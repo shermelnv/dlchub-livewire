@@ -106,10 +106,10 @@ public function openGroup($groupCode)
 
         $message = $this->selectedGroup->messages()->create([
             'user_id' => Auth::id(),
-            'content' => $this->messageInput,
+            'message' => $this->messageInput,
         ]);
 
-        $this->messages->push($message->load('user'));
+        $this->messages[] = $message->load('user');
         $this->messageInput = '';
     }
 
