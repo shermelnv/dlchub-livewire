@@ -102,8 +102,8 @@ class VotingRoom extends Component
     {
         $now = Carbon::now();
 
-        if ($this->room->status !== 'Ended' && $now->greaterThanOrEqualTo($this->room->end_time)) {
-            $this->room->status = 'Ended';
+        if ($this->room->status !== 'Closed' && $now->greaterThanOrEqualTo($this->room->end_time)) {
+            $this->room->status = 'Closed';
         } elseif ($this->room->status !== 'Ongoing' && $now->between($this->room->start_time, $this->room->end_time)) {
             $this->room->status = 'Ongoing';
         } elseif ($this->room->status !== 'Pending' && $now->lessThan($this->room->start_time)) {
@@ -118,7 +118,7 @@ class VotingRoom extends Component
         return match ($this->room->status) {
             'Pending'  => 'text-yellow-600 dark:text-yellow-400',
             'Ongoing'  => 'text-green-600 dark:text-green-400',
-            'Ended'    => 'text-red-600 dark:text-red-400',
+            'Closed'    => 'text-red-600 dark:text-red-400',
             default    => '',
         };
     }

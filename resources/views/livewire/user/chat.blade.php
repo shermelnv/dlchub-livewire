@@ -66,7 +66,7 @@
                             <div class="flex gap-3 items-start justify-end">
                                 <div class="bg-blue-100 dark:bg-blue-900 text-gray-900 dark:text-white p-3 rounded-xl max-w-md">
                                     <div class="text-sm font-medium">You</div>
-                                    <div class="text-sm">{{ $message->content }}</div>
+                                    <div class="text-sm">{{ $message->message }}</div>
                                     <div class="text-xs text-gray-500 mt-1 text-right">{{ $message->created_at->diffForHumans() }}</div>
                                 </div>
                                 <img src="{{ $message->user->avatar_url ?? 'https://i.pravatar.cc/100?u=' . $message->user_id }}" class="w-9 h-9 rounded-full" />
@@ -77,7 +77,7 @@
                                 <img src="{{ $message->user->avatar_url ?? 'https://i.pravatar.cc/100?u=' . $message->user_id }}" class="w-9 h-9 rounded-full" />
                                 <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl max-w-md">
                                     <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $message->user->name }}</div>
-                                    <div class="text-sm text-gray-700 dark:text-gray-300">{{ $message->content }}</div>
+                                    <div class="text-sm text-gray-700 dark:text-gray-300">{{ $message->message }}</div>
                                     <div class="text-xs text-gray-500 mt-1">{{ $message->created_at->diffForHumans() }}</div>
                                 </div>
                             </div>

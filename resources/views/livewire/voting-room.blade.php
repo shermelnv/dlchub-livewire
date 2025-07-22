@@ -315,7 +315,7 @@
         let diff = targetTime - now;
 
         if (diff <= 0) {
-            return label === 'start' ? 'Started' : 'Ended';
+            return label === 'Ongoing' ? 'Started' : 'Closed';
         }
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));

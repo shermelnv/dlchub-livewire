@@ -27,8 +27,6 @@ public $organization, $role, $bio, $avatar_url, $is_active = true;
     {
         $this->user = auth()->user();
 
-        
-
     }
 
 public function createUser()
@@ -119,7 +117,8 @@ public function confirmDelete(int $id)
 
     public function render()
     {
-        $manageUsers = User::where('id', '!=', auth()->id())
+            $manageUsers = User::where('id', '!=', auth()->id())
+            ->whereNot('role', 'superadmin') 
             ->orderBy('created_at', 'desc')
             ->paginate(7);
 

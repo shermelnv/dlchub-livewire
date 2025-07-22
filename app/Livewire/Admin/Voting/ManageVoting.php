@@ -25,7 +25,19 @@ class ManageVoting extends Component
 
     public function loadRooms()
     {
-        $this->rooms = VotingRoom::latest()->get();
+        $now = now();
+
+       VotingRoom::where('status', 'Pending')
+        ->whereNotNull('start_time')
+        ->where('start_time', '<=', $now)
+        ->update(['status' => 'Ongoing']);
+
+        VotingRoom::where('status', 'Ongoing')
+        ->whereNotNull('end_time')
+        ->where('end_time', '<=', $now)
+        ->update(['status' => 'Closed']);
+
+    $this->rooms = VotingRoom::latest()->get();
     }
 
     public function createVoting()

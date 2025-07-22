@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupChat extends Model
 {
-    protected $fillable = ['name', 'description', 'group_code'];
+    protected $fillable = [
+        'group_owner_id', 
+        'name', 
+        'description', 
+        'group_code'
+    ];
 
 
     /**
@@ -34,4 +39,9 @@ class GroupChat extends Model
     {
         return $this->members(); // Or just remove this if redundant.
     }
+
+    public function owner()
+{
+    return $this->belongsTo(User::class, 'group_owner_id');
+}
 }

@@ -13,6 +13,8 @@
 
             <flux:navlist variant="outline">
 
+                {{-- IF THE USER IS ADMIN OR SUPER ADMIN --}}
+                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
                 {{-- ADMIN / SUPERADMIN --}}
                 <flux:navlist.group :heading="__('Admin / SuperAdmin')" class="grid">
 
@@ -21,10 +23,12 @@
                     <flux:navlist.item icon="inbox-arrow-down" :href="route('admin.voting.manage-voting')" :current="request()->routeIs('admin.voting.manage-voting')" wire:navigate>{{ __('Manage Voting') }}</flux:navlist.item>
                     <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>{{ __('Manage Chat') }}</flux:navlist.item>
                     <flux:navlist.item icon="megaphone" :href="route('admin.advertisement.manage-advertisement')" :current="request()->routeIs('admin.advertisement.manage-advertisement')" wire:navigate>{{ __('Manage Advertisement') }}</flux:navlist.item>
-
+                    <flux:navlist.item icon="rss" :href="route('admin.feed.manage-feed')" :current="request()->routeIs('admin.feed.manage-feed')" wire:navigate>{{ __('Manage Feed') }}</flux:navlist.item>
                    
                 </flux:navlist.group>
-
+                @endif
+               
+                @if (auth()->user()->role === 'user')
                 {{-- USER --}}
                 <flux:navlist.group :heading="__('User')" class="grid">
                     <flux:navlist.item icon="megaphone" :href="route('user.feed')" :current="request()->routeIs('user.feed')" wire:navigate>{{ __('Feed') }}</flux:navlist.item>
@@ -33,6 +37,8 @@
                     <flux:navlist.item icon="check-circle" :href="route('user.voting')" :current="request()->routeIs('user.voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
 
                 </flux:navlist.group>
+
+                @endif
 
 
             </flux:navlist>

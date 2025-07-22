@@ -26,6 +26,7 @@
                     <th class="px-4 py-3">ID</th>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Role</th>
                     <th class="px-4 py-3">Org</th>
                     <th class="px-4 py-3 text-center">Actions</th>
                 </tr>
@@ -36,6 +37,7 @@
                         <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageUser->id }}</td>
                         <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageUser->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->email }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->role ?? 'User' }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->organization ?? 'No Org' }}</td>
                         <td class="px-4 py-3 text-center">
                             <flux:dropdown position="left">
@@ -77,7 +79,7 @@
                     </flux:modal>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-6 text-center text-gray-500">No users found.</td>
+                        <td colspan="6" class="px-4 py-6 text-center text-gray-500">No users found.</td>
                     </tr>
                 @endforelse
             </tbody>

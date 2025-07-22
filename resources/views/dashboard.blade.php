@@ -9,10 +9,10 @@
         {{-- Summary Cards --}}
         <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             @foreach ([
-                ['title' => 'Students', 'icon' => 'user', 'count' => 150],
-                ['title' => 'Active Group Chat', 'icon' => 'chat', 'count' => 4],
-                ['title' => 'Active Votes', 'icon' => 'voting', 'count' => 12],
-                ['title' => 'Advertisement', 'icon' => 'ads', 'count' => 4],
+                ['title' => 'Students', 'icon' => 'user', 'count' => $studentCount],
+                ['title' => 'Active Group Chat', 'icon' => 'chat', 'count' => $groupChatCount],
+                ['title' => 'Active Voting', 'icon' => 'voting', 'count' => $activeVoteCount],
+                ['title' => 'Advertisement', 'icon' => 'ads', 'count' => $adsCount],
             ] as $item)
                 @php
                     $percent = isset($item['voted']) && isset($item['total'])

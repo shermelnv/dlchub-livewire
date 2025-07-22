@@ -35,15 +35,23 @@ public function mount($groupCode = null)
             ->whereHas('members', fn ($q) => $q->where('user_id', Auth::id()))
             ->with('members')->first();
     }
+
+    // show the group messages if a group is selected
+    if ($this->selectedGroup) {
+        $this->messages = $this->selectedGroup->messages()->with('user')->get();
+    } else {
+        $this->messages = [];   
+    }
 }
 
 
     public function createGroup()
     {
         $group = GroupChat::create([
+            'group_owner_id' => Auth::id(),
             'name' => $this->newGroupName,
             'description' => $this->newGroupDescription,
-             'group_code' => strtoupper(Str::random(6)), // Generates something like "A1B2C3"
+            'group_code' => strtoupper(Str::random(6)), // Generates something like "A1B2C3"
         ]);
 
         $group->members()->attach(Auth::id());
@@ -51,6 +59,7 @@ public function mount($groupCode = null)
         $this->modal('create-group')->close();
         Toaster::success('Group Created Successfully!');
         return redirect()->route('user.chat', ['groupCode' => $group->group_code]);
+
     }
 
     public function joinGroup()

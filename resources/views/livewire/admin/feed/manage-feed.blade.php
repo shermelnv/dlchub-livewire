@@ -18,6 +18,55 @@
         <!-- Left/Main Column -->
         <div class="w-full col-span-3 flex flex-col gap-6">
             
+            <!-- What's on your mind -->
+            <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
+                <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
+
+                <flux:modal.trigger name="post-feed">
+                    <flux:button class="w-full">What's on your mind?</flux:button>
+                </flux:modal.trigger>
+              
+                    <flux:modal name="post-feed">
+                        <form wire:submit.prevent="createPost">
+                        <div class="space-y-6">
+                            {{-- Modal Header --}}
+                            <div>
+                                <flux:heading size="lg">Create Feed Post</flux:heading>
+                                <flux:text class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    Share an announcement, event, or important update.
+                                </flux:text>
+                            </div>
+
+                            {{-- Content --}}
+                            <div class="flex flex-col gap-4">
+                                <flux:input label="Post Title" wire:model.defer="title" placeholder="Post Title"/>
+
+                                <flux:textarea label="Post Content" wire:model.defer="content" placeholder="What's on your mind? (Max 2000 Characters)"/>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <flux:select label="Category" wire:model.defer="category">
+                                        <flux:select.option>Select Category</flux:select.option>
+                                        <flux:select.option value="Academic">Academic</flux:select.option>
+                                        <flux:select.option value="Events">Events</flux:select.option>
+                                        <flux:select.option value="Student Life">Student Life</flux:select.option>
+                                    </flux:select>
+                                
+
+                                    <flux:input label="Department" wire:model.defer="department" placeholder="ex. IT"/>
+                            
+                                </div>
+
+                                {{-- Submit Button --}}
+                                <div class="flex justify-end">
+                                    <flux:button type="submit" variant="primary">
+                                        Post
+                                    </flux:button>
+                                </div>
+                            </div>
+                        </form>
+                </flux:modal>
+
+            </section>
 
             <!-- Filters -->
             <section class="bg-white dark:bg-gray-900 rounded-xl p-4 shadow space-y-6">

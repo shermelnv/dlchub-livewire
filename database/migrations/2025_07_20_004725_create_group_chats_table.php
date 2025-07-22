@@ -13,6 +13,7 @@ return new class extends Migration
     {
     Schema::create('group_chats', function (Blueprint $table) {
         $table->id();
+        $table->foreignId('group_owner_id')->constrained('users')->onDelete('cascade');
         $table->string('name');
         $table->text('description')->nullable();
         $table->string('group_code')->unique();
