@@ -2,37 +2,66 @@
 
 namespace App\Livewire\User;
 
+use App\Models\Org;
 use Livewire\Component;
-use App\Models\Advertisement as UserAdvertisement;
+use App\Models\Advertisement as AdvertisementModel;
 
 class Advertisement extends Component
 {
-    public $photos = [];
 
-
-    public $category;
- 
+    public $organizationFilter = null;
+    public $orgs;
+    public $trendingOrgs = [];
     public $advertisements = [];
-    public $categoryFilter = null;
 
+    // ───── Stats ─────
+
+    public $stats = [
+        'total_ads' => 0,
+        'events' => 0,
+        'internships' => 0,
+        'jobs' => 0,
+        'scholarships' => 0,
+    ];
     
-        public function mount()
+    // ───── Lifecycle ─────
+    public function mount()
     {
         $this->fetchAdvertisements();
     }
+    
+    // ───── Data Fetching ─────
+    public function fetchAdvertisements()
+    {
+        $this->advertisements = AdvertisementModel::with('photos')->latest()->get();
+        $this->orgs = Org::all();
 
-        public function fetchAdvertisements()
-    {
-        $this->advertisements = UserAdvertisement::latest()->get();
+        $this->trendingOrgs = AdvertisementModel::select('organization')
+            ->whereNotNull('organization')
+            ->groupBy('organization')
+            ->selectRaw('organization, COUNT(*) as ad_count')
+            ->orderByDesc('ad_count')
+            ->limit(5)
+            ->get();
     }
-        public function getFilteredAdvertisementsProperty()
+
+    // ───── Computed ─────
+    public function getFilteredAdvertisementsProperty()
     {
-        return $this->categoryFilter
-            ? UserAdvertisement::where('category', $this->categoryFilter)->latest()->get()
-            : UserAdvertisement::latest()->get();
+        return $this->organizationFilter
+            ? AdvertisementModel::with('photos')->where('organization', $this->organizationFilter)->latest()->get()
+            : AdvertisementModel::with('photos')->latest()->get();
     }
+
+    public function resetFilters()
+    {
+    $this->organizationFilter = null;
+    $this->typeFilter = null;
+    }
+
+  
     public function render()
     {
-        return view('livewire.user.advertisement');
+        return view('livewire.user.advertisement.advertisement');
     }
 }

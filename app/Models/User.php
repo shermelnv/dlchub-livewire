@@ -22,11 +22,8 @@ protected $fillable = [
     'name',
     'email',
     'password',
-    'organization',
     'role',
-    'bio',
-    'avatar_url',
-    'is_active',
+    'status',
 ];
 
     /**
@@ -80,6 +77,19 @@ public function chatMessages()
     return $this->hasMany(ChatMessage::class);
 }
 
+public function isAdmin()
+{
+    return $this->role === 'admin';
+}
+
+public function isOrg()
+{
+    return $this->role === 'org';
+}
+public function hasAnyRole(...$roles)
+{
+    return in_array($this->role, $roles);
+}
 
 
 }

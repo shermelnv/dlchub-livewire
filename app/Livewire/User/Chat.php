@@ -2,12 +2,17 @@
 
 namespace App\Livewire\User;
 
+use Livewire\Features\SupportEvents\Browser;
 use Livewire\Component;
 use App\Models\GroupChat;
 use App\Models\ChatMessage;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+use App\Events\DashboardStats;
 use Masmerise\Toaster\Toaster;
+use App\Events\GroupMessageSent;
 use Illuminate\Support\Facades\Auth;
+use App\Events\GroupChat as GroupChatEvent;
 
 class Chat extends Component
 {
@@ -45,6 +50,33 @@ public function mount($groupCode = null)
 }
 
 
+public function loadMessages()
+{
+    if (!$this->selectedGroup) {
+        return;
+    }
+
+    $this->messages = ChatMessage::with('user')
+    ->where('group_chat_id', $this->selectedGroup->id)
+    ->orderBy('created_at', 'asc')
+    ->get()
+    ->map(function ($message) {
+        return [
+            'id' => $message->id,
+            'user_id' => $message->user_id,
+            'message' => $message->message,
+            'created_at' => $message->created_at, // keep as Carbon
+            'created_at_human' => $message->created_at->diffForHumans(), // optional for tooltip
+            'user' => ['name' => $message->user->name],
+        ];
+    })
+    ->toArray();
+
+    // $this->dispatch('scroll-to-bottom');
+}
+
+
+
     public function createGroup()
     {
         $group = GroupChat::create([
@@ -55,6 +87,11 @@ public function mount($groupCode = null)
         ]);
 
         $group->members()->attach(Auth::id());
+
+        event(new DashboardStats([
+            'groupChats' => \App\Models\GroupChat::count(),
+            
+        ]));
         $this->reset(['newGroupName', 'newGroupDescription']);
         $this->modal('create-group')->close();
         Toaster::success('Group Created Successfully!');
@@ -102,6 +139,11 @@ public function openGroup($groupCode)
     if ($group) {
         $this->selectedGroup = $group;
         session(['selected_group_code' => $groupCode]);
+
+
+
+    
+
         return redirect()->route('user.chat', ['groupCode' => $groupCode]);
     }
 }
@@ -119,11 +161,23 @@ public function openGroup($groupCode)
         ]);
 
         $this->messages[] = $message->load('user');
+        
         $this->messageInput = '';
+        
+        broadcast(new GroupMessageSent($message));
+        $this->dispatch('scroll-to-bottom');
     }
+
+#[On('message-received')]
+public function handleRealtimeMessage($message)
+{
+    $this->loadMessages();
+}
+
+
 
     public function render()
     {
-        return view('livewire.user.chat');
+        return view('livewire.user.chat.chat');
     }
 }

@@ -47,9 +47,9 @@
 
     <!-- Metrics -->
 @php
-    $totalVotes = $positions->flatMap->candidates->sum(fn($c) => $c->votes->count());
+$totalVotes = \App\Models\Vote::distinct('user_id')->count('user_id');
+$votingRate = $totalStudents ? round(($totalVotes / $totalStudents) * 100) : 0;
 
-    $votingRate = $totalStudents ? round(($totalVotes / $totalStudents) * 100) : 0;
 @endphp
 
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
@@ -292,14 +292,24 @@
                              class="h-40 w-full object-cover rounded-md mb-4">
                         <h4 class="font-bold text-lg">{{ $candidate->name }}</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400">{{ $candidate->bio ?? 'No bio available.' }}</p>
-                        <div class="mt-auto pt-4">
+                        <div class="relative group my-4">
                             <button
-    wire:click.prevent="voteCandidate({{ $candidate->id }})"
-    class="w-full bg-[#7B2E2E] text-white py-2 rounded hover:bg-[#5c2222] transition">
-    Vote for {{ explode(' ', $candidate->name)[0] }}
-</button>
-
+                                wire:click.prevent="voteCandidate({{ $candidate->id }})"
+                                @disabled($room->status !== 'Ongoing')
+                                class="w-full py-2 rounded transition
+                                    {{ $room->status !== 'Ongoing'
+                                        ? 'bg-gray-400 text-white cursor-not-allowed'
+                                        : 'bg-[#7B2E2E] text-white hover:bg-[#5c2222] cursor-pointer'
+                                    }}">
+                                {{ $room->status !== 'Ongoing' ? 'Voting Unavailable' : 'Vote for ' . explode(' ', $candidate->name)[0] }}
+                            </button>
+                            @if($room->status !== 'Ongoing')
+                                <div class="absolute top-full mt-1 text-xs bg-black text-white px-2 py-1 rounded hidden group-hover:block">
+                                    Voting opens once the election is ongoing.
+                                </div>
+                            @endif
                         </div>
+
                     </div>
                 @endforeach
             </div>
@@ -307,16 +317,15 @@
     @endforeach
 </div>
 <script>
+    const roomStatus = "{{ $room->status }}"; // 'Upcoming', 'Ongoing', or 'Ended'
     const startAt = new Date("{{ \Carbon\Carbon::parse($room->start_time)->timezone('Asia/Manila')->format('Y-m-d H:i:s') }}");
     const endAt   = new Date("{{ \Carbon\Carbon::parse($room->end_time)->timezone('Asia/Manila')->format('Y-m-d H:i:s') }}");
 
-    function formatCountdown(targetTime, label) {
+    function formatCountdown(targetTime) {
         const now = new Date();
         let diff = targetTime - now;
 
-        if (diff <= 0) {
-            return label === 'Ongoing' ? 'Started' : 'Closed';
-        }
+        if (diff <= 0) return 'Ended';
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         diff %= 1000 * 60 * 60 * 24;
@@ -338,20 +347,30 @@
     }
 
     function updateClocks() {
+        const now = new Date();
         const startsClock = document.getElementById('starts-in-clock');
         const endsClock = document.getElementById('ends-in-clock');
 
-        if (startsClock) {
-            startsClock.textContent = formatCountdown(startAt, 'start');
+        if (!startsClock || !endsClock) return;
+
+        // Start Time Display
+        if (now < startAt) {
+            startsClock.textContent = formatCountdown(startAt);
+        } else {
+            startsClock.textContent = 'Started';
         }
 
-        if (endsClock) {
-            endsClock.textContent = formatCountdown(endAt, 'end');
+        // End Time Display
+        if (now < endAt) {
+            endsClock.textContent = formatCountdown(endAt);
+        } else {
+            endsClock.textContent = 'Ended';
+            startsClock.textContent = 'Ended';
         }
-
-        // Optional: trigger Livewire update or button disable here
     }
 
-    updateClocks();
-    setInterval(updateClocks, 1000);
+    document.addEventListener("DOMContentLoaded", function () {
+        updateClocks();
+        setInterval(updateClocks, 1000);
+    });
 </script>

@@ -24,24 +24,35 @@ new #[Layout('components.layouts.auth')] class extends Component {
      * Handle an incoming authentication request.
      */
     public function login(): void
-    {
-        $this->validate();
+{
+    $this->validate();
+    $this->ensureIsNotRateLimited();
 
-        $this->ensureIsNotRateLimited();
+    if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        RateLimiter::hit($this->throttleKey());
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
-
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        throw ValidationException::withMessages([
+            'email' => __('auth.failed'),
+        ]);
     }
+
+    $user = Auth::user();
+
+    if ($user->status !== 'approved') {
+        session(['user_name' => $user->name]); // optional, for display
+
+        Auth::logout();
+
+        $this->redirect(route('not-verified')); // you must have this route defined
+        return;
+    }
+
+    RateLimiter::clear($this->throttleKey());
+    Session::regenerate();
+
+    $this->redirectIntended(default: route('redirectToPage', absolute: false), navigate: true);
+}
+
 
     /**
      * Ensure the authentication request is not rate limited.

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use App\Mail\EmailVerification;
+use Illuminate\Support\Facades\Mail;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     public string $name = '';
@@ -27,12 +29,24 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $validated['password'] = Hash::make($validated['password']);
 
-        event(new Registered(($user = User::create($validated))));
+        // Set default status if applicable (optional)
+        $validated['status'] = 'pending';
 
-        Auth::login($user);
+        $user = User::create($validated);
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+        // Store user name in session (for use on redirect page)
+        session(['user_name' => $user->name]);
+
+        // Fire Registered event (optional, but common)
+        event(new Registered($user));
+
+        // Send verification email (only if your system actually verifies via email)
+        Mail::to($user->email)->send(new EmailVerification($user));
+
+        // Redirect to success page
+        $this->redirectIntended(route('registered-success', absolute: false), navigate: true);
     }
+
 }; ?>
 
 <div class="flex flex-col gap-6">

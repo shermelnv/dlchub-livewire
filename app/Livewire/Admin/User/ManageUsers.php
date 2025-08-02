@@ -4,9 +4,15 @@ namespace App\Livewire\Admin\User;
 
 use App\Models\User;
 use Livewire\Component;
+use App\Models\GroupChat;
+use App\Models\VotingRoom;
 use Livewire\WithPagination;
+use App\Mail\AccountVerified;
+use App\Models\Advertisement;
+use App\Events\DashboardStats;
 use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class ManageUsers extends Component
 {
@@ -36,7 +42,7 @@ public function createUser()
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string|min:6',
         'organization' => 'nullable|string|max:255',
-        'role' => 'required|in:user,admin,superadmin',
+        'role' => 'required|in:user,org,admin,superadmin',
         'bio' => 'nullable|string',
         'avatar_url' => 'nullable|url',
         'is_active' => 'boolean',
@@ -45,7 +51,12 @@ public function createUser()
     $validated['password'] = Hash::make($validated['password']);
 
     User::create($validated);
-
+    event(new DashboardStats([
+        'students' => User::where('role', 'user')->count(),
+        'groupChats' => GroupChat::count(),
+        'activeVotings' => VotingRoom::where('status', 'Ongoing')->count(),
+        'advertisements' => Advertisement::count(),
+    ]));
     $this->reset(['name', 'email', 'password', 'organization', 'role', 'bio', 'avatar_url', 'is_active']);
     $this->modal('create-user')->close();
     Toaster::success('User created successfully!');
@@ -64,27 +75,32 @@ public function createUser()
         $this->modal('edit-user')->show();
     }
 
+    // ACCOUNT EMAIL VERIFIED Mail::to($user->email)->send(new AccountVerified($user, $rawPassword));
+
+
 public function updateUser()
 {
     $this->validate([
         'showUser.name' => 'required|string|max:255',
         'showUser.organization' => 'nullable|string|max:255',
-        'showUser.role' => 'required|in:user,admin,superadmin',
-        'showUser.bio' => 'nullable|string',
-        'showUser.avatar_url' => 'nullable|url',
-        'showUser.is_active' => 'boolean',
+        'showUser.role' => 'required|in:user,org,admin,superadmin',
+        'showUser.status' => 'required|in:pending,approved,rejected',
+
     ]);
 
     $user = User::findOrFail($this->showUser['id']);
-
+    $wasNotVerified = $user->status === 'pending';
+    $newStatus = $this->showUser['status'];
     $user->update([
         'name' => $this->showUser['name'],
-        'organization' => $this->showUser['organization'],
         'role' => $this->showUser['role'],
-        'bio' => $this->showUser['bio'],
-        'avatar_url' => $this->showUser['avatar_url'],
-        'is_active' => $this->showUser['is_active'],
+        'status' => $newStatus,
     ]);
+
+       // ✅ Send account verified email if newly verified
+    if ($wasNotVerified && $newStatus === 'approved') {
+        Mail::to($user->email)->send(new AccountVerified($user));
+    }
 
     $this->reset('showUser');
 
@@ -92,6 +108,11 @@ public function updateUser()
     Toaster::success('User updated successfully!');
 }
 
+public function confirmDelete(int $id)
+{
+    $this->deleteUserId = $id;
+    $this->modal('delete-user')->show(); // single modal for all deletes
+}
 
 public function deleteUser()
 {
@@ -106,21 +127,97 @@ public function deleteUser()
     }
 }
 
-public function confirmDelete(int $id)
+public ?int $approveUserId = null;
+public ?int $rejectUserId = null;
+public ?int $banUserId = null;
+public ?int $unbanUserId = null;
+
+// Show Approve Modal
+public function confirmApprove(int $id)
 {
-    $this->deleteUserId = $id;
-    $this->modal('delete-user')->show(); // single modal for all deletes
+    $this->approveUserId = $id;
+    $this->modal('approve-user')->show();
 }
 
+// Approve Logic
+public function approveUser()
+{
+    if ($this->approveUserId) {
+        $user = User::findOrFail($this->approveUserId);
+        $user->status = 'approved';
+        $user->save();
 
+        Toaster::success('Approved Successfully!');
+        $this->modal('approve-user')->close();
+    }
+}
 
+// Show Reject Modal
+public function confirmReject(int $id)
+{
+    $this->rejectUserId = $id;
+    $this->modal('reject-user')->show();
+}
+
+// Reject Logic
+public function rejectUser()
+{
+    if ($this->rejectUserId) {
+        $user = User::findOrFail($this->rejectUserId);
+        $user->status = 'rejected';
+        $user->save();
+
+        Toaster::success('Rejected Successfully!');
+        $this->modal('reject-user')->close();
+    }
+}
+
+// Show Ban Modal
+public function confirmBan(int $id)
+{
+    $this->banUserId = $id;
+    $this->modal('ban-user')->show();
+}
+
+// Ban Logic
+public function banUser()
+{
+    if ($this->banUserId) {
+        $user = User::findOrFail($this->banUserId);
+        $user->status = 'banned';
+        $user->save();
+
+        Toaster::success('Banned Successfully!');
+        $this->modal('ban-user')->close();
+    }
+}
+// Show unban Modal
+public function confirmUnban(int $id)
+{
+    $this->unbanUserId = $id;
+    $this->modal('unban-user')->show();
+}
+
+// unban Logic
+public function unbanUser()
+{
+    if ($this->unbanUserId) {
+        $user = User::findOrFail($this->unbanUserId);
+        $user->status = 'approved';
+        $user->save();
+
+        Toaster::success('Unbanned Successfully!');
+        $this->modal('unban-user')->close();
+    }
+}
 
     public function render()
     {
             $manageUsers = User::where('id', '!=', auth()->id())
+            ->whereNotIn('role', ['org'])
             ->whereNot('role', 'superadmin') 
-            ->orderBy('created_at', 'desc')
-            ->paginate(7);
+            ->orderBy('created_at', 'asc')
+            ->paginate(8);
 
         return view('livewire.admin.user.manage-users', [
             'manageUsers' => $manageUsers,

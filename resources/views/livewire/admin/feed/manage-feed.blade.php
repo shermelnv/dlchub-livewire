@@ -1,5 +1,5 @@
 <div>
-    <!-- Header Section -->
+    <!-- ========== HEADER ========== -->
     <div class="relative mb-6 w-full">
         <flux:heading size="xl" level="1">
             {{ __('School Announcement') }}
@@ -10,162 +10,173 @@
         </flux:subheading>
 
         <flux:separator variant="subtle" />
-
     </div>
 
-    <!-- Main Grid Layout -->
+    <!-- ========== MAIN GRID ========== -->
     <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 h-full">
-        <!-- Left/Main Column -->
-        <div class="w-full col-span-3 flex flex-col gap-6">
-            
-            <!-- What's on your mind -->
+        <!-- ========== LEFT COLUMN: FEED AREA ========== -->
+        <div class="w-full col-span-3 flex flex-col gap-6 px-4 sm:px-6 md:px-10 lg:px-15 xl:px-20">
+
+            <!-- ====== CREATE POST SECTION ====== -->
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
                 <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
-
                 <flux:modal.trigger name="post-feed">
                     <flux:button class="w-full">What's on your mind?</flux:button>
                 </flux:modal.trigger>
-              
-                    <flux:modal name="post-feed">
-                        <form wire:submit.prevent="createPost">
-                        <div class="space-y-6">
-                            {{-- Modal Header --}}
-                            <div>
-                                <flux:heading size="lg">Create Feed Post</flux:heading>
-                                <flux:text class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                    Share an announcement, event, or important update.
-                                </flux:text>
-                            </div>
-
-                            {{-- Content --}}
-                            <div class="flex flex-col gap-4">
-                                <flux:input label="Post Title" wire:model.defer="title" placeholder="Post Title"/>
-
-                                <flux:textarea label="Post Content" wire:model.defer="content" placeholder="What's on your mind? (Max 2000 Characters)"/>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <flux:select label="Category" wire:model.defer="category">
-                                        <flux:select.option>Select Category</flux:select.option>
-                                        <flux:select.option value="Academic">Academic</flux:select.option>
-                                        <flux:select.option value="Events">Events</flux:select.option>
-                                        <flux:select.option value="Student Life">Student Life</flux:select.option>
-                                    </flux:select>
-                                
-
-                                    <flux:input label="Department" wire:model.defer="department" placeholder="ex. IT"/>
-                            
-                                </div>
-
-                                {{-- Submit Button --}}
-                                <div class="flex justify-end">
-                                    <flux:button type="submit" variant="primary">
-                                        Post
-                                    </flux:button>
-                                </div>
-                            </div>
-                        </form>
-                </flux:modal>
-
             </section>
 
-            <!-- Filters -->
-            <section class="bg-white dark:bg-gray-900 rounded-xl p-4 shadow space-y-6">
-                
-                <!-- Department & Date Filters -->
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 flex-wrap">
-                    
-                    <!-- Department Filter -->
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <flux:label class="text-gray-700 dark:text-gray-200">Department:</flux:label>
+            <div class="flex justify-between">
+            <!-- ====== FILTER SECTION ====== -->
+            <div class="flex space-x-4">
+                    <flux:dropdown>
+                        <flux:button icon:trailing="chevron-down" size="sm">
+                            {{ $organizationFilter ? ucfirst($organizationFilter) : 'All Organization' }}
+                        </flux:button>
+                        <flux:menu>
+                            <flux:menu.item wire:click="$set('organizationFilter', null)">
+                                All Organization
+                            </flux:menu.item>
+                            @foreach ($orgs as $org)
+                                <flux:menu.item wire:click="$set('organizationFilter', '{{ $org->name }}')">
+                                    {{ $org->name }}
+                                </flux:menu.item>
+                            @endforeach
+                        </flux:menu>
+                    </flux:dropdown>
 
-                        <flux:field class="w-full sm:w-[12rem]">
-                            <flux:select wire:model="department" placeholder="All Departments">
-                                <flux:select.option value="">All Departments</flux:select.option>
-                                <flux:select.option value="IT">IT</flux:select.option>
-                                <flux:select.option value="Business">Business</flux:select.option>
-                                <flux:select.option value="Engineering">Engineering</flux:select.option>
-                                <flux:select.option value="Education">Education</flux:select.option>
-                            </flux:select>
-
-                        </flux:field>
-                    </div>
-
-                    <!-- Date Range Filter -->
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <flux:label class="text-gray-700 dark:text-gray-200">Date Range:</flux:label>
-
-                        <flux:field>
-                            <flux:input wire:model="dateFrom"  type="date" class="dark:bg-gray-800 dark:text-white" />
-                        </flux:field>
-                        <flux:label class="text-gray-500 dark:text-gray-300">to</flux:label>
-
-                        <flux:field>
-                            <flux:input wire:model="dateTo" type="date" class="dark:bg-gray-800 dark:text-white" />
-                        </flux:field>
-                    </div>
+                    <!-- Type Filter -->
+                    <flux:dropdown>
+                        <flux:button icon:trailing="chevron-down" size="sm">
+                            {{ $typeFilter ? ucfirst($typeFilter) : 'All Type' }}
+                        </flux:button>
+                        <flux:menu>
+                            <flux:menu.item wire:click="$set('typeFilter', null)">
+                                All Type
+                            </flux:menu.item>
+                            @foreach ($types as $type)
+                                <flux:menu.item wire:click="$set('typeFilter', '{{ $type->type_name }}')">
+                                    {{ $type->type_name }}
+                                </flux:menu.item>
+                            @endforeach
+                        </flux:menu>
+                    </flux:dropdown>
                 </div>
 
-                <div class="flex justify-between items-center">
-                    <!-- Categories Filter -->
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <flux:label class="text-gray-700 dark:text-gray-200">Categories:</flux:label>
+                @if ($organizationFilter || $typeFilter)
+                    <flux:button color="gray" size="sm" wire:click="resetFilters">
+                        Reset Filters
+                    </flux:button>
+                @endif
+            </div>
 
-                        @php
-                            $allCategories = ['Academic', 'Events', 'Administrative', 'Student Life'];
-                        @endphp
-
-                        @foreach ($allCategories as $cat)
-                            <button
-                                wire:click="toggleCategory('{{ $cat }}')"
-                                class="px-3 py-1 rounded-full text-sm transition
-                                    {{ $category === $cat 
-                                        ? 'bg-red-900 text-white' 
-                                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100' }}">
-                                {{ $cat }}
-                            </button>
-                        @endforeach
-
-
-                    </div>
-
-                    <flux:button wire:click="resetFilters" variant="ghost">Clear Filters</flux:button>
-                    <flux:button wire:click="filter" >Apply Filter</flux:button>
-
-
-                </div>
-                
-
-                
-            </section>
-
+            <!-- ====== FEED LIST ====== -->
             <div class="space-y-6">
-
-                {{-- Feed List --}}
-                @forelse ($feeds as $feed)
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $feed->title }}</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $feed->category }} • {{ $feed->department }} • {{ $feed->published_at->format('F j, Y') }}
-                                </p>
+                @forelse ($this->filteredFeeds as $feed)
+                    <div class="bg-white dark:bg-gray-800 shadow-md hover:shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition duration-300 ease-in-out">
+                        @if ($feed->photo_url)
+                            <div class="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                                <img src="{{ asset('storage/' . $feed->photo_url) }}" loading="lazy" class="object-contain w-full h-full" />
+                                @if ($feed->organization)
+                                    <span class="absolute top-2 left-2 bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-purple-900 dark:text-white">
+                                        {{ $feed->organization }}
+                                    </span>
+                                @endif
                             </div>
-                            <div class="text-sm text-gray-400 dark:text-gray-500">
-                                by {{ $feed->user->name ?? 'Unknown' }}
+                        @endif
+
+                        <div class="p-4 space-y-3">
+                            <!-- Header -->
+                            <div class="flex justify-between">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->title }}</h2>
+                                <flux:dropdown position="bottom" align="end">
+                                    <button><flux:icon.ellipsis-horizontal /></button>
+                                    <flux:menu>
+                                        <flux:menu.item wire:click="editPost({{ $feed->id }})">Edit</flux:menu.item>
+                                        <flux:menu.item wire:click="confirmDelete({{ $feed->id }})">Delete</flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
+
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }}
+                            </p>
+
+                            <!-- Content -->
+                            <p class="text-sm text-gray-600 dark:text-gray-300">{{ $feed->content }}</p>
+
+                            <!-- Tags -->
+                            @if ($feed->type)
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="bg-gray-100 dark:bg-gray-700 text-xs px-2 py-1 rounded-full font-medium text-gray-700 dark:text-gray-200">
+                                        {{ $feed->type }}
+                                    </span>
+                                </div>
+                            @endif
+
+                            <!-- Footer -->
+                            <div class="flex items-center gap-6 pt-2 text-gray-500 dark:text-gray-400 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <flux:icon.heart class="w-4 h-4" />
+                                    <span>123</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon.chat-bubble-oval-left-ellipsis class="w-4 h-4" />
+                                    <span>123</span>
+                                </div>
                             </div>
                         </div>
-
-                        <p class="mt-4 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                            {{ $feed->content }}
-                        </p>
                     </div>
                 @empty
-                    <div class="text-center text-gray-500 dark:text-gray-400">
-                        No posts available.
-                    </div>
+                    <div class="text-center text-gray-500 dark:text-gray-400">No posts available.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- ========== RIGHT SIDEBAR ========== -->
+        <div class="flex flex-col gap-6">
+            <!-- Orgs -->
+            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
+                <h2 class="font-semibold mb-3 flex gap-2">
+                    <flux:icon.building-library /> Organizations
+                </h2>
+                @forelse ($orgs as $org)
+                    <a href="{{ route('org.profile', ['org' => $org->id]) }}">
+                        <div class="flex gap-4 items-center text-sm py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                            <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
+                            <span class="truncate">{{ $org->name }}</span>
+                        </div>
+                    </a>
+                @empty
+                    <p class="text-sm text-gray-400">No data available.</p>
                 @endforelse
             </div>
 
+            <!-- Deadlines -->
+            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
+                <h2 class="font-semibold mb-3 flex gap-2">
+                    <flux:icon.clock /> Upcoming Deadlines
+                </h2>
+                <p class="text-sm text-gray-400">No upcoming deadlines.</p>
+            </div>
+
+            <!-- Help -->
+            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
+                <h2 class="font-semibold mb-3">💬 Help & Support</h2>
+                <ul class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                    <li><a href="#" class="hover:underline">📘 How to post an advertisement</a></li>
+                    <li><a href="#" class="hover:underline">📩 Contact administrator</a></li>
+                    <li><a href="#" class="hover:underline">⚙️ Manage your organization</a></li>
+                </ul>
+            </div>
         </div>
     </div>
+
+    <!-- ====== DELETE POST MODAL ====== -->
+    @include('livewire.admin.feed.partials.delete-modal')
+
+    <!-- ====== CREATE POST MODAL ====== -->
+    @include('livewire.admin.feed.partials.create-modal')
+
+    <!-- ====== EDIT POST MODAL ====== -->
+    @include('livewire.admin.feed.partials.edit-modal')
 </div>

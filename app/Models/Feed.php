@@ -14,15 +14,14 @@ class Feed extends Model
     'user_id',
     'title',         
     'content',
-    'category',
-    'department',
+    'organization',
+    'type',
     'published_at',
+    'photo_url'
 ];
 
 protected $casts = [
     'published_at' => 'datetime',
-
-
 ];
 
 

@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin\Voting;
 
-use App\Models\VotingRoom;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\VotingRoom;
+use App\Events\DashboardStats;
+use App\Models\RecentActivity;
 use Masmerise\Toaster\Toaster;
+use App\Events\RecentActivities;
+use Illuminate\Support\Facades\Auth;
 
 class ManageVoting extends Component
 {
@@ -43,22 +46,39 @@ class ManageVoting extends Component
     public function createVoting()
     {
         $this->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_time' => 'nullable|date',
-            'end_time' => 'nullable|date|after:start_time',
-            'status' => 'required|in:Pending,Ongoing,Closed',
-        ]);
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start_time' => 'nullable|date',
+        'end_time' => 'nullable|date|after:start_time',
+    ]);
 
-        VotingRoom::create([
-            'title' => $this->title,
-            'description' => $this->description,
-            'start_time' => $this->start_time ?: null,
-            'end_time' => $this->end_time ?: null,
-            'status' => $this->status,
+    $status = now()->lt($this->start_time) ? 'Pending' : 'Ongoing';
+
+    VotingRoom::create([
+        'title' => $this->title,
+        'description' => $this->description,
+        'start_time' => $this->start_time ?: null,
+        'end_time' => $this->end_time ?: null,
+        'status' => $status,
+    ]);
+
+        $activity = '🗳️ ' . auth()->user()->name . ' created a voting room: "' . $this->title . '"';
+
+        RecentActivity::create([
+            'message' => $activity,
+            'type' => 'voting',
         ]);
+        event(new RecentActivities($activity));
+
+        event(new DashboardStats([
+            'students' => \App\Models\User::where('role', 'user')->count(),
+            'groupChats' => \App\Models\GroupChat::count(),
+            'activeVotings' => \App\Models\VotingRoom::where('status', 'Ongoing')->count(),
+            'advertisements' => \App\Models\Advertisement::count(),
+        ]));
 
         $this->resetFields();
+       
         Toaster::success('Voting created successfully.');
         $this->modal('add-voting')->close();
         $this->loadRooms();
@@ -106,7 +126,17 @@ class ManageVoting extends Component
     public function deleteRoom($roomId)
     {
         $room = VotingRoom::findOrFail($roomId);
+        $roomTitle = $room->title;
         $room->delete();
+
+        // Create activity message
+        $activity = '🗑️ ' . auth()->user()->name . ' deleted the voting room "' . $roomTitle . '"';
+
+        // Save to DB
+        RecentActivity::create(['message' => $activity]);
+
+        // Broadcast to dashboard
+        event(new RecentActivities($activity));
 
         $this->loadRooms();
         Toaster::success('Voting room deleted successfully.');

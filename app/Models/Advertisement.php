@@ -8,13 +8,13 @@ class Advertisement extends Model
 {
     protected $fillable = [
         'title',
-        'category',
         'description',
         'organization',
-        'location',
-        'event_date',
-        'time',
-        'deadline',
-        'tags',
     ];
+
+    public function photos()
+{
+    return $this->hasMany(AdvertisementPhoto::class);
+}
+
 }

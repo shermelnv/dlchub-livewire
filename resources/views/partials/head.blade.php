@@ -11,5 +11,24 @@
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+       window.Echo.channel('dashboard.stats')
+    .listen('.stats.updated', (e) => {
+        window.dispatchEvent(new CustomEvent('stats-updated', {
+            detail: e.stats
+        }));
+    });
+ Echo.channel('dashboard.activity')
+            .listen('.activity.created', (e) => {
+                console.log('Broadcast received:', e.message)
+                window.dispatchEvent(new CustomEvent('activity-created', {
+                    detail: { message: e.message }
+                }))
+            });
+
+
+    });
+</script>
 
 @fluxAppearance

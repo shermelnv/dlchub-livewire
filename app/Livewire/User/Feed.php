@@ -2,74 +2,67 @@
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
-use Masmerise\Toaster\Toaster;
+
+use App\Models\Org;
 use App\Models\Feed as FeedModel;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Type;
+use Livewire\Component;
+
 
 class Feed extends Component
 {
-    public $title;
-    public $content;
-    public $search = '';
-    public $category = '';
-    public $appliedCategory = '';
-    public $department = '';
-    public $appliedDepartment = '';
-    public $dateFrom;
-    public $dateTo;
-    public $appliedDateFrom;
-    public $appliedDateTo;
+    public $dateFrom , $dateTo;
+    public $orgs, $types;
+    public $filterOrganization, $filterType;
+    public $feeds;
+    
+    public $organizationFilter = null;
+    public $typeFilter = null; // for filtering
 
-    public $feeds = [];
+
 
     public function mount()
     {
         $this->fetchFeeds();
+        $this->orgs = Org::all();
     }
 
     public function fetchFeeds()
     {
-        $this->feeds = FeedModel::latest('published_at')->get();
+        $this->feeds = FeedModel::latest()->get();
+
+        $this->orgs = Org::all();
+        $this->types = Type::all();
     }
+
 
     public function getFilteredFeedsProperty()
     {
-        return FeedModel::query()
-            ->when($this->appliedDepartment, fn($q) => $q->where('department', $this->appliedDepartment))
-            ->when($this->appliedCategory, fn($q) => $q->where('category', $this->appliedCategory))
-            ->when($this->appliedDateFrom, fn($q) => $q->whereDate('published_at', '>=', $this->appliedDateFrom))
-            ->when($this->appliedDateTo, fn($q) => $q->whereDate('published_at', '<=', $this->appliedDateTo))
-            ->latest('published_at')
-            ->get();
+    $query = FeedModel::query();
+
+    if ($this->organizationFilter) {
+        $query->where('organization', $this->organizationFilter);
     }
 
+    if ($this->typeFilter) {
+        $query->where('type', $this->typeFilter);
+    }
 
+    return $query->latest()->get();
+    }
 
-    public function filter()
+       public function resetFilters()
     {
-        $this->appliedCategory = $this->category;
-        $this->appliedDepartment = $this->department;
-        $this->appliedDateFrom = $this->dateFrom;
-        $this->appliedDateTo = $this->dateTo;
-    }
+    $this->organizationFilter = null;
+    $this->typeFilter = null;
+}
 
-    public function toggleCategory($cat)
-    {
-        $this->category = $this->category === $cat ? '' : $cat;
-    }
 
-    public function resetFilters()
-    {
-        $this->reset([
-            'category', 'appliedCategory',
-            'department', 'appliedDepartment',
-            'dateFrom', 'dateTo', 'appliedDateFrom', 'appliedDateTo',
-        ]);
-    }
+    
+
 
     public function render()
     {
-        return view('livewire.user.feed');
+        return view('livewire.user.feed.feed');
     }
 }

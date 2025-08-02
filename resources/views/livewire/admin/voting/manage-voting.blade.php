@@ -29,11 +29,6 @@
                     <flux:input label="End Time" type="datetime-local" wire:model.defer="end_time" />
                 </div>
 
-                <flux:select label="Status" wire:model.defer="status">
-                    <option value="Pending">Pending</option>
-                    <option value="Ongoing">Ongoing</option>
-                    <option value="Closed">Closed</option>
-                </flux:select>
 
                 <div class="flex pt-4">
                     <flux:modal.close>

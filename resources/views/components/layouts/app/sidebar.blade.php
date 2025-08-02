@@ -7,26 +7,66 @@
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
+
+            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
             <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
-
+            @else
+            <a href="{{ route('user.feed') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+                <x-app-logo />
+            </a>
+            @endif
             <flux:navlist variant="outline">
 
-                {{-- IF THE USER IS ADMIN OR SUPER ADMIN --}}
-                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                
+                
                 {{-- ADMIN / SUPERADMIN --}}
-                <flux:navlist.group :heading="__('Admin / SuperAdmin')" class="grid">
+                @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
+                    <flux:navlist.group :heading="__('Admin / SuperAdmin')" class="grid">
+                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                            {{ __('Dashboard') }}
+                        </flux:navlist.item>
 
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                    <flux:navlist.item icon="users" :href="route('admin.user.manage-users')" :current="request()->routeIs('admin.user.manage-users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
-                    <flux:navlist.item icon="inbox-arrow-down" :href="route('admin.voting.manage-voting')" :current="request()->routeIs('admin.voting.manage-voting')" wire:navigate>{{ __('Manage Voting') }}</flux:navlist.item>
-                    <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>{{ __('Manage Chat') }}</flux:navlist.item>
-                    <flux:navlist.item icon="megaphone" :href="route('admin.advertisement.manage-advertisement')" :current="request()->routeIs('admin.advertisement.manage-advertisement')" wire:navigate>{{ __('Manage Advertisement') }}</flux:navlist.item>
-                    <flux:navlist.item icon="rss" :href="route('admin.feed.manage-feed')" :current="request()->routeIs('admin.feed.manage-feed')" wire:navigate>{{ __('Manage Feed') }}</flux:navlist.item>
-                   
-                </flux:navlist.group>
+                        <flux:navlist.item icon="users" :href="route('admin.user.manage-users')" :current="request()->routeIs('admin.user.manage-users')" wire:navigate>
+                            {{ __('Manage Users') }}
+                        </flux:navlist.item>
+
+                        <flux:navlist.item icon="folder-git-2" :href="route('admin.org.manage-org')" :current="request()->routeIs('admin.org.manage-org')" wire:navigate>
+                            {{ __('Manage Org') }}
+                        </flux:navlist.item>
+
+                       
+                    </flux:navlist.group>
                 @endif
+
+                
+
+                @if (in_array(auth()->user()->role, ['org', 'admin', 'superadmin']))
+                    <flux:navlist.group :heading="__('Org')" class="grid">
+                        {{-- <flux:navlist.item icon="identification" :href="route('org.profile')" :current="request()->routeIs('org.profile')" wire:navigate>
+                            {{ __('Org Profile') }}
+                        </flux:navlist.item> --}}
+
+                         <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                            {{ __('Manage Chat') }}
+                        </flux:navlist.item>
+
+                        <flux:navlist.item icon="rss" :href="route('admin.feed.manage-feed')" :current="request()->routeIs('admin.feed.manage-feed')" wire:navigate>
+                            {{ __('Manage Feed') }}
+                        </flux:navlist.item>
+
+                        <flux:navlist.item icon="inbox-arrow-down" :href="route('admin.voting.manage-voting')" :current="request()->routeIs('admin.voting.manage-voting')" wire:navigate>
+                            {{ __('Manage Voting') }}
+                        </flux:navlist.item>
+
+                        <flux:navlist.item icon="megaphone" :href="route('admin.advertisement.manage-advertisement')" :current="request()->routeIs('admin.advertisement.manage-advertisement')" wire:navigate>
+                            {{ __('Manage Advertisement') }}
+                        </flux:navlist.item>
+                    </flux:navlist.group>
+                @endif
+
+
                
                 @if (auth()->user()->role === 'user')
                 {{-- USER --}}

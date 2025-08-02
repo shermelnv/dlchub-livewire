@@ -13,11 +13,12 @@ return new class extends Migration
     {
   Schema::create('feeds', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('user_id')->constrained()->onDelete('cascade');
-    $table->string('category')->nullable(); // e.g., 'Academic', 'Events'
-    $table->string('department')->nullable(); // optional filter
+    $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+    $table->string('organization')->nullable();
+    $table->string('type')->nullable();
     $table->string('title');
     $table->text('content');
+    $table->string('photo_url')->nullable();
     $table->date('published_at')->nullable(); // for sorting/filter
     $table->timestamps();
 });

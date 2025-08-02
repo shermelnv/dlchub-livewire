@@ -49,6 +49,13 @@ class VotingRoom extends Component
     {
         $candidate = Candidate::with('position')->findOrFail($candidateId);
         $userId = Auth::id();
+        
+        $roomStatus = $candidate->position->votingRoom->status;
+
+        if ($roomStatus !== "Ongoing"){
+            Toaster::error("Voting is not available at this time.  Status: {$roomStatus}");
+            return;
+        }
 
         // Prevent duplicate votes for the same position
         $alreadyVoted = Vote::where('user_id', $userId)
@@ -66,6 +73,7 @@ class VotingRoom extends Component
             'position_id'  => $candidate->position_id,
         ]);
 
+        $this->loadRoom();
         Toaster::success('Vote cast successfully!');
     }
 

@@ -14,14 +14,8 @@ public function up(): void
     Schema::create('advertisements', function (Blueprint $table) {
         $table->id();
         $table->string('title');
-        $table->string('category'); // internship, event, job, scholarship
         $table->text('description')->nullable();
         $table->string('organization')->nullable();
-        $table->string('location')->nullable();
-        $table->date('event_date')->nullable();
-        $table->time('time')->nullable();
-        $table->date('deadline')->nullable();
-        $table->string('tags')->nullable(); // comma separated string
         $table->timestamps();
     });
 }
