@@ -24,4 +24,5 @@ RUN chmod -R 775 storage bootstrap/cache
 EXPOSE 8000
 
 # Run Laravel app with built-in PHP server (or use nginx separately)
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000
+
