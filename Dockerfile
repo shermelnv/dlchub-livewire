@@ -11,24 +11,23 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy app files
+# Copy composer files first for better Docker caching
+COPY composer.json composer.lock ./
+
+# Install Laravel dependencies (now includes pusher)
+RUN composer install --no-dev --optimize-autoloader
+
+# Copy the rest of the application
 COPY . .
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www && chmod -R 775 storage bootstrap/cache
 
-# Use www-data user to avoid volume permission issues
+# Use www-data user
 USER www-data
-
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
-
-# Switch back to root to set correct permissions
-USER root
-RUN chmod -R 775 storage bootstrap/cache
 
 # Expose port (optional)
 EXPOSE 8000
 
-# Run migrations and serve app
+# Run migrations and serve the app
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
