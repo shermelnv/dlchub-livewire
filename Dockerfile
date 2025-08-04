@@ -1,5 +1,4 @@
-# Stage 1: PHP Build Stage
-FROM php:8.2-fpm-alpine AS app
+FROM php:8.2-fpm-alpine
 
 # Install system dependencies and PHP extensions
 RUN apk add --no-cache \
@@ -16,8 +15,14 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev \
     icu-dev \
+    g++ \
+    make \
+    autoconf \
+    zlib-dev \
     mysql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install pdo_mysql mbstring tokenizer xml intl gd bcmath
+
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
