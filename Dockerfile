@@ -17,7 +17,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
 # Copy your actual .env (important!)
-COPY .env .env
+
 
 # Laravel setup
 RUN php artisan config:clear \
