@@ -11,7 +11,6 @@ RUN apk add --no-cache \
     libpng-dev \
     libjpeg-turbo-dev \
     libwebp-dev \
-    libxpm-dev \
     freetype-dev \
     libxml2-dev \
     oniguruma-dev \
@@ -22,7 +21,8 @@ RUN apk add --no-cache \
     zlib-dev \
     mysql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo_mysql mbstring tokenizer xml intl gd bcmath
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo_mysql mbstring tokenizer xml intl bcmath
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
