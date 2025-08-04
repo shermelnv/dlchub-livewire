@@ -1,38 +1,32 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    zip unzip curl git libpng-dev libonig-dev libxml2-dev libzip-dev supervisor \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+    git unzip curl libpng-dev libonig-dev libxml2-dev zip \
+    supervisor \
+    && docker-php-ext-install pdo_mysql
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy all source files
-COPY . ./
+# Copy files
+COPY . .
 
-# Copy env early to avoid artisan failure
-COPY .env.example .env
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Optional if permissions are required
-RUN chown -R www-data:www-data /var/www && chmod -R 775 storage bootstrap/cache
+# Copy your actual .env (important!)
+COPY .env .env
 
-# Enable Laravel Pint plugins
-RUN composer global config --no-plugins allow-plugins.laravel/pint true
+# Laravel setup
+RUN php artisan config:clear \
+    && php artisan config:cache \
+    && php artisan migrate --force \
+    && php artisan db:seed --force
 
-# Install PHP dependencies without scripts
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Supervisor config
+COPY deploy/supervisord.conf /etc/supervisord.conf
 
-# Copy supervisor config
-COPY ./deploy/supervisord.conf /etc/supervisord.conf
-
-# Use www-data user
-USER www-data
-
-EXPOSE 8000
-
-# Run Supervisor after discovering packages
-CMD php artisan config:clear && php artisan package:discover --ansi && php artisan migrate --force --seed && /usr/bin/supervisord -c /etc/supervisord.conf
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
