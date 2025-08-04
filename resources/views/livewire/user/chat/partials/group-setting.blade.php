@@ -31,37 +31,42 @@
             </div>
 
             <div x-show="tab === 'pending-member-request' " class="space-y-3">
-                    <flux:heading size="sm">Pending Member Requests</flux:heading>
-
-                    @foreach ([
-                        ['name' => 'Alice Reyes', 'email' => 'alice@email.com'],
-                        ['name' => 'Ben Cruz', 'email' => 'ben@email.com'],
-                    ] as $user)
-                        <div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            
+                @if ($this->selectedGroup)
+                    @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
+                        <div class="border p-4 rounded-lg flex justify-between items-center">
                             <div>
-                                <p class="font-medium text-gray-800 dark:text-white">{{ $user['name'] }}</p>
-                                <p class="text-sm text-gray-500">{{ $user['email'] }}</p>
+                                <p class="font-bold text-white">{{ $request->user->name }}</p>
+                                <p class="text-sm text-gray-300">{{ $request->user->email }}</p>
                             </div>
                             <div class="flex gap-2">
-                                <flux:button size="xs" color="green" icon="check">Accept</flux:button>
-                                <flux:button size="xs" color="red" icon="x-mark">Reject</flux:button>
+                                <flux:button size="xs" color="green" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
+                                <flux:button size="xs" color="red" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div>No Member Request</div>
+                    @endforelse
+                @endif
             </div>
             <div x-show="tab === 'members' " class="space-y-3">
-            <flux:heading size="sm">Current Members</flux:heading>
+            
 
-            @foreach ([
-                ['name' => 'Charlie Santos', 'email' => 'charlie@email.com'],
-                ['name' => 'Dana Lopez', 'email' => 'dana@email.com'],
-            ] as $member)
+            @foreach ($selectedGroup?->members ?? [] as $member)
                 <div class="flex justify-between items-center border p-3 rounded-lg dark:border-gray-700">
                     <div>
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $member['name'] }}</p>
-                        <p class="text-sm text-gray-500">{{ $member['email'] }}</p>
+                        <p class="font-medium text-gray-900 dark:text-white">{{ $member->name }}</p>
+                        <p class="text-sm text-gray-500">{{ $member->email }}</p>
                     </div>
-                    <flux:button size="xs" variant="ghost" icon="trash" color="red">Remove</flux:button>
+                        <flux:button 
+                            size="xs" 
+                            variant="ghost" 
+                            icon="trash" 
+                            color="red" 
+                            wire:click="removeMember({{ $member->id }})"
+                        >
+                            Remove
+                        </flux:button>
                 </div>
             @endforeach
         </div>

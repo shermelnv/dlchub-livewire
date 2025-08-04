@@ -19,7 +19,7 @@ class AccountVerified extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.verified')
+        return $this->markdown('emails.verification')
             ->subject('✅ Your DLCHub Account Has Been Verified')
             ->with([
                 'user' => $this->user,

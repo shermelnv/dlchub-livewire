@@ -2,7 +2,6 @@
 
 namespace App\Livewire\User;
 
-use Livewire\Features\SupportEvents\Browser;
 use Livewire\Component;
 use App\Models\GroupChat;
 use App\Models\ChatMessage;
@@ -11,8 +10,10 @@ use Livewire\Attributes\On;
 use App\Events\DashboardStats;
 use Masmerise\Toaster\Toaster;
 use App\Events\GroupMessageSent;
+use App\Models\GroupMemberRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Events\GroupChat as GroupChatEvent;
+use Livewire\Features\SupportEvents\Browser;
 
 class Chat extends Component
 {
@@ -31,22 +32,33 @@ public function mount($groupCode = null)
         $q->where('user_id', Auth::id());
     })->with('members')->get();
 
+    // Handle selected group logic safely
     if ($groupCode) {
         $this->selectedGroup = GroupChat::where('group_code', $groupCode)
             ->whereHas('members', fn ($q) => $q->where('user_id', Auth::id()))
-            ->with('members')->first();
+            ->with(['members', 'requests.user']) // include requests if needed
+            ->first();
     } elseif (session('selected_group_code')) {
         $this->selectedGroup = GroupChat::where('group_code', session('selected_group_code'))
             ->whereHas('members', fn ($q) => $q->where('user_id', Auth::id()))
-            ->with('members')->first();
+            ->with(['members', 'requests.user'])
+            ->first();
     }
 
-    // show the group messages if a group is selected
+    // Load messages
     if ($this->selectedGroup) {
         $this->messages = $this->selectedGroup->messages()->with('user')->get();
     } else {
-        $this->messages = [];   
+        $this->messages = [];
     }
+}
+
+
+public function getPendingRequestsProperty()
+{
+    return $this->selectedGroup
+        ? $this->selectedGroup->requests()->where('status', 'pending')->with('user')->get()
+        : collect(); // return empty collection if group is null
 }
 
 
@@ -99,20 +111,74 @@ public function loadMessages()
 
     }
 
-    public function joinGroup()
-    {
-        $group = GroupChat::where('group_code', $this->groupCode)->first();
+public function joinGroup()
+{
+    $group = GroupChat::where('group_code', $this->groupCode)->first();
 
-
-        if ($group && !$group->members->contains(Auth::id())) {
-            $group->members()->attach(Auth::id());
-        }
-
-        $this->reset('groupCode');
-        $this->modal('join-group')->close();
-        Toaster::success('Joined Successfully!');
-        return redirect()->route('user.chat', ['groupCode' => $group->group_code]);
+    if (!$group) {
+        Toaster::error('Group not found.');
+        return;
     }
+
+    $existingRequest = GroupMemberRequest::where('group_id', $group->id)
+        ->where('user_id', Auth::id())
+        ->first();
+
+    $isMember = $group->members()->where('user_id', Auth::id())->exists();
+
+    if ($isMember) {
+        Toaster::info('You are already a member of this group.');
+    } elseif ($existingRequest && $existingRequest->status === 'pending') {
+        Toaster::info('Join request already submitted.');
+    } elseif ($existingRequest && $existingRequest->status === 'rejected') {
+        Toaster::info('Your join request was rejected.');
+    } else {
+        GroupMemberRequest::updateOrCreate(
+            ['group_id' => $group->id, 'user_id' => Auth::id()],
+            [
+                'status' => 'pending',
+                'message' => null,
+                'responded_at' => null,
+            ]
+        );
+
+        Toaster::success('Join request submitted!');
+    }
+
+    $this->reset('groupCode');
+    $this->modal('join-group')->close();
+}
+
+
+public function approveRequest($requestId)
+{
+    $request = GroupMemberRequest::findOrFail($requestId);
+
+    // Only allow if current user is group admin/owner (you may want to add this check)
+    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_id) return;
+
+    $request->update([
+        'status' => 'accepted',
+        'responded_at' => now(),
+    ]);
+
+    $this->selectedGroup->members()->attach($request->user_id);
+    $this->dispatch('toast', title: 'Request approved');
+}
+
+public function rejectRequest($requestId)
+{
+    $request = GroupMemberRequest::findOrFail($requestId);
+
+    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_id) return;
+
+    $request->update([
+        'status' => 'rejected',
+        'responded_at' => now(),
+    ]);
+
+    $this->dispatch('toast', title: 'Request rejected');
+}
 
     public function leaveGroup($groupId)
     {
@@ -146,6 +212,15 @@ public function openGroup($groupCode)
 
         return redirect()->route('user.chat', ['groupCode' => $groupCode]);
     }
+}
+public function removeMember($id)
+{
+    if (!$this->selectedGroup) return;
+
+    $this->selectedGroup->members()->detach($id);
+    $this->selectedGroup->refresh();
+    $this->messages = $this->selectedGroup->messages()->with('user')->get(); // optional refresh
+    Toaster::success('Member Removed');
 }
 
 

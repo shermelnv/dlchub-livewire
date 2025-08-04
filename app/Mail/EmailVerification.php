@@ -6,12 +6,13 @@ namespace App\Mail;
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EmailVerification extends Mailable
+class EmailVerification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

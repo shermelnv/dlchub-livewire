@@ -104,13 +104,14 @@
                         {{-- Message Row --}}
                         <div class="flex gap-3 items-end {{ $msg->user_id === auth()->id() ? 'justify-end' : '' }}">
                             {{-- Avatar (left for others) --}}
-                            @if ($msg->user_id !== auth()->id())
-                                @if ($isLastInBlock)
-                                    <img src="{{ $msg->user->avatar_url ?? 'https://i.pravatar.cc/100?u=' . $msg->user_id }}" class="w-9 h-9 rounded-full" />
-                                @else
-                                    <div class="w-9"></div>
-                                @endif
+                            @if ($profileImage)
+                                <img src="{{ $profileImage->temporaryUrl() }}" class="w-24 h-24 rounded-full object-cover" />
+                            @elseif (auth()->user()->profile_image)
+                                <img src="{{ asset('storage/' . auth()->user()->profile_image) }}" class="w-24 h-24 rounded-full object-cover" />
+                            @else
+                                <img src="https://i.pravatar.cc/100?u={{ auth()->id() }}" class="w-24 h-24 rounded-full object-cover" />
                             @endif
+
 
                             {{-- Message bubble --}}
                             <div>

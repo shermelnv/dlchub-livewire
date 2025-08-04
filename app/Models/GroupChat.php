@@ -44,4 +44,10 @@ class GroupChat extends Model
 {
     return $this->belongsTo(User::class, 'group_owner_id');
 }
+
+public function requests()
+{
+    return $this->hasMany(GroupMemberRequest::class, 'group_id');
+}
+
 }

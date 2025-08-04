@@ -7,59 +7,50 @@ use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
 use Masmerise\Toaster\Toaster;
 
+
 new class extends Component {
-    public string $name = '';
-    public string $email = '';
-    public string $organization = '';
+
+    public string $name = '', $email = '', $username = '', $mobile_number = '', $academic_program = '', $role = '';
+    public string $current_password = '', $new_password = '', $new_password_confirmation = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
-        $this->organization = Auth::user()->organization ?? 'No org';
+        $user = Auth::user();
 
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->username = $user->username ?? 'NATOY';
+        $this->mobile_number = $user->mobile_number ?? '123456789';
+        $this->academic_program = $user->academic_program ?? 'HALO HALONG COURSE';
+        $this->role = $user->role ?? 'STUDENT BA?';
     }
 
     /**
      * Update the profile information for the currently authenticated user.
      */
-   public function updateProfileInformation(): void
-{
-    $user = Auth::user();
+ public function updateProfileInformation(): void
+    {
+        $user = Auth::user();
 
-    $validated = [
-        'name' => ['required', 'string', 'max:255'],
-        'email' => [
-            'required',
-            'string',
-            'lowercase',
-            'email',
-            'max:255',
-            Rule::unique(User::class)->ignore($user->id)
-        ],
-    ];
+        $validated = $this->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+        ]);
 
-    if ($this->organization !== 'No org') {
-        $validated['organization'] = ['nullable', 'string', 'max:255'];
+        $user->fill($validated);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        $this->dispatch('profile-updated');
+        Toaster::success('Profile updated successfully.');
     }
-
-    // Run validation
-    $validated = $this->validate($validated);
-
-    $user->fill($validated);
-
-    if ($user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
-
-    $user->save();
-    Toaster::success("Profile Updated");
-    $this->dispatch('profile-updated', name: $user->name);
-}
-
 
     /**
      * Send an email verification notification to the current user.
@@ -83,45 +74,42 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your profile information.')">
 
-            <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+            
+        <form wire:submit="updateProfileInformation" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Username --}}
+                <flux:input wire:model.defer="username" :label="__('Username')" type="text" readonly />
 
-                @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
-                    <div>
-                        <flux:text class="mt-4">
-                            {{ __('Your email address is unverified.') }}
+                {{-- Complete Name --}}
+                <flux:input wire:model.defer="name" :label="__('Complete Name')" type="text" readonly />
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email.') }}
-                            </flux:link>
-                        </flux:text>
+                {{-- Email --}}
+                <flux:input wire:model.defer="email" :label="__('Email')" type="email" readonly />
 
-                        @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
-                            </flux:text>
-                        @endif
-                    </div>
-                @endif
+                {{-- Mobile Number --}}
+                <flux:input wire:model.defer="mobile_number" :label="__('Mobile Number')" type="text" readonly />
+
+                {{-- Academic Program --}}
+                <flux:input wire:model.defer="academic_program" :label="__('Academic Program')" type="text" readonly />
+
+                {{-- Group --}}
+                <flux:input wire:model.defer="role" :label="__('Role')" type="text" readonly />
             </div>
 
-            <flux:input wire:model="organization" :label="__('Organization')" type="text"  autocomplete="organization" />
-
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
-                </div>
-
+                <flux:button type="submit" variant="primary">{{ __('Save Changes') }}</flux:button>
+                <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
                 <x-action-message class="me-3" on="profile-updated">
                     {{ __('Saved.') }}
                 </x-action-message>
+
             </div>
         </form>
+    
 
         <livewire:settings.delete-user-form />
     </x-settings.layout>
 </section>
+

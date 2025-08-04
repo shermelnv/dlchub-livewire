@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Events\UserRegistered;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,31 +22,36 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     public function register(): void
     {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+    $validated = $this->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+        'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+    $email = $validated['email'];
+    $localPart = strstr($email, '@', true);
+    $domainPart = substr(strstr($email, '@'), 1);
 
-        // Set default status if applicable (optional)
-        $validated['status'] = 'pending';
-
-        $user = User::create($validated);
-
-        // Store user name in session (for use on redirect page)
-        session(['user_name' => $user->name]);
-
-        // Fire Registered event (optional, but common)
-        event(new Registered($user));
-
-        // Send verification email (only if your system actually verifies via email)
-        Mail::to($user->email)->send(new EmailVerification($user));
-
-        // Redirect to success page
-        $this->redirectIntended(route('registered-success', absolute: false), navigate: true);
+    if ($domainPart !== 'pampangastateu.edu.ph' || !preg_match('/^\d+$/', $localPart)) {
+        $this->addError('email', 'Email must be a Pampanga State University account.');
+        return;
     }
+
+    $validated['password'] = Hash::make($validated['password']);
+    $validated['username'] = $localPart;
+    $validated['status'] = 'pending';
+
+    $user = User::create($validated);
+
+    session(['user_name' => $user->name]);
+
+    event(new Registered($user));
+
+    Mail::to($user->email)->send(new EmailVerification($user));
+    
+    $this->redirectIntended(route('registered-success', absolute: false), navigate: true);
+    }
+
 
 }; ?>
 

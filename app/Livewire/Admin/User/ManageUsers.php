@@ -6,11 +6,14 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\GroupChat;
 use App\Models\VotingRoom;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Mail\AccountVerified;
 use App\Models\Advertisement;
 use App\Events\DashboardStats;
 use Masmerise\Toaster\Toaster;
+use App\Mail\EmailVerification;
+use App\Mail\UserAccountCreated;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -35,32 +38,43 @@ public $organization, $role, $bio, $avatar_url, $is_active = true;
 
     }
 
-public function createUser()
-{
-    $validated = $this->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
-        'organization' => 'nullable|string|max:255',
-        'role' => 'required|in:user,org,admin,superadmin',
-        'bio' => 'nullable|string',
-        'avatar_url' => 'nullable|url',
-        'is_active' => 'boolean',
-    ]);
+    public function createUser()
+    {
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+        ]);
 
-    $validated['password'] = Hash::make($validated['password']);
+        $email = $validated['email'];
+        $localPart = strstr($email, '@', true);
+        $domainPart = substr(strstr($email, '@'), 1);
 
-    User::create($validated);
-    event(new DashboardStats([
-        'students' => User::where('role', 'user')->count(),
-        'groupChats' => GroupChat::count(),
-        'activeVotings' => VotingRoom::where('status', 'Ongoing')->count(),
-        'advertisements' => Advertisement::count(),
-    ]));
-    $this->reset(['name', 'email', 'password', 'organization', 'role', 'bio', 'avatar_url', 'is_active']);
-    $this->modal('create-user')->close();
-    Toaster::success('User created successfully!');
-}
+        // Validate domain is Pampanga State University
+        if ($domainPart !== 'pampangastateu.edu.ph' || !preg_match('/^\d+$/', $localPart)) {
+            $this->addError('email', 'Email must be a Pampanga State University account.');
+            return;
+        }
+
+        $randomPassword = Str::random(10);
+        $validated['password'] = Hash::make($randomPassword);
+        $validated['status'] = 'approved';
+        $validated['username'] = $localPart;
+
+        $user = User::create($validated);
+
+        // Email the random password
+        Mail::to($user->email)->send(new UserAccountCreated($user, $randomPassword));
+
+        event(new DashboardStats([
+            'students' => User::where('role', 'user')->count(),
+            'groupChats' => GroupChat::count(),
+            'activeVotings' => VotingRoom::where('status', 'Ongoing')->count(),
+            'advertisements' => Advertisement::count(),
+        ]));
+        $this->reset(['name', 'email']);
+        $this->modal('create-user')->close();
+        Toaster::success('User created successfully!');
+    }
 
 
     public function viewUser($id)
@@ -147,6 +161,8 @@ public function approveUser()
         $user->status = 'approved';
         $user->save();
 
+
+        Mail::to($user->email)->send(new EmailVerification($user));
         Toaster::success('Approved Successfully!');
         $this->modal('approve-user')->close();
     }

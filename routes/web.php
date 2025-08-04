@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
+    Volt::route('settings/avatar', 'settings.avatar')->name('settings.avatar');
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
     
@@ -109,15 +110,6 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-    // Route::middleware('org.only')->group(function () {
-
-    //     Route::get('admin/user/manage-users', ManageUsers::class)->name('admin.user.manage-users');
-    //     Route::get('admin/voting/manage-voting', ManageVoting::class)->name('admin.voting.manage-voting');
-    //     Route::get('admin/chat/manage-chat', ManageChat::class)->name('admin.chat.manage-chat');
-    //     Route::get('admin/advertisement/manage-advertisement', ManageAdvertisement::class)->name('admin.advertisement.manage-advertisement');
-    //     Route::get('admin/feed/manage-feed', ManageFeed::class)->name('admin.feed.manage-feed');
-    //     Route::get('admin/org/manage-org', ManageOrg::class)->name('admin.org.manage-org');
-    // });
 
     Route::middleware('user.only')->group(function () {
             Route::get('user/feed', Feed::class)->name('user.feed');

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Volt\Component;
+use Masmerise\Toaster\Toaster;
 
 new class extends Component {
     public string $current_password = '';
@@ -33,7 +34,13 @@ new class extends Component {
 
         $this->reset('current_password', 'password', 'password_confirmation');
 
+        Toaster::success('Password changed successfully!');
         $this->dispatch('password-updated');
+    }
+
+    public function cancel()
+    {
+        $this->reset('current_password', 'password', 'password_confirmation');
     }
 }; ?>
 
@@ -65,8 +72,10 @@ new class extends Component {
             />
 
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
+                <div class="flex items-center justify-end gap-4">
                     <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
+
+                    <flux:button variant="ghost" wire:click="cancel" class="w-full">{{ __('Cancel') }}</flux:button>
                 </div>
 
                 <x-action-message class="me-3" on="password-updated">
