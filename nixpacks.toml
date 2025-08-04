@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["php", "phpPackages.composer", "nodejs", "npm", "mysql"]
+nixPkgs = ["nodejs", "php", "phpPackages.composer"]
 
 [phases.build]
 cmds = [
@@ -9,10 +9,4 @@ cmds = [
 ]
 
 [phases.start]
-cmds = [
-  "php artisan optimize:clear",
-  "php artisan storage:link",
-  "php artisan session:table",
-  "php artisan migrate --force --seed",
-  "php artisan serve --host=0.0.0.0 --port=$PORT"
-]
+cmd = "php artisan migrate --force && php artisan config:cache && php artisan serve --host=0.0.0.0 --port=$PORT"
