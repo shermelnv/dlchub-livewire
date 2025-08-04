@@ -17,6 +17,9 @@ COPY . ./
 # Optional if permissions are required
 RUN chown -R www-data:www-data /var/www && chmod -R 775 storage bootstrap/cache
 
+RUN composer global config --no-plugins allow-plugins.laravel/pint true
+
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
