@@ -1,41 +1,30 @@
 FROM php:8.3-fpm
 
-# Install system dependencies
+# Install system deps
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim unzip git curl \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    npm \
-    nodejs \
-    libcurl4-openssl-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd curl
+    git curl unzip libzip-dev libpng-dev libonig-dev libxml2-dev zip npm
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy existing application directory contents
-COPY . /var/www
-
-# Install PHP dependencies
+# Copy composer files and install
+COPY composer.json composer.lock ./
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
-# Build frontend
+# Copy rest of app
+COPY . .
+
+# NPM install and build
 RUN npm install && npm run build
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+# Permissions
+RUN chown -R www-data:www-data /var/www
 
-# Start the server
-CMD php artisan serve --host=0.0.0.0 --port=8080
+EXPOSE 9000
+CMD ["php-fpm"]
