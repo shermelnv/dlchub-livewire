@@ -1,5 +1,6 @@
 [phases.setup]
-nixPkgs = ["nodejs", "php", "phpPackages.composer"]
+nixPkgs = ["php", "phpPackages.composer", "nodejs", "npm", "mariadb
+"]
 
 [phases.build]
 cmds = [
@@ -9,4 +10,10 @@ cmds = [
 ]
 
 [phases.start]
-cmd = "php artisan migrate --force && php artisan config:cache && php artisan serve --host=0.0.0.0 --port=$PORT"
+cmds = [
+  "php artisan optimize:clear",
+  "php artisan storage:link",
+  "php artisan session:table",
+  "php artisan migrate --force --seed",
+  "php artisan serve --host=0.0.0.0 --port=$PORT"
+]
