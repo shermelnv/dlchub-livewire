@@ -14,14 +14,17 @@ WORKDIR /var/www
 # Copy all source files
 COPY . ./
 
+# Copy env early to avoid artisan failure
+COPY .env.example .env
+
 # Optional if permissions are required
 RUN chown -R www-data:www-data /var/www && chmod -R 775 storage bootstrap/cache
 
+# Enable Laravel Pint plugins
 RUN composer global config --no-plugins allow-plugins.laravel/pint true
 
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install PHP dependencies without scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copy supervisor config
 COPY ./deploy/supervisord.conf /etc/supervisord.conf
@@ -31,5 +34,5 @@ USER www-data
 
 EXPOSE 8000
 
-# Run Supervisor (manages multiple Laravel processes)
-CMD php artisan migrate --force --seed && /usr/bin/supervisord -c /etc/supervisord.conf
+# Run Supervisor after discovering packages
+CMD php artisan config:clear && php artisan package:discover --ansi && php artisan migrate --force --seed && /usr/bin/supervisord -c /etc/supervisord.conf
