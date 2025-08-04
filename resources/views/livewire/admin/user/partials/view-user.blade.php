@@ -7,11 +7,20 @@
 
             <div class="grid grid-cols-3 gap-4">
                 <div class="flex justify-center">
+                    @if (!empty($showUser['profile_image']))
                     <flux:avatar
                         circle
-                        class="size-40"
-                        src="{{ $showUser['profile'] ?? 'https://i.pravatar.cc/200?u=' . $showUser['id'] }}"
+                        class="size-40 object-cover"
+                        src="{{ asset('storage/' . $showUser['profile_image']) }}"
                     />
+                    @else
+                    <flux:avatar
+                        circle
+                        class="size-40 object-cover text-3xl"
+                        name="{{ $showUser['name'] }}"
+                    />
+
+                    @endif
                 </div>
 
                 <div class="col-span-2 space-y-3">
