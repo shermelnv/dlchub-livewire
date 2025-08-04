@@ -1,4 +1,5 @@
-FROM php:8.2-fpm-alpine
+# Stage 1: Build App
+FROM php:8.2-fpm-alpine AS app
 
 # Install system dependencies and PHP extensions
 RUN apk add --no-cache \
@@ -23,7 +24,6 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install pdo_mysql mbstring tokenizer xml intl gd bcmath
 
-
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -40,8 +40,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Production .env should already be set in Railway variables
-# Laravel app key
+# Laravel app cache clearing
 RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
 RUN php artisan event:cache
 
@@ -56,7 +55,7 @@ WORKDIR /var/www/html
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Run Laravel queue + scheduler + websocket using supervisord (optional)
+# Run Laravel queue + scheduler + websocket using supervisord
 COPY deploy/supervisord.conf /etc/supervisord.conf
 
 # Install supervisord
