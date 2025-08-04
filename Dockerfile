@@ -14,15 +14,21 @@ WORKDIR /var/www
 # Copy app files
 COPY . .
 
-# Install PHP dependencies
+# Set permissions
+RUN chown -R www-data:www-data /var/www
+
+# Use www-data user to avoid volume permission issues
+USER www-data
+
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Switch back to root to set correct permissions
+USER root
 RUN chmod -R 775 storage bootstrap/cache
 
-# Expose port
+# Expose port (optional)
 EXPOSE 8000
 
-# Run Laravel app with built-in PHP server (or use nginx separately)
-CMD php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000
-
+# Run migrations and serve app
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000

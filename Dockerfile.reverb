@@ -1,0 +1,12 @@
+FROM composer:2.7 as vendor
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --prefer-dist
+
+COPY . .
+
+RUN composer dump-autoload --optimize
+
+CMD ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=443", "--scheme=https"]
