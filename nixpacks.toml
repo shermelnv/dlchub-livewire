@@ -1,14 +1,12 @@
 [phases.setup]
-nixPkgs = ['php', 'php83Packages.composer', 'nodejs_20', 'python3', 'pkg-config']
+nixPkgs = ['php82', 'php82Packages.composer', 'nodejs_20', 'npm']
 
 [phases.build]
 cmds = [
-  "composer install --no-interaction --prefer-dist --optimize-autoloader",
-  "npm install",
-  "php artisan config:cache",
-  "php artisan route:cache",
-  "php artisan view:cache"
+  'composer install --no-interaction --prefer-dist --optimize-autoloader',
+  'npm install',
+  'npm run build'
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = 'php artisan serve --host=0.0.0.0 --port=$PORT'
