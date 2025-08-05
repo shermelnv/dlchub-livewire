@@ -10,9 +10,7 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy app files
-COPY . /app
-COPY .env .env
+
 
 # Set permissions
 RUN chown -R www-data:www-data /app && chmod -R 755 /app
