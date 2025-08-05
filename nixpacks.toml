@@ -5,7 +5,6 @@ nixPkgs = ['php', 'php83Packages.composer', 'nodejs_20', 'python3', 'pkg-config'
 cmds = [
   "composer install --no-interaction --prefer-dist --optimize-autoloader",
   "npm install",
-  "npx tailwindcss -i resources/css/app.css -o public/css/app.css --minify",
   "php artisan config:cache",
   "php artisan route:cache",
   "php artisan view:cache"
