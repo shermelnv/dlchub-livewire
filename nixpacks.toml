@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['php82', 'php82Packages.composer', 'mysql', 'redis']
+
+[phases.build]
+cmds = [
+  "composer install --no-interaction --prefer-dist --optimize-autoloader",
+  "php artisan config:cache"
+]
+
+[phases.start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"

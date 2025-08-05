@@ -1,22 +1,40 @@
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
-WORKDIR /app
-
-# System deps
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    zip unzip git curl libzip-dev libpng-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_mysql zip gd
+    build-essential \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    libcurl4-openssl-dev \
+    libzip-dev \
+    libpq-dev \
+    libicu-dev \
+    libssl-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Set working directory
+WORKDIR /var/www
 
-
-# Set permissions
-RUN chown -R www-data:www-data /app && chmod -R 755 /app
+# Copy existing application
+COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Run artisan commands
-RUN php artisan config:clear && php artisan config:cache && composer dump-autoload
+# Set permissions
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+
+# Expose port (optional if using nginx)
+EXPOSE 9000
+
+CMD ["php-fpm"]
