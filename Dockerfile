@@ -1,41 +1,43 @@
-FROM php:8.3-cli
+# Use official PHP 8.2 image with required extensions
+FROM php:8.2-fpm
 
-# Install dependencies
+# Install system dependencies & PHP extensions for Laravel
 RUN apt-get update && apt-get install -y \
-    unzip git libzip-dev supervisor curl \
-    && docker-php-ext-install pdo pdo_mysql zip bcmath
+    git \
+    curl \
+    libzip-dev \
+    zip \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Install Node.js for Laravel Mix / Vite
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Install Composer globally
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy existing application files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install JS dependencies & build assets
+# Install Node.js (for building assets)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs
+
+# Install npm dependencies and build assets (adjust if using Vite)
 RUN npm install && npm run build
 
-# Laravel optimizations
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Permissions for Laravel storage and cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Copy Supervisor config
-COPY supervisord.conf /etc/supervisord.conf
+# Expose port 9000 for php-fpm (if using nginx)
+EXPOSE 8000
 
-# Expose HTTP and Reverb WebSocket ports
-EXPOSE 8080 6001
+# Start PHP-FPM server (change as needed)
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
 
-
-
-# Start Supervisor (manages all processes)
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
