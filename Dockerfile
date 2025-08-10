@@ -1,43 +1,37 @@
-# Use official PHP 8.2 image with required extensions
-FROM php:8.2-fpm
+# Stage 1: PHP + Composer + Node for building
+FROM php:8.2-fpm as php-stage
 
-# Install system dependencies & PHP extensions for Laravel
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libzip-dev \
-    zip \
-    unzip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
+    git curl zip unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
+    supervisor \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Install Composer globally
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application files
+# Copy app files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node.js (for building assets)
+# Install Node & build assets
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs
-
-# Build assets
-RUN npm install && npm run build
+    apt-get install -y nodejs && \
+    npm install && npm run build
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Expose port Railway expects
+# Copy supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose port
 EXPOSE 8080
 
-# Start Laravel on port 8080
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/laravel.conf"]
-
+# Default command
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
