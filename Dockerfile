@@ -30,6 +30,9 @@ RUN composer install --no-dev --optimize-autoloader
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
+# Clear Laravel caches
+RUN php artisan config:clear && php artisan view:clear
+
 # Install Node modules & build
 RUN npm install && \
     printenv | grep VITE_ || echo "No VITE_ vars found" && \
