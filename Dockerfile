@@ -20,7 +20,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application files
+# Copy application files (including .env if building locally)
 COPY . .
 
 # Install PHP dependencies
@@ -33,11 +33,20 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
 # Clear Laravel caches
 RUN php artisan config:clear && php artisan view:clear
 
-# Install Node modules & build
-RUN npm install && \
-    printenv | grep VITE_ || echo "No VITE_ vars found" && \
-    npm run build
+# Build assets with VITE_ env vars
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT
+ARG VITE_REVERB_SCHEME
+ARG VITE_REVERB_USE_TLS
 
+ENV VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY} \
+    VITE_REVERB_HOST=${VITE_REVERB_HOST} \
+    VITE_REVERB_PORT=${VITE_REVERB_PORT} \
+    VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME} \
+    VITE_REVERB_USE_TLS=${VITE_REVERB_USE_TLS}
+
+RUN npm install && npm run build
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -49,4 +58,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 8080 6001 54321
 
 # Start all processes using Supervisor
-CMD php artisan migrate:fresh --force --seed &&  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD php artisan migrate:fresh --force --seed && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
