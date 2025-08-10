@@ -33,5 +33,14 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  server: {
+  host: '0.0.0.0',
+  port: 5173,
+  hmr: {
+    host: 'dlchub-livewire-production-650b.up.railway.app',
+    protocol: 'wss'
+  }
+}
+
   // Remove server config for production
 });
