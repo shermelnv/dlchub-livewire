@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    supervisor \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
 # Install Composer globally
@@ -35,8 +36,11 @@ RUN npm install && npm run build
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port Railway expects
-EXPOSE 8080
+# Copy Supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Start Laravel on port 8080
-CMD php artisan migrate --force  && php artisan serve --host=0.0.0.0 --port=8080
+# Expose ports
+EXPOSE 8080 6001
+
+# Start all processes using Supervisor
+CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
