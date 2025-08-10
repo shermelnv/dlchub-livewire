@@ -55,7 +55,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports
-EXPOSE 8080 6001 54321
+EXPOSE 8080 23233 6001
 
 # Start all processes using Supervisor
 CMD php artisan migrate:fresh --force --seed && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
