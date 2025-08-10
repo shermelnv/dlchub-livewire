@@ -30,8 +30,11 @@ RUN composer install --no-dev --optimize-autoloader
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
-# Build assets
-RUN npm install && npm run build
+# Install Node modules & build
+RUN npm install && \
+    printenv | grep VITE_ || echo "No VITE_ vars found" && \
+    npm run build
+
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
