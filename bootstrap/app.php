@@ -5,6 +5,7 @@ use App\Http\Middleware\UserOnly;
 use App\Http\Middleware\AdminOnly;
 
 use App\Http\Middleware\AdminOrOrg;
+use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\SuperAdminOnly;
 use App\Schedule\UpdateVotingRoomStatus;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->prepend(TrustProxies::class);
          $middleware->alias([
         'admin.only' => AdminOnly::class,
         'superadmin.only' => SuperAdminOnly::class,
@@ -27,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'user.only' =>UserOnly::class,
         'org.only' =>OrgOnly::class,
         'approved' =>EnsureUserIsApproved::class,
+        
     ]);
 
     })
