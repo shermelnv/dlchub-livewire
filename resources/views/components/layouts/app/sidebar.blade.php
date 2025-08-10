@@ -69,30 +69,36 @@
 
                
                 @if (auth()->user()->role === 'user')
-                {{-- USER --}}
-                <flux:navlist.group :heading="__('User')" class="grid">
-                    <flux:navlist.item icon="megaphone" :href="route('user.feed')" :current="request()->routeIs('user.feed')" wire:navigate>{{ __('Feed') }}</flux:navlist.item>
-                    <flux:navlist.item icon="megaphone" :href="route('user.advertisement')" :current="request()->routeIs('user.advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
-                    <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item>
-                    <flux:navlist.item icon="check-circle" :href="route('user.voting')" :current="request()->routeIs('user.voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
+                    {{-- USER --}}
+                    <flux:navlist.group :heading="__('User')" class="grid">
+                        <flux:navlist.item icon="megaphone" :href="route('user.feed')" :current="request()->routeIs('user.feed')" wire:navigate>{{ __('Feed') }}</flux:navlist.item>
+                        <flux:navlist.item icon="megaphone" :href="route('user.advertisement')" :current="request()->routeIs('user.advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
+                        {{-- <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item> --}}
+                        <flux:navlist.item icon="check-circle" :href="route('user.voting')" :current="request()->routeIs('user.voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
 
-                </flux:navlist.group>
+                    </flux:navlist.group>
 
+                    @livewire('sidebar-group-chats')
                 @endif
 
+
+                
+                    
+                    
+                
 
             </flux:navlist>
 
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                {{-- <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
                 {{ __('Documentation') }}
-                </flux:navlist.item>
+                </flux:navlist.item> --}}
             </flux:navlist>
 
             <!-- Desktop User Menu -->

@@ -17,6 +17,8 @@ use Livewire\Features\SupportEvents\Browser;
 
 class Chat extends Component
 {
+    
+
     public $groups = [];
     public $selectedGroup = null;
     public $messages = [];
@@ -89,65 +91,7 @@ public function loadMessages()
 
 
 
-    public function createGroup()
-    {
-        $group = GroupChat::create([
-            'group_owner_id' => Auth::id(),
-            'name' => $this->newGroupName,
-            'description' => $this->newGroupDescription,
-            'group_code' => strtoupper(Str::random(6)), // Generates something like "A1B2C3"
-        ]);
-
-        $group->members()->attach(Auth::id());
-
-        event(new DashboardStats([
-            'groupChats' => \App\Models\GroupChat::count(),
-            
-        ]));
-        $this->reset(['newGroupName', 'newGroupDescription']);
-        $this->modal('create-group')->close();
-        Toaster::success('Group Created Successfully!');
-        return redirect()->route('user.chat', ['groupCode' => $group->group_code]);
-
-    }
-
-public function joinGroup()
-{
-    $group = GroupChat::where('group_code', $this->groupCode)->first();
-
-    if (!$group) {
-        Toaster::error('Group not found.');
-        return;
-    }
-
-    $existingRequest = GroupMemberRequest::where('group_id', $group->id)
-        ->where('user_id', Auth::id())
-        ->first();
-
-    $isMember = $group->members()->where('user_id', Auth::id())->exists();
-
-    if ($isMember) {
-        Toaster::info('You are already a member of this group.');
-    } elseif ($existingRequest && $existingRequest->status === 'pending') {
-        Toaster::info('Join request already submitted.');
-    } elseif ($existingRequest && $existingRequest->status === 'rejected') {
-        Toaster::info('Your join request was rejected.');
-    } else {
-        GroupMemberRequest::updateOrCreate(
-            ['group_id' => $group->id, 'user_id' => Auth::id()],
-            [
-                'status' => 'pending',
-                'message' => null,
-                'responded_at' => null,
-            ]
-        );
-
-        Toaster::success('Join request submitted!');
-    }
-
-    $this->reset('groupCode');
-    $this->modal('join-group')->close();
-}
+    
 
 
 public function approveRequest($requestId)
@@ -155,11 +99,10 @@ public function approveRequest($requestId)
     $request = GroupMemberRequest::findOrFail($requestId);
 
     // Only allow if current user is group admin/owner (you may want to add this check)
-    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_id) return;
+    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_chat_id) return;
 
     $request->update([
         'status' => 'accepted',
-        'responded_at' => now(),
     ]);
 
     $this->selectedGroup->members()->attach($request->user_id);
@@ -170,11 +113,11 @@ public function rejectRequest($requestId)
 {
     $request = GroupMemberRequest::findOrFail($requestId);
 
-    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_id) return;
+    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_chat_id) return;
 
     $request->update([
         'status' => 'rejected',
-        'responded_at' => now(),
+
     ]);
 
     $this->dispatch('toast', title: 'Request rejected');
@@ -248,6 +191,17 @@ public function handleRealtimeMessage($message)
 {
     $this->loadMessages();
 }
+
+#[On('newJoinRequest')]
+public function newJoinRequest()
+{
+    if (!$this->selectedGroup) {
+        return;
+    }
+    Toaster::info('New join request');
+    $this->selectedGroup->refresh();
+}
+
 
 
 

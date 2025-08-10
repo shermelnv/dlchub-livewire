@@ -38,28 +38,28 @@ public function run(): void
     ]);
 
     // // Seed 100 users with email = student#@pampangastateu.edu.ph
-    // User::factory()
-    //     ->count(100)
-    //     ->create()
-    //     ->each(function ($user) {
-    //         // Generate fake student number (8-digit number)
-    //         $studentNumber = fake()->unique()->numberBetween(10000000, 99999999);
-    //         $user->email = $studentNumber . '@pampangastateu.edu.ph';
-    //         $user->username = (string) $studentNumber;
+    User::factory()
+        ->count(100)
+        ->create()
+        ->each(function ($user) {
+            // Generate fake student number (8-digit number)
+            $studentNumber = fake()->unique()->numberBetween(10000000, 99999999);
+            $user->email = $studentNumber . '@pampangastateu.edu.ph';
+            $user->username = (string) $studentNumber;
 
-    //         // Assign random role and status
-    //         $role = fake()->randomElement(['user', 'org']);
-    //         $user->role = $role;
-    //         $user->status = 'approved';
-    //         $user->save();
+            // Assign random role and status
+            $role = fake()->randomElement(['user', 'org']);
+            $user->role = $role;
+            $user->status = 'approved';
+            $user->save();
 
-    //         // If role is 'org', create Org
-    //         if ($role === 'org') {
-    //             Org::create([
-    //                 'name' => $user->name . ' Organization',
-    //             ]);
-    //         }
-    //     });
+            // If role is 'org', create Org
+            if ($role === 'org') {
+                Org::create([
+                    'name' => $user->name . ' Organization',
+                ]);
+            }
+        });
 }
 
 }

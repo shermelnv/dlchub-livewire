@@ -8,6 +8,7 @@ use App\Events\DashboardStats;
 use App\Models\RecentActivity;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
+use App\Events\ManageVoting as BroadcastVotingRoom;
 use Illuminate\Support\Facades\Auth;
 
 class ManageVoting extends Component
@@ -54,7 +55,7 @@ class ManageVoting extends Component
 
     $status = now()->lt($this->start_time) ? 'Pending' : 'Ongoing';
 
-    VotingRoom::create([
+    $votingRoom = VotingRoom::create([
         'title' => $this->title,
         'description' => $this->description,
         'start_time' => $this->start_time ?: null,
@@ -68,6 +69,8 @@ class ManageVoting extends Component
             'message' => $activity,
             'type' => 'voting',
         ]);
+
+        broadcast(new BroadcastVotingRoom($votingRoom));
         event(new RecentActivities($activity));
 
         event(new DashboardStats([

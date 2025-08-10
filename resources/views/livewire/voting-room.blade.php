@@ -1,341 +1,272 @@
-<div class="space-y-6 p-4 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-200">
+<div 
+    x-data="{ roomId: @js($room->id) }" 
+    x-init="
+        Echo.private(`voting-room.${roomId}`)
+            .listen('.voted.candidate', (e) => {
+                Livewire.dispatch('votedCandidate');
+                console.log(e);
+            });
+        
+        Echo.channel('manage-user')
+            .listen('.user.registered', (e) => {
+                console.log('received', e.user);
+                Livewire.dispatch('newUser');
+            });
+
+        Echo.channel('voting-room')
+            .listen('.room.expired', (e) => {
+                console.log('received');
+                Livewire.dispatch('roomExpired');
+            });
+    "
+    class="space-y-6 p-4 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-200"
+>
     <!-- Back -->
     <div class="flex justify-between items-center mb-6">
-        <a href="{{ route('admin.voting.manage-voting') }}"
-           class="inline-flex items-center text-sm font-medium text-maroon-700 dark:text-maroon-300 hover:underline">
+        <a 
+            href="{{ route('admin.voting.manage-voting') }}"
+            class="inline-flex items-center text-sm font-medium text-maroon-700 dark:text-maroon-300 hover:underline"
+        >
             <flux:icon.chevron-left class="w-4 h-4 mr-1" />
             Back to Rooms
         </a>
-        <flux:modal.trigger name="room-option" >
-            <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer hover:text-white"/>
+        <flux:modal.trigger name="room-option">
+            <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer hover:text-white" />
         </flux:modal.trigger>
     </div>
 
-    <flux:modal name="room-option" variant="flyout">
-    <div class="space-y-6">
-        <div>
-            <flux:heading size="lg">Room Option</flux:heading>
-            <flux:text class="mt-2">Make changes to your personal details.</flux:text>
-        </div>
-        <flux:input label="Name" placeholder="Your name" />
-        <flux:input label="Date of birth" type="date" />
-        <div class="flex">
-            <flux:spacer />
-            <flux:button type="submit" variant="primary">Save changes</flux:button>
-        </div>
-    </div>
-</flux:modal>
+    @if($room->status !== 'Closed')
+        @include('livewire.room-option')
 
-<!-- Header -->
-<div class="flex justify-between items-start">
-    <div>
-        <h1 class="text-2xl font-bold text-maroon-900 dark:text-white">{{ $room->title }}</h1>
-        <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $room->description }}</p>
-    </div>
-
-    <div class="text-sm text-right space-y-1">
-        <div class="text-gray-500 dark:text-gray-400">Ends at</div>
-        <div class="font-semibold" id="ends-in-clock">
-            Loading...
-        </div>
-
-        <div class="font-bold {{ $this->statusTextColor }} ">
-            Status: {{ $room->status }}
-        </div>
-    </div>
-</div>
-
-    <!-- Metrics -->
-@php
-$totalVotes = \App\Models\Vote::distinct('user_id')->count('user_id');
-$votingRate = $totalStudents ? round(($totalVotes / $totalStudents) * 100) : 0;
-
-@endphp
-
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-            <div class="text-sm text-gray-500 dark:text-gray-400">Total Votes</div>
-            <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $totalVotes }}</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-            <div class="text-sm text-gray-500 dark:text-gray-400">Voting Rate</div>
-            <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $votingRate }}%</div>
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
-                <div
-                    class="h-2 rounded-full transition-all duration-500 ease-in-out
-                        {{ $votingRate < 30 ? 'bg-red-500 dark:bg-red-400' : ($votingRate < 70 ? 'bg-yellow-500 dark:bg-yellow-400' : 'bg-green-600 dark:bg-green-400') }}"
-                    style="width: {{ $votingRate }}%;">
+        <!-- Header -->
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-maroon-900 dark:text-white">{{ $room->title }}</h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $room->description }}</p>
+            </div>
+            <div class="text-sm text-right space-y-1">
+                <div class="text-gray-500 dark:text-gray-400">Ends at</div>
+                <div class="font-semibold" id="ends-in-clock">Loading...</div>
+                <div class="font-bold {{ $this->statusTextColor }}">
+                    Status: {{ $room->status }}
                 </div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-            <div class="text-sm text-gray-500 dark:text-gray-400">Active Races</div>
-            <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ count($positions) }}</div>
-        </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-            <div class="text-sm text-gray-500 dark:text-gray-400">Start Time</div>
-            <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">
-                Loading...
+
+        <!-- Metrics -->
+        @php
+            $totalVotes = \App\Models\Vote::whereHas('candidate.position', function ($query) use ($room) {
+                $query->where('voting_room_id', $room->id);
+            })->count();
+
+            $totalUniqueVoters = \App\Models\Vote::whereHas('candidate.position', function ($query) use ($room) {
+                $query->where('voting_room_id', $room->id);
+            })->distinct('user_id')->count('user_id');
+
+            $totalStudents = \App\Models\User::where('role', 'user')->where('status', 'approved')->count();
+            $votingRate = $totalStudents ? round(($totalUniqueVoters / $totalStudents) * 100) : 0;
+        @endphp
+
+        {{-- Voting Stats --}}
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                <div class="text-sm text-gray-500 dark:text-gray-400">Total Votes</div>
+                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $totalVotes . " / " . $totalStudents }}</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                <div class="text-sm text-gray-500 dark:text-gray-400">Voting Rate</div>
+                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $votingRate }}%</div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                    <div 
+                        class="h-2 rounded-full transition-all duration-500 ease-in-out
+                            {{ $votingRate < 30 ? 'bg-red-500 dark:bg-red-400' : ($votingRate < 70 ? 'bg-yellow-500 dark:bg-yellow-400' : 'bg-green-600 dark:bg-green-400') }}"
+                        style="width: {{ $votingRate }}%;"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                <div class="text-sm text-gray-500 dark:text-gray-400">Active Races</div>
+                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ count($positions) }}</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                <div class="text-sm text-gray-500 dark:text-gray-400">Start Time</div>
+                <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">Loading...</div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                <div class="text-sm text-gray-500 dark:text-gray-400">Status</div>
+                <div class="text-xl font-semibold text-green-600 dark:text-green-400">{{ $room->status }}</div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-            <div class="text-sm text-gray-500 dark:text-gray-400">Status</div>
-            <div class="text-xl font-semibold text-green-600 dark:text-green-400">{{ $room->status }}</div>
-        </div>
-    </div>
-
-    
-
-
-<!-- Election Summary -->
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-    <h3 class="font-bold mb-4 text-maroon-800 dark:text-white">Election Summary</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        @foreach ($positions as $position)
-            @php
-                $votes = $position->candidates->sum('vote_count');
-            @endphp
-            <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm bg-gray-50 dark:bg-zinc-900 text-center">
-                <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ $position->name }}</div>
-                <div class="text-2xl font-bold text-maroon-800 dark:text-rose-300">{{ $votes }}</div>
-                <div class="text-xs text-gray-400 dark:text-gray-500">votes</div>
-            </div>
-        @endforeach
-    </div>
-</div>
-
 
         <!-- Per Position Voting Charts -->
-<div class="space-y-6">
-    @php $hasCompetitivePosition = false; @endphp
+        <div class="space-y-6">
+            @foreach($positions as $position)
+                @if($position->candidates->count() > 0)
+                    @php
+                        $hasCompetitivePosition = true;
+                        $total = $position->candidates->sum('vote_count') ?: 1;
+                    @endphp
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow">
+                        <h2 class="text-lg font-bold text-maroon-800 dark:text-white">{{ $position->name }}</h2>
+                        <div class="mt-4 space-y-3">
+                            @foreach($position->candidates as $candidate)
+                                @php
+                                    $percent = round(($candidate->vote_count / $total) * 100);
+                                    $color = '#' . substr(md5($candidate->id), 0, 6);
+                                @endphp
+                                <div class="relative w-full h-6 md:h-12 overflow-hidden rounded-xs md:rounded-md mb-2 border border-gray-500">
+                                    <div class="absolute top-0 left-0 h-full bg-sky-600 transition-all duration-500 ease-in-out" style="width: {{ $percent }}%"></div>
+                                    <div class="relative z-10 flex justify-between items-center h-full pr-4 text-white">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <span class="size-6 md:size-12 text-lg bg-red-900 rounded-xs md:rounded-md flex items-center justify-center font-bold">{{ $loop->iteration }}</span>
+                                                {{ $candidate->name }}
+                                            </div>
+                                        </div>
+                                        <div class="text-xs md:text-sm font-medium text-white/80">
+                                            {{ $candidate->vote_count }} votes ({{ $percent }}%)
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+        </div>
 
-    @foreach($positions as $position)
-        @if($position->candidates->count() > 1)
-            @php
-                $hasCompetitivePosition = true;
-                $total = $position->candidates->sum('vote_count') ?: 1;
-            @endphp
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow">
-                <h2 class="text-lg font-bold text-maroon-800 dark:text-white">{{ $position->name }}</h2>
-                <div class="mt-4 space-y-3">
-                    @foreach($position->candidates as $candidate)
-                        @php
-                            $percent = round(($candidate->vote_count / $total) * 100);
-                            $color = '#' . substr(md5($candidate->id), 0, 6);
-                        @endphp
-                        <div>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full" style="background-color: {{ $color }}"></div>
-                                    <span class="font-medium">{{ $candidate->name }}</span>
-                                </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300">
-                                    {{ $candidate->vote_count }} votes ({{ $percent }}%)
-                                </div>
-                            </div>
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
-                                <div class="h-2 rounded-full transition-all duration-500 ease-in-out" style="width: {{ $percent }}%; background-color: {{ $color }}"></div>
+        <!-- Candidate Cards -->
+        @foreach ($positions as $position)
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <flux:heading class="uppercase text-lg lg:text-xl">{{ $position->name }} Candidates</flux:heading>
+                <flux:text class="mb-4 text-xs lg:text-base">Choose your {{ $position->name }} candidate</flux:text>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    @forelse ($position->candidates as $candidate)
+                        <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
+                            <img 
+                                src="https://i.pravatar.cc/400?u={{ $candidate->id }}"
+                                alt="{{ $candidate->name }}"
+                                class="h-20 md:h-40 w-full object-cover rounded-md mb-4"
+                            >
+                            <h4 class="font-bold text-sm md:text-lg">{{ $candidate->name }}</h4>
+                            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">{{ $candidate->bio ?? 'No bio available.' }}</p>
+                            <div class="relative group my-4">
+                                <button
+                                    wire:click.prevent="voteCandidate({{ $candidate->id }})"
+                                    @disabled($room->status !== 'Ongoing')
+                                    class="w-full py-2 rounded transition text-xs md:text-base
+                                        {{ $room->status !== 'Ongoing'
+                                            ? 'bg-gray-400 text-white cursor-not-allowed'
+                                            : 'bg-[#7B2E2E] text-white hover:bg-[#5c2222] cursor-pointer'
+                                        }}"
+                                >
+                                    {{ $room->status !== 'Ongoing' ? 'Voting Unavailable' : 'Vote for ' . explode(' ', $candidate->name)[0] }}
+                                </button>
+                                @if($room->status !== 'Ongoing')
+                                    <div class="absolute top-full mt-1 text-xs bg-black text-white px-2 py-1 rounded hidden group-hover:block">
+                                        Voting opens once the election is ongoing.
+                                    </div>
+                                @endif
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <flux:text class="col-span-2 md:col-span-3 text-center text-xs md:text-lg">NO CANDIDATE AT THE MOMENT</flux:text>
+                    @endforelse
                 </div>
             </div>
-        @endif
-    @endforeach
+        @endforeach
+    @else
+        @php
+            $start_time = Carbon\Carbon::parse($room->start_time);
+            $end_time = Carbon\Carbon::parse($room->end_time);
+            $totalVotes = \App\Models\Vote::whereHas('candidate.position', function ($query) use ($room) {
+                $query->where('voting_room_id', $room->id);
+            })->count();
+        @endphp
+        <div class="flex justify-between">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $room->title }}</h1>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">{{ $room->description }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                    Election Date: {{ $start_time->format('m/d/y') }} - {{ $end_time->format('m/d/y') }} &nbsp;&bull;&nbsp; {{ $totalVotes }} total votes
+                </p>
+            </div>
+        </div>
 
-    @if(!$hasCompetitivePosition)
-        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-            No competitive positions available yet. Please add more candidates to see results.
+        <div class="grid grid-cols-2 gap-6">
+            @foreach($positions as $position)
+                @php
+                    $maxVotes = $position->candidates->max('vote_count');
+                    $winners = $position->candidates->where('vote_count', $maxVotes);
+                @endphp
+                <div class="max-w-xl border-2 p-4 font-sans space-y-6 bg-white dark:bg-gray-900 rounded-md shadow-md transition-colors duration-300">
+                    <div class="flex justify-between">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $position->name }}</h1>
+                        <div class="flex justify-end">
+                            <div class="text-right space-y-0.5">
+                                @if($winners->count())
+                                    @foreach($winners as $winner)
+                                        <p class="text-green-700 dark:text-green-400 font-semibold text-lg">{{ $winner->name }}</p>
+                                    @endforeach
+                                    <flux:badge color="lime">
+                                        {{ $winners->count() > 1 ? 'Winners' : 'Winner' }}
+                                    </flux:badge>
+                                @else
+                                    <p class="text-gray-500">No winner yet</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        @foreach($position->candidates as $candidate)
+                            @php
+                                $total = $position->candidates->sum('vote_count') ?: 1;
+                                $percent = round(($candidate->vote_count / $total) * 100);
+                            @endphp
+                            <div class="relative w-full h-8 md:h-12 flex items-center border border-gray-500 rounded-md overflow-hidden">
+                                <div class="flex-shrink-0 w-10 md:w-12 h-full bg-red-900 flex items-center justify-center font-bold text-white rounded-l-md select-none z-10">
+                                    {{ $loop->iteration }}
+                                </div>
+                                <div class="relative flex-grow h-full">
+                                    <div class="absolute top-0 left-0 h-full bg-sky-600 transition-all duration-500 ease-in-out" style="width: {{ $percent }}%"></div>
+                                    <div class="relative z-5 flex justify-between items-center h-full px-4 text-white font-semibold select-none">
+                                        <div class="truncate">{{ $candidate->name }}</div>
+                                        <div class="text-xs md:text-sm font-medium text-white/80">{{ $candidate->vote_count }} votes ({{ $percent }}%)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
 
         </div>
     @endif
 </div>
 
-    
-
-        <flux:dropdown position="right">
-            
-            <flux:button icon:trailing="chevron-down" > Add</flux:button>
-                <flux:menu>
-                    <flux:menu.item icon="plus" wire:click="addPosition">
-                        Add Position
-                    </flux:menu.item>
-                    <flux:menu.item icon="plus" wire:click="addCandidate">
-                        Add Candidate
-                    </flux:menu.item>
-                </flux:menu>
-            </flux:dropdown>
-
-            {{-- MODALS --}}
-
-<flux:modal name="add-position" class="md:w-[40rem]">
-    <form wire:submit.prevent="createPosition">
-        <div class="space-y-6">
-            <!-- Header -->
-            <div>
-                <flux:heading size="lg">Add Position</flux:heading>
-                <flux:text class="mt-2">Define a new role or title for this voting room.</flux:text>
-            </div>
-
-            <!-- Position Name -->
-            <flux:input
-                label="Position Name"
-                wire:model.defer="newPosition.name"
-                placeholder="e.g. President"
-                required
-            />
-
-            <!-- Optional Order Index -->
-            <flux:input
-                label="Display Order (optional)"
-                type="number"
-                wire:model.defer="newPosition.order_index"
-                placeholder="e.g. 1"
-                min="0"
-            />
-
-            <!-- Footer -->
-            <div class="flex pt-4">
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
-                <flux:spacer />
-                <flux:button type="submit" variant="primary">Create</flux:button>
-            </div>
-        </div>
-    </form>
-</flux:modal>
-
-
-           <flux:modal name="add-candidate" class="md:w-[40rem]">
-    <form wire:submit.prevent="createCandidate">
-        <div class="space-y-6">
-            <!-- Header -->
-            <div>
-                <flux:heading size="lg">Add Candidate</flux:heading>
-                <flux:text class="mt-2">Register a new candidate for a specific position.</flux:text>
-            </div>
-
-            <!-- Position Selector -->
-            <flux:select label="Position" wire:model.defer="newCandidate.position_id">
-                <option value="">Select Position</option>
-                @foreach ($positions as $position)
-                    <option value="{{ $position->id }}">{{ $position->name }}</option>
-                @endforeach
-            </flux:select>
-
-            <!-- Name -->
-            <flux:input
-                label="Full Name"
-                wire:model.defer="newCandidate.name"
-                placeholder="e.g. Juan Dela Cruz"
-                required
-            />
-
-            <!-- Short Name -->
-            <flux:input
-                label="Short Name (optional)"
-                wire:model.defer="newCandidate.short_name"
-                placeholder="e.g. Juan"
-            />
-
-            <!-- Bio -->
-            <flux:textarea
-                label="Biography (optional)"
-                wire:model.defer="newCandidate.bio"
-                placeholder="Tell us something about this candidate..."
-            />
-
-            <!-- Photo URL -->
-            <flux:input
-                label="Photo URL (optional)"
-                wire:model.defer="newCandidate.photo_url"
-                placeholder="https://example.com/photo.jpg"
-                type="url"
-            />
-
-            <!-- Color -->
-        
-
-            <div>
-                <flux:input
-                            label="Color (optional)"
-                            type="color"
-                            wire:model.defer="newCandidate.color"
-                            placeholder="#FF0000 or red"
-                        />
-
-            </div>
-
-            <!-- Footer -->
-            <div class="flex pt-4">
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
-                <flux:spacer />
-                <flux:button type="submit" variant="primary">Add Candidate</flux:button>
-            </div>
-        </div>
-    </form>
-</flux:modal>
-
-
-    <!-- Candidate Cards -->
-    @foreach ($positions as $position)
-        <div>
-            <h2 class="text-xl font-semibold mb-4 text-maroon-800 dark:text-white">{{ $position->name }} Candidates</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                @foreach ($position->candidates as $candidate)
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden p-4 flex flex-col">
-                        <img src="https://via.placeholder.com/300x200?text={{ urlencode($candidate->name) }}"
-                             alt="{{ $candidate->name }}"
-                             class="h-40 w-full object-cover rounded-md mb-4">
-                        <h4 class="font-bold text-lg">{{ $candidate->name }}</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $candidate->bio ?? 'No bio available.' }}</p>
-                        <div class="relative group my-4">
-                            <button
-                                wire:click.prevent="voteCandidate({{ $candidate->id }})"
-                                @disabled($room->status !== 'Ongoing')
-                                class="w-full py-2 rounded transition
-                                    {{ $room->status !== 'Ongoing'
-                                        ? 'bg-gray-400 text-white cursor-not-allowed'
-                                        : 'bg-[#7B2E2E] text-white hover:bg-[#5c2222] cursor-pointer'
-                                    }}">
-                                {{ $room->status !== 'Ongoing' ? 'Voting Unavailable' : 'Vote for ' . explode(' ', $candidate->name)[0] }}
-                            </button>
-                            @if($room->status !== 'Ongoing')
-                                <div class="absolute top-full mt-1 text-xs bg-black text-white px-2 py-1 rounded hidden group-hover:block">
-                                    Voting opens once the election is ongoing.
-                                </div>
-                            @endif
-                        </div>
-
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endforeach
-</div>
 <script>
-    const roomStatus = "{{ $room->status }}"; // 'Upcoming', 'Ongoing', or 'Ended'
+    const roomStatus = "{{ $room->status }}";
     const startAt = new Date("{{ \Carbon\Carbon::parse($room->start_time)->timezone('Asia/Manila')->format('Y-m-d H:i:s') }}");
     const endAt   = new Date("{{ \Carbon\Carbon::parse($room->end_time)->timezone('Asia/Manila')->format('Y-m-d H:i:s') }}");
 
     function formatCountdown(targetTime) {
         const now = new Date();
         let diff = targetTime - now;
-
         if (diff <= 0) return 'Ended';
 
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         diff %= 1000 * 60 * 60 * 24;
-
         const hours = Math.floor(diff / (1000 * 60 * 60));
         diff %= 1000 * 60 * 60;
-
         const minutes = Math.floor(diff / (1000 * 60));
         diff %= 1000 * 60;
-
         const seconds = Math.floor(diff / 1000);
 
         return [
@@ -350,17 +281,14 @@ $votingRate = $totalStudents ? round(($totalVotes / $totalStudents) * 100) : 0;
         const now = new Date();
         const startsClock = document.getElementById('starts-in-clock');
         const endsClock = document.getElementById('ends-in-clock');
-
         if (!startsClock || !endsClock) return;
 
-        // Start Time Display
         if (now < startAt) {
             startsClock.textContent = formatCountdown(startAt);
         } else {
             startsClock.textContent = 'Started';
         }
 
-        // End Time Display
         if (now < endAt) {
             endsClock.textContent = formatCountdown(endAt);
         } else {

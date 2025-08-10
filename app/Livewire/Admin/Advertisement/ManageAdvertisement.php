@@ -7,6 +7,7 @@ use App\Models\Org;
 use Livewire\Component;
 use App\Models\Advertisement;
 use App\Events\DashboardStats;
+use App\Events\ManageAdvertisement as BroadcastAdvertisement;
 
 use App\Models\RecentActivity;
 use Masmerise\Toaster\Toaster;
@@ -121,7 +122,7 @@ class ManageAdvertisement extends Component
             'message' => $activity,
             'type' => 'advertisement',
         ]);
-
+        broadcast(new BroadcastAdvertisement($ad));
         event(new RecentActivities($activity));
         event(new DashboardStats([
             'students' => \App\Models\User::where('role', 'user')->count(),

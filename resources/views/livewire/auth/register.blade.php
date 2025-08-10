@@ -46,10 +46,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
     session(['user_name' => $user->name]);
 
     event(new Registered($user));
-
+    broadcast(new UserRegistered());
+    Auth::login($user);
     Mail::to($user->email)->send(new EmailVerification($user));
     
-    $this->redirectIntended(route('registered-success', absolute: false), navigate: true);
+    $this->redirectIntended(route('user.feed', absolute: false), navigate: true);
     }
 
 

@@ -1,11 +1,5 @@
-<div>
-    <div class="mb-6">
-        <flux:heading size="xl">Manage Voting</flux:heading>
-        <flux:subheading size="lg" class="mb-6">
-            Manage your voting rooms and settings.
-        </flux:subheading>
-        <flux:separator variant="subtle" />
-    </div>
+<div class="p-10">
+
 
     {{-- Add Voting Modal Trigger --}}
     <flux:modal.trigger name="add-voting">

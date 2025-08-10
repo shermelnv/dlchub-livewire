@@ -13,7 +13,14 @@ Broadcast::channel('chat.{groupId}', function ($user, $groupId) {
     return $user->groupChats->contains('id', $groupId);
 });
 
+Broadcast::channel('group.{groupId}', function ($user, $groupId) {
+    return $user->groupChats->contains('id', $groupId);
+});
 
+
+Broadcast::channel('voting-room.{id}', function ($user, $id) {
+    return true;
+});
 
 // #[On('group-message-received')]
 // public function handleRealtimeMessage($e)

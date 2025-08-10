@@ -4,12 +4,19 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\VotingRoom;
+use Livewire\Attributes\On;
 
 class Voting extends Component
 {
     public $rooms = [];
 
      public function mount()
+    {
+        $this->loadRooms();
+    }
+
+    #[On('newVotingRoom')]
+    public function newVotingRoom()
     {
         $this->loadRooms();
     }

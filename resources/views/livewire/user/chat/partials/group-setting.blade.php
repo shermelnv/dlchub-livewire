@@ -1,89 +1,139 @@
-<flux:modal name="group-settings" class="md:w-[42rem]">
-    <div class="space-y-6">
-        {{-- Modal Header --}}
-        <flux:heading size="lg">Group Settings</flux:heading>
-        <flux:text class="text-sm text-gray-500 dark:text-gray-400">
-            Manage your group's name, description, and member access.
-        </flux:text>
+<flux:modal name="group-settings-large-devices" variant="flyout" class="">
+    <flux:heading>Group Settings</flux:heading>
 
-        {{-- Group Info --}}
-        <div class="grid gap-4">
-            <flux:input label="Group Name" placeholder="e.g. STEM Society" value="Mock Group A" />
-            <flux:textarea label="Description" placeholder="Group purpose or details...">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </flux:textarea>
-        </div>
+    <!-- Group Info -->
+    <div class="flex flex-col items-center gap-2 w-full">
+        <flux:avatar circle src="https://unavatar.io/x/calebporzio" class="size-30" />
+        <div class="text-center font-bold">{{ $selectedGroup->name }}</div>
+        <div class="text-blue-500 cursor-pointer">Change name or image</div>
+    </div>
 
-        <div x-data="{tab: 'pending-member-request' }">
-            <div class="grid grid-cols-2 mb-8">
-                <button
-                    @click="tab = 'pending-member-request' "
-                    :class="tab === 'pending-member-request' ? 'bg-red-900 text-white' : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200' "
-                    class="py-4 transition-all">
-                    Member Request
-                </button>
-                <button
-                    @click="tab = 'members' "
-                    :class="tab === 'members' ? 'bg-red-900 text-white' : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200' "
-                    class="py-4 transition-all">
-                    Members
-                </button>
-            </div>
+    <hr class="my-4 border-gray-300 dark:border-gray-700" />
 
-            <div x-show="tab === 'pending-member-request' " class="space-y-3">
-            
-                @if ($this->selectedGroup)
-                    @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
-                        <div class="border p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-white">{{ $request->user->name }}</p>
-                                <p class="text-sm text-gray-300">{{ $request->user->email }}</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <flux:button size="xs" color="green" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
-                                <flux:button size="xs" color="red" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
-                            </div>
-                        </div>
-                    @empty
-                        <div>No Member Request</div>
-                    @endforelse
-                @endif
-            </div>
-            <div x-show="tab === 'members' " class="space-y-3">
-            
-
-            @foreach ($selectedGroup?->members ?? [] as $member)
-                <div class="flex justify-between items-center border p-3 rounded-lg dark:border-gray-700">
-                    <div>
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $member->name }}</p>
-                        <p class="text-sm text-gray-500">{{ $member->email }}</p>
-                    </div>
-                        <flux:button 
-                            size="xs" 
-                            variant="ghost" 
-                            icon="trash" 
-                            color="red" 
-                            wire:click="removeMember({{ $member->id }})"
-                        >
-                            Remove
-                        </flux:button>
+    <!-- Members Section -->
+    <div class="space-y-3">
+        <flux:heading size="sm">Members</flux:heading>
+        @foreach ($selectedGroup->members as $member)
+            <div class="flex items-center justify-between p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <flux:avatar src="{{ $member->avatar_url }}" class="size-8" />
+                    <div>{{ $member->name }}</div>
                 </div>
-            @endforeach
-        </div>
-        </div>
+                <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button>
+            </div>
+        @endforeach
+    </div>
 
-        {{-- Modal Footer --}}
-        <div class="flex justify-between items-center">
+    <hr class="my-4 border-gray-300 dark:border-gray-700" />
 
-                <flux:button variant="danger" size="sm">Leave Group</flux:button>
-                <div class="flex items-center space-x-2">
-                    <flux:modal.close>
-                        <flux:button variant="ghost">Close</flux:button>
-                    </flux:modal.close>
-                    <flux:button icon="check" color="primary">Save Changes</flux:button>
-                </div>
-   
-            
-        </div>
+    <!-- Member Requests Section -->
+    <div class="space-y-3">
+            <div class="flex justify-between">
+                <flux:heading size="sm">Join Requests</flux:heading>
+                <flux:modal.trigger name="rejected-list">
+                    <flux:button size="xs">Rejected List</flux:button>
+                </flux:modal.trigger>
+                
+    </div>
+        @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
+            <div class="border p-4 rounded-lg flex justify-between items-center">
+                                <div class="">
+                                    <p class="font-bold text-white truncate">{{ $request->user->name }}</p>
+                                    <p class="text-sm text-gray-300 truncate">{{ $request->user->email }}</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <flux:button size="xs" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
+                                    <flux:button size="xs" variant="danger" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
+                                </div>
+                            </div>
+        @empty
+            <div class="text-gray-500 dark:text-gray-400 text-sm">No pending requests.</div>
+
+        @endforelse
     </div>
 </flux:modal>
+
+
+<flux:modal name="group-settings-mobile" variant="flyout" class="min-w-xs">
+    <flux:heading>Group Settings</flux:heading>
+
+    <!-- Group Info -->
+    <div class="flex flex-col items-center gap-4 w-full">
+        <flux:avatar circle src="https://unavatar.io/x/calebporzio" class="size-30" />
+        <div class="text-center font-bold">{{ $selectedGroup->name }}</div>
+        <div class="text-blue-500 cursor-pointer">Change name or image</div>
+    </div>
+
+    <hr class="my-4 border-gray-300 dark:border-gray-700" />
+
+    <!-- Members Section -->
+    <div class="space-y-3">
+        <flux:heading size="sm">Members</flux:heading>
+        @foreach ($selectedGroup->members as $member)
+            <div class="flex items-center justify-between p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                <div class="flex items-center gap-3 max-w-40">
+                    <flux:avatar src="{{ $member->avatar_url }}" class="size-8" />
+                    <div class="truncate">{{ $member->name }}</div>
+                </div>
+                <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button>
+            </div>
+        @endforeach
+    </div>
+
+    <hr class="my-4 border-gray-300 dark:border-gray-700" />
+
+    <!-- Member Requests Section -->
+    <div 
+    x-data
+    x-init="
+
+
+    "
+    class="space-y-3">
+    <div class="flex justify-between">
+                <flux:heading size="sm">Join Requests</flux:heading>
+                <flux:button size="sm">Rejected List</flux:button>
+    </div>
+
+        @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
+            <div class="border p-4 rounded-lg flex justify-between items-center gap-2">
+                                <div class="flex items-center gap-2 ">
+                                    <flux:avatar src="{{ $member->avatar_url }}" class="size-8" />
+                                    <div class="max-w-24">
+                                        <div class="truncate">{{ $request->user->name }}</div>
+                                        <div class="truncate">{{ $request->user->email }}</div>
+                                    </div>
+                                </div>
+                                <div class="grid gap-1">
+                                    <flux:button size="xs" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
+                                    <flux:button size="xs" variant="danger" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
+                                </div>
+                            </div>
+        @empty
+            <div class="text-gray-500 dark:text-gray-400 text-sm">No pending requests.</div>
+
+        @endforelse
+    </div>
+</flux:modal>
+
+
+<flux:modal name="rejected-list">
+    <flux:heading size="sm">Rejected Join Requests</flux:heading>
+    
+    @forelse ($selectedGroup->requests()->where('status', 'rejected')->with('user')->get() as $rejected)
+        <div class="border p-4 rounded-lg flex justify-between items-center">
+            <div>
+                <p class="font-bold">{{ $rejected->user->name }}</p>
+                <p class="text-sm text-gray-500">{{ $rejected->user->email }}</p>
+            </div>
+            <flux:button size="xs" wire:click="approveRejected({{ $rejected->id }})">
+                Approve
+            </flux:button>
+        </div>
+    @empty
+        <div class="text-gray-500 dark:text-gray-400 text-sm">
+            No rejected requests.
+        </div>
+    @endforelse
+</flux:modal>
+

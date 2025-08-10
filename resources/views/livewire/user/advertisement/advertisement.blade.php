@@ -1,4 +1,17 @@
-<div class="space-y-4">
+<div 
+    x-init="Echo.channel('manage-ads')
+                .listen('.ads.post', (e) => {
+                    console.log('new ads post', e.ads);
+                    Livewire.dispatch('newAdPosted');
+                });
+            Echo.channel('manage-feeds')
+                .listen('.feed.post', (e) => {
+                    console.log('new feed post', e.feed);
+                    Livewire.dispatch('newFeedPosted');
+                });
+                
+            "
+class="space-y-4">
     
     <div>
             <flux:heading size="xl" level="1">{{ __('Advertisement') }}</flux:heading>

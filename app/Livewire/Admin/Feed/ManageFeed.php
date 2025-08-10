@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Feed;
 use App\Models\Org;
 use App\Models\Type;
 use Livewire\Component;
+use App\Events\ManageFeed as BroadcastFeed;
+use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use App\Models\RecentActivity;
 use Masmerise\Toaster\Toaster;
@@ -68,6 +70,12 @@ class ManageFeed extends Component
         $this->fetchFeeds();
     }
 
+    #[On('newFeedPosted')]
+    public function newFeedPosted()
+    {
+        $this->fetchFeeds();
+    }
+
     public function fetchFeeds()
     {
         $this->feeds = FeedModel::latest()->get();
@@ -84,7 +92,7 @@ public function createPost()
         'content' => 'required|string|max:2000',
         'organization' => 'nullable|string|max:255',
         'type' => 'nullable|string|max:100',
-        'photo' => 'nullable|image|max:2048',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
     ]);
 
     $photoPath = $this->photo?->store('feeds', 'public');
@@ -118,6 +126,7 @@ public function createPost()
     $this->fetchFeeds();
 
     Toaster::success('Feed post created!');
+    broadcast(new BroadcastFeed($post));
 }
 
 

@@ -1,11 +1,8 @@
- <div class="lg:flex hidden items-center justify-between border-b border-neutral-200 dark:border-neutral-700 bg-[#701D0B] p-4 pl-8">
-        <h1 class="text-2xl font-bold text-white">Dashboard Overview</h1>
-    </div>
 <x-layouts.app :title="__('Dashboard')">
                {{-- Header --}}
     
 
-<div class="flex h-full w-full flex-1 flex-col gap-6 rounded-xl">
+<div class="flex h-full w-full flex-1 flex-col gap-6 rounded-xl p-4">
 
         {{-- Summary Cards --}}
         <livewire:dashboard-stats/>

@@ -1,32 +1,56 @@
-<div class="space-y-4">
+<div 
+    x-data
+    x-init="Echo.channel('manage-user')
+                .listen('.user.registered', (e) => {
+                    console.log('received', e.user);
+                    Livewire.dispatch('newUser', { user: e.user });
+                });"
+    class="space-y-4 p-10">
 
     {{-- Header --}}
     <div class="relative grid grid-cols-2">
-    <section>        
-        <flux:heading size="xl" level="1">Manage Users</flux:heading>
-        <flux:subheading size="lg" class="mt-2 text-gray-600 dark:text-gray-400">
-            Manage your user accounts, edit details or remove users as needed.
-        </flux:subheading>
-    </section>
+
+        <div class="flex gap-2">
+            <flux:input 
+            icon="magnifying-glass" 
+            placeholder="Search user" 
+            wire:model.live="search"
+            />
+ <flux:dropdown>
+        <flux:button icon:trailing="chevron-down">
+            Status
+        </flux:button>
+
+        <flux:menu>
+            <flux:menu.radio.group wire:model.live="status">
+                <flux:menu.radio value="all">All</flux:menu.radio>
+                <flux:menu.radio value="pending">Pending</flux:menu.radio>
+                <flux:menu.radio value="approved">Approved</flux:menu.radio>
+                <flux:menu.radio value="rejected">Rejected</flux:menu.radio>
+                <flux:menu.radio value="banned">Banned</flux:menu.radio>
+            </flux:menu.radio.group>
+        </flux:menu>
+    </flux:dropdown>
+        </div>
+    
+    
+
     <section class="flex justify-end items-center gap-4">
-        <flux:modal.trigger name="reject-list">
-            <flux:button icon="x-circle">Reject List</flux:button>
-        </flux:modal.trigger>
         <flux:modal.trigger name="create-user">
             <flux:button icon="plus">Create User</flux:button>
         </flux:modal.trigger>
     </section>
 
-        <flux:separator variant="subtle" class="mt-4 col-span-2" />
     </div>
-
+<flux:separator variant="subtle" class="mt-4 col-span-2" />
 
     {{-- Table --}}
     <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
         <table class="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700 text-sm">
             <thead class="bg-gray-100 dark:bg-zinc-800 text-left text-gray-600 dark:text-gray-300 uppercase tracking-wide">
                 <tr>
-                    <th class="px-4 py-3">ID</th>
+        
+                    <th class="px-4 py-3">Username</th>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Email</th>
                     <th class="px-4 py-3">Role</th>
@@ -37,7 +61,7 @@
             <tbody class="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700">
                 @forelse ($manageUsers as $manageUser)
                     <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800">
-                        <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageUser->id }}</td>
+                        <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageUser->username }}</td>
                         <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageUser->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->email }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->role ?? 'User' }}</td>
@@ -74,13 +98,17 @@
                                         {{-- ACCOUNT CONTROL --}}
                                         @if($manageUser->status !== 'pending')
                                         <flux:menu.group heading="Account Control">
-                                            @if($manageUser->status !== 'banned')
+                                            @if(in_array($manageUser->status, ['approved']))
                                             <flux:menu.item icon="no-symbol"  wire:click="confirmBan({{ $manageUser->id }})">
                                                 Ban
                                             </flux:menu.item>
-                                            @else
+                                            @elseif(in_array($manageUser->status, ['banned']))
                                             <flux:menu.item icon="no-symbol"  wire:click="confirmUnban({{ $manageUser->id }})">
                                                 Unban
+                                            </flux:menu.item>
+                                            @else
+                                            <flux:menu.item icon="check"  wire:click="confirmApprove({{ $manageUser->id }})">
+                                                Approve
                                             </flux:menu.item>
                                             @endif
                                             <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $manageUser->id }})">
@@ -124,8 +152,12 @@
 
     {{-- Pagination --}}
     <div class="mt-4">
+
+    
         {{ $manageUsers->links() }}
+    
     </div>
+
 
     {{-- ========= CREATE USER =========== --}}
     @include('livewire.admin.user.partials.create-user')
@@ -136,8 +168,7 @@
     {{-- ========= EDIT USER =========== --}}
     @include('livewire.admin.user.partials.edit-user')
 
-    {{-- ========= REJECT LIST =========== --}}
-    @include('livewire.admin.user.partials.reject-list')
+
 
     {{-- ========= DELETE USER =========== --}}
     @include('livewire.admin.user.partials.delete-user')

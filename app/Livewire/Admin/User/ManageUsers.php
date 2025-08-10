@@ -7,10 +7,12 @@ use Livewire\Component;
 use App\Models\GroupChat;
 use App\Models\VotingRoom;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Mail\AccountVerified;
 use App\Models\Advertisement;
 use App\Events\DashboardStats;
+use App\Events\UserRegistered;
 use Masmerise\Toaster\Toaster;
 use App\Mail\EmailVerification;
 use App\Mail\UserAccountCreated;
@@ -161,6 +163,7 @@ public function approveUser()
         $user->status = 'approved';
         $user->save();
 
+        broadcast(new UserRegistered());
 
         Mail::to($user->email)->send(new EmailVerification($user));
         Toaster::success('Approved Successfully!');
@@ -227,17 +230,38 @@ public function unbanUser()
     }
 }
 
-    public function render()
+    #[On('newUser')]
+    public function handleNewUserRealtime()
     {
-            $manageUsers = User::where('id', '!=', auth()->id())
-            ->whereNotIn('role', ['org'])
-            ->whereNot('role', 'superadmin') 
-            ->orderBy('created_at', 'asc')
-            ->paginate(8);
-
-        return view('livewire.admin.user.manage-users', [
-            'manageUsers' => $manageUsers,
-            
-        ]);
+        Toaster::success('A new user just registered');
     }
+
+public string $search = '';
+public string $status = 'all';
+
+public function render()
+{
+    $query = User::query()
+        ->whereNotIn('role', ['org', 'superadmin'])
+        ->when($this->search, function ($q) {
+            $q->where(function ($sub) {
+                $sub->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('email', 'like', '%' . $this->search . '%')
+                    ->orWhere('username', 'like', '%' . $this->search . '%');
+            });
+        })
+        ->when($this->status !== 'all', function ($q) {
+            $q->where('status', $this->status);
+        })
+        ->orderBy('created_at', 'asc');
+
+    $manageUsers = $query->paginate(7);
+
+
+    return view('livewire.admin.user.manage-users', [
+        'manageUsers' => $manageUsers,
+
+    ]);
+}
+
 }

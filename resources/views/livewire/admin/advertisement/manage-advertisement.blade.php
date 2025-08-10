@@ -1,15 +1,7 @@
-<div>
-        <div>
-            <flux:heading size="xl" level="1">{{ __('Advertisement') }}</flux:heading>
-            <flux:subheading size="lg" class="mb-6">
-                {{ __('Manage your profile and account settings') }}
-            </flux:subheading>
-
-        <flux:separator variant="subtle" class="col-span-2" />
-        </div>
+<div class="p-10">
 
     <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 h-full">
-        <div class="w-full space-y-4 col-span-3">
+        <div class="w-full space-y-4 col-span-3 px-20">
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
                 <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
                 <flux:modal.trigger name="add-advertisement">

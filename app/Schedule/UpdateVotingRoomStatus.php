@@ -4,6 +4,7 @@ namespace App\Schedule;
 
 use Carbon\Carbon;
 use App\Models\VotingRoom;
+use App\Events\RoomExpired;
 use App\Events\DashboardStats;
 use App\Models\RecentActivity;
 use App\Events\RecentActivities;
@@ -50,7 +51,8 @@ class UpdateVotingRoomStatus
                 'status' => 'closed',
             ]);
 
-            event(new RecentActivities([$activity]));
+            event(new RoomExpired());
+            event(new RecentActivities($activity));
         }
 
 

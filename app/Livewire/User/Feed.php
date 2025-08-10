@@ -4,9 +4,11 @@ namespace App\Livewire\User;
 
 
 use App\Models\Org;
-use App\Models\Feed as FeedModel;
 use App\Models\Type;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Masmerise\Toaster\Toaster;
+use App\Models\Feed as FeedModel;
 
 
 class Feed extends Component
@@ -25,6 +27,19 @@ class Feed extends Component
     {
         $this->fetchFeeds();
         $this->orgs = Org::all();
+    }
+
+    #[On('newFeedPosted')]
+    public function newFeedPosted()
+    {
+        Toaster::info('new feed just posted!');
+        $this->fetchFeeds();
+    }
+
+    #[On('newAdPosted')]
+    public function newAdPosted()
+    {
+        Toaster::info('new ad just posted!');
     }
 
     public function fetchFeeds()

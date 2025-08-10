@@ -47,7 +47,7 @@ class GroupChat extends Model
 
 public function requests()
 {
-    return $this->hasMany(GroupMemberRequest::class, 'group_id');
+    return $this->hasMany(GroupMemberRequest::class, 'group_chat_id');
 }
 
 }

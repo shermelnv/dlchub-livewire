@@ -8,6 +8,7 @@ use App\Http\Middleware\AdminOrOrg;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\SuperAdminOnly;
 use App\Schedule\UpdateVotingRoomStatus;
+use App\Http\Middleware\EnsureUserIsApproved;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -25,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'sharedRole' => AdminOrOrg::class,
         'user.only' =>UserOnly::class,
         'org.only' =>OrgOnly::class,
-
+        'approved' =>EnsureUserIsApproved::class,
     ]);
 
     })

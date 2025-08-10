@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use App\Models\Org;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Advertisement as AdvertisementModel;
 
 class Advertisement extends Component
@@ -30,6 +31,19 @@ class Advertisement extends Component
         $this->fetchAdvertisements();
     }
     
+    #[On('newAdPosted')]
+    public function newAdPosted()
+    {
+        Toaster::info('new ad just posted!');
+        $this->fetchAdvertisements();
+    }
+
+    #[On('newFeedPosted')]
+    public function newFeedPosted()
+    {
+        Toaster::info('new feed just posted!');
+    }
+
     // ───── Data Fetching ─────
     public function fetchAdvertisements()
     {

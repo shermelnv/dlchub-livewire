@@ -8,9 +8,11 @@ use App\Models\Vote;
 use Livewire\Component;
 use App\Models\Position;
 use App\Models\Candidate;
-use App\Models\VotingRoom as VotingRoomModel;
+use Livewire\Attributes\On;
+use App\Events\VotedCandidate;
 use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Auth;
+use App\Models\VotingRoom as VotingRoomModel;
 
 class VotingRoom extends Component
 {
@@ -72,7 +74,7 @@ class VotingRoom extends Component
             'candidate_id' => $candidate->id,
             'position_id'  => $candidate->position_id,
         ]);
-
+        event(new VotedCandidate($candidate->position->votingRoom->id));
         $this->loadRoom();
         Toaster::success('Vote cast successfully!');
     }
@@ -135,11 +137,6 @@ class VotingRoom extends Component
     // Add Position
     // ────────────────────────────────────────────────
 
-    public function addPosition()
-    {
-        $this->modal('add-position')->show();
-    }
-
     public function createPosition()
     {
         $this->validate([
@@ -156,20 +153,16 @@ class VotingRoom extends Component
         ]);
 
         $this->reset('newPosition');
-        $this->modal('add-position')->close();
-
-        $this->loadRoom();
         Toaster::success('Position added successfully.');
+        $this->modal('room-option')->close();
+        $this->modal('add-positionOrcandidate')->close();
+        $this->loadRoom();
+        
     }
 
     // ────────────────────────────────────────────────
     // Add Candidate
     // ────────────────────────────────────────────────
-
-    public function addCandidate()
-    {
-        $this->modal('add-candidate')->show();
-    }
 
     public function createCandidate()
     {
@@ -185,10 +178,11 @@ class VotingRoom extends Component
         Candidate::create($this->newCandidate);
 
         $this->reset('newCandidate');
-        $this->modal('add-candidate')->close();
-
-        $this->loadRoom();
+        $this->modal('room-option')->close();
+        $this->modal('add-positionOrcandidate')->close();
         Toaster::success('Candidate added successfully.');
+        $this->loadRoom();
+
     }
 
     // ────────────────────────────────────────────────
@@ -200,6 +194,33 @@ class VotingRoom extends Component
         $this->loadRoom();
         $this->modal('room-option')->show();
     }
+
+
+    #[On('votedCandidate')]
+    public function votedCandidate()
+    {
+        $this->loadRoom();
+    }
+    #[On('newUser')]
+    public function newUser()
+    {
+        $this->loadRoom();
+    }
+
+    #[On('roomExpired')]
+    public function roomExpired()
+    {
+        $this->loadRoom();
+    }
+    
+    public Candidate|null $selectedCandidate = null;
+
+    public function candidateCard($id)
+    {
+        $this->selectedCandidate = Candidate::findOrFail($id);
+        $this->modal('candidate-card')->show();
+    }
+
 
     // ────────────────────────────────────────────────
     // Render Component

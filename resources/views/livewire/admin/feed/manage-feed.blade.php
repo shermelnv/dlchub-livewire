@@ -1,30 +1,25 @@
-<div>
-    <!-- ========== HEADER ========== -->
-    <div class="relative mb-6 w-full">
-        <flux:heading size="xl" level="1">
-            {{ __('School Announcement') }}
-        </flux:heading>
-
-        <flux:subheading size="lg" class="mb-6">
-            {{ __('Stay Updated with the latest news and important information from our university') }}
-        </flux:subheading>
-
-        <flux:separator variant="subtle" />
-    </div>
+<div 
+    x-data
+    x-init="Echo.channel('manage-feeds')
+                .listen('.feed.post', (e) => {
+                    console.log('new feed post', e.feed);
+                    Livewire.dispatch('newFeedPosted');
+                });">
 
     <!-- ========== MAIN GRID ========== -->
-    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 h-full">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 h-full  lg:p-6">
         <!-- ========== LEFT COLUMN: FEED AREA ========== -->
-        <div class="w-full col-span-3 flex flex-col gap-6 px-4 sm:px-6 md:px-10 lg:px-15 xl:px-20">
+        <div class="w-full col-span-3 flex flex-col gap-6">
 
             <!-- ====== CREATE POST SECTION ====== -->
+            @if(auth()->user()->role !== 'user')
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
                 <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
                 <flux:modal.trigger name="post-feed">
                     <flux:button class="w-full">What's on your mind?</flux:button>
                 </flux:modal.trigger>
             </section>
-
+            @endif
             <div class="flex justify-between">
             <!-- ====== FILTER SECTION ====== -->
             <div class="flex space-x-4">
@@ -133,15 +128,27 @@
         </div>
 
         <!-- ========== RIGHT SIDEBAR ========== -->
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col col-span-2 gap-6 xs:hidden h-[calc(100vh-1.5rem)] sticky self-start top-6 shadow overflow-y-auto">
+            {{-- search --}}
+            <flux:input icon-trailing="magnifying-glass" placeholder="Search" clearable/>
+            
+            <div class="space-y-4">
+                <flux:heading size="lg">Advertisement</flux:heading>
+                <div class="grid grid-cols-2 h-auto gap-4">
+                    <div class="h-20 w-full bg-white"></div>
+                    <div class="grid items-center">Lorem ipsum dolor sit amet!</div>
+                </div>
+            </div>
+            
             <!-- Orgs -->
-            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
+            <div class="border w-full p-2 rounded-lg bg-white dark:bg-gray-800 shadow">
                 <h2 class="font-semibold mb-3 flex gap-2">
                     <flux:icon.building-library /> Organizations
                 </h2>
+                <div class="max-h-[30vh] overflow-y-auto">
                 @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}">
-                        <div class="flex gap-4 items-center text-sm py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
+                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                             <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
                             <span class="truncate">{{ $org->name }}</span>
                         </div>
@@ -149,6 +156,7 @@
                 @empty
                     <p class="text-sm text-gray-400">No data available.</p>
                 @endforelse
+                </div>
             </div>
 
             <!-- Deadlines -->

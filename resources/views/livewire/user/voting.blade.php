@@ -1,4 +1,17 @@
-<div>
+<div
+    x-data
+    x-init="
+        Echo.channel('manage-voting')
+            .listen('.voting.created', (e) => {
+            console.log('new voting room' , e.voting);
+            Livewire.dispatch('newVotingRoom');
+        });
+
+    "
+class="p-10"
+>
+
+
           <div class="relative mb-6 w-full">
             <flux:heading size="xl" level="1">{{ __('Voting') }}</flux:heading>
             <flux:subheading size="lg" class="mb-6">{{ __('Manage your profile and account settings') }}</flux:subheading>

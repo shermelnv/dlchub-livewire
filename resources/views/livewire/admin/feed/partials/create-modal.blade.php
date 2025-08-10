@@ -1,5 +1,5 @@
 <flux:modal name="post-feed">
-    <form wire:submit.prevent="createPost">
+    <form wire:submit.prevent="createPost" enctype="multipart/form-data">
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Create Feed Post</flux:heading>
@@ -32,6 +32,12 @@
                 </div>
             </flux:modal>
         @endif
+        @error('photo')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+        <div wire:loading wire:target="photo">
+            <p class="text-gray-500 text-sm mt-2">Uploading image...</p>
+        </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4">

@@ -5,15 +5,15 @@
             $wire.addActivity(e.detail)
         });
     "
-    class="col-span-1 md:col-span-2 flex flex-col rounded-xl bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 shadow overflow-hidden"
+    class="col-span-1 md:col-span-2 flex flex-col rounded-xl bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 shadow"
 >
  <div class="p-4 text-lg font-semibold text-gray-700 dark:text-white">
         Recent Activities
     </div>
 
-    <div class="flex-1  p-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+    <div class="flex-1 max-h-[60vh] overflow-y-auto px-4 text-sm text-gray-600 dark:text-gray-300">
         @forelse ($activities as $activity)
-            <div class="flex gap-3 items-start py-3 border-b dark:border-neutral-700">
+            <div class="flex gap-3 items-start py-2 border-b dark:border-neutral-700">
                 {{-- Icon Bubble --}}
                 <flux:avatar circle src="{{ 'https://i.pravatar.cc/100?u=' . $activity->type}}" />
                 {{-- Message + Status + Timestamp --}}

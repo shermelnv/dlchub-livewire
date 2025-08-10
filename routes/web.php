@@ -11,21 +11,26 @@ use App\Models\GroupChat;
 
 // ADMIN / SUPERADMIN
 
+use App\Events\RoomExpired;
 use App\Livewire\User\Chat;
 use App\Livewire\User\Feed;
 use App\Livewire\OrgProfile;
 use App\Livewire\VotingRoom;
-use Illuminate\Http\Request;
 
 // GLOBAL
 
-use App\Livewire\User\Voting;
+use Illuminate\Http\Request;
 
 
 // MODELS
 
 
+use App\Livewire\User\Voting;
+use App\Events\UserRegistered;
+use App\Events\VotedCandidate;
+use App\Events\ChatJoinRequest;
 use App\Events\RecentActivities;
+use App\Models\Feed as FeedModel;
 use App\Models\User as  UserModel;
 use App\Livewire\User\Advertisement;
 use Illuminate\Support\Facades\Mail;
@@ -35,19 +40,21 @@ use App\Livewire\Admin\Chat\ManageChat;
 use App\Livewire\Admin\Feed\ManageFeed;
 use App\Livewire\Admin\User\ManageUsers;
 use App\Livewire\DashboardRecentActivity;
+use App\Events\ManageFeed as BroadcastFeed;
 use App\Livewire\Admin\Voting\ManageVoting;
 use App\Events\GroupChat as  GroupChatEvent;
 use App\Models\VotingRoom as  VotingRoomModel;
+use App\Events\ManageVoting as BroadcastVotingRoom;
 use App\Models\Advertisement as  AdvertisementModel;
 use App\Livewire\Admin\Advertisement\ManageAdvertisement;
+use App\Events\ManageAdvertisement as BroadcastAdvertisement;
 
 Route::get('/test-email', function () {
     Mail::to('carreon.carll@gmail.com')->send(new TestMail());
     return 'Email sent!';
 });
 
-Route::view('/registered-success', 'registered-successfully')->name('registered-success');
-Route::view('/not-verified', 'not-verified')->name('not-verified');
+
 
 Route::get('/', function () {
 
@@ -79,7 +86,7 @@ Route::get('redirectAfter_LoginOrRegister', function () {
 })->name('redirectToPage');
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
@@ -142,8 +149,75 @@ Route::middleware(['auth'])->group(function () {
         return 'Broadcast sent';
     });
 
+    Route::get('/test-email', function () {
+        Mail::raw('This is a test email from Laravel.', function ($message) {
+            $message->to('carreon.carll@gmail.com')
+                    ->subject('Test Email from Laravel');
+        });
+
+        return 'Email sent!';
+    });
+
+    Route::get('/test-broadcast-user', function () {
+        $user = User::latest()->first(); // or fake user
+
+        broadcast(new UserRegistered(   ));
+
+        return 'Broadcasted user.registered for: ' . $user->name;
+    });
+
+    Route::get('/test-broadcast-feeds', function () {
+        $feeds = FeedModel::latest()->first(); // or fake user
+
+        broadcast(new BroadcastFeed($feeds));
+
+        return 'Broadcasted feed.posted from: ' . $feeds->title;
+    });
+
+    Route::get('/test-broadcast-ads', function () {
+        $ads = AdvertisementModel::latest()->first(); // or fake user
+
+        broadcast(new BroadcastAdvertisement($ads));
+
+        return 'Broadcasted ads.posted from: ' . $ads->title;
+    });
+    Route::get('/test-broadcast-room', function () {
+        $voting = VotingRoomModel::latest()->first(); // or fake user
+
+        broadcast(new BroadcastVotingRoom($voting));
+
+        return 'Broadcasted voting.posted from: ' . $voting->title;
+    });
+
+    Route::get('/test-voting-room', function () {
+        $voted = VotingRoomModel::latest()->first(); // or fake user
+
+        event(new VotedCandidate($voted->id));
 
 
+        return 'Broadcasted voting.posted from: ' . $voted->title;
+    });
+
+    Route::get('/test-room-expired', function () {
+    $room = VotingRoomModel::latest()->first();
+
+    // Fire the event manually
+    event(new RoomExpired());
+
+    return 'Broadcasted room.expired for: ' . $room->title;
+    });
+
+Route::get('/test-join-request', function () {
+    $group = GroupChat::where('group_code', 'MBFUHO')->firstOrFail();
+
+    event(new ChatJoinRequest($group->id));
+
+    return 'Broadcasted chat.join.request for Group: ' . $group->group_code;
+});
+
+
+    Route::view('/registered-success', 'registered-successfully')->name('registered-success');
+    Route::view('/not-verified', 'not-verified')->name('not-verified');
 });
 
 require __DIR__.'/auth.php';

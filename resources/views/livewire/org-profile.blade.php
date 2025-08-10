@@ -1,6 +1,6 @@
-<div class="min-h-screen ">
+<div class="min-h-screen px-10 py-5">
     {{-- Org Header --}}
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center mb-6 ">
         
         <!-- Left: Org Info -->
         <section class="flex gap-6 col-span-1 md:col-span-4">
@@ -33,30 +33,87 @@
     </div>
 
     
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-10">
 
+        {{-- RIGHT ABOUT --}}
+        <section class="col-span-2 border p-4 rounded-xl bg-white dark:bg-gray-800 h-fit sticky self-start top-6 shadow">
+            <h2 class="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-900 dark:text-white">
+                <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" />
+                About
+            </h2>
+
+            <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur natus aut cumque...
+            </p>
+
+            <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                    <flux:badge size="lg" color="red">
+                        <flux:icon.calendar/>
+                    </flux:badge>
+                    <div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">Founded</div>
+                        <div class="font-semibold text-gray-900 dark:text-white">2020</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <flux:badge size="lg" color="red">
+                        <flux:icon.envelope/>
+                    </flux:badge>
+                    <div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
+                        <a href="mailto:egames@university.edu" class="text-black dark:text-white underline truncate">
+                            egames@university.edu
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <flux:badge size="lg" color="red">
+                        <flux:icon.globe-alt/>
+                    </flux:badge>
+                    <div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">Website</div>
+                        <a href="https://www.egames-org.com" target="_blank" class="text-black dark:text-white underline">
+                            www.egames-org.com
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <flux:badge size="lg" color="red">
+                        <flux:icon.users/>
+                    </flux:badge>
+                    <div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">Members</div>
+                        <div class="font-semibold text-black dark:text-white">12,312 Active Members</div>
+                    </div>
+                </div>
+            </div>
+        </section>
       
         {{-- LEFT CONTENT --}}
         <section class="col-span-3">
                 {{-- tabs --}}
             <div x-data="{tab: 'feed'}">
-                <div class="grid grid-cols-3 shadow-md mb-8">
+                <div class="grid grid-cols-3 shadow-md mb-8 ">
                     <button 
                         @click="tab = 'feed'"
-                        :class="tab === 'feed' ? 'bg-red-900 text-white' : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200'"
-                        class="py-4 transition-all">
+                        :class="tab === 'feed' ? 'bg-red-950 border-b text-white' : ' text-gray-900  dark:text-gray-200'"
+                        class="py-4 transition-all rounded-tl-xl ">
                         Feed
                     </button>
                     <button 
                         @click="tab = 'ads'"
-                        :class="tab === 'ads' ? 'bg-red-900 text-white' : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 border-r-2'"
+                        :class="tab === 'ads' ? 'bg-red-950 border-b text-white' : ' text-gray-900  dark:text-gray-200 '"
                         class="py-4 transition-all">
                         Advertisement
                     </button>
                     <button 
                         @click="tab = 'members'"
-                        :class="tab === 'members' ? 'bg-red-900 text-white' : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200'"
-                        class="py-4 transition-all">
+                        :class="tab === 'members' ? 'bg-red-950 border-b text-white' : ' text-gray-900  dark:text-gray-200'"
+                        class="py-4 transition-all rounded-tr-xl">
                         Members
                     </button>
             
@@ -153,63 +210,7 @@
           
         </section>
 
-          {{-- RIGHT ABOUT --}}
-       <section class="border p-4 rounded-xl bg-white dark:bg-gray-800 h-fit sticky self-start top-6 shadow">
-    <h2 class="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-900 dark:text-white">
-        <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" />
-        About
-    </h2>
-
-    <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur natus aut cumque...
-    </p>
-
-    <div class="space-y-4">
-        <div class="flex items-center gap-4">
-            <flux:badge size="lg" color="red">
-                <flux:icon.calendar/>
-            </flux:badge>
-            <div>
-                <div class="text-sm text-gray-600 dark:text-gray-300">Founded</div>
-                <div class="font-semibold text-gray-900 dark:text-white">2020</div>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <flux:badge size="lg" color="red">
-                <flux:icon.envelope/>
-            </flux:badge>
-            <div>
-                <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
-                <a href="mailto:egames@university.edu" class="text-black dark:text-white underline">
-                    egames@university.edu
-                </a>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <flux:badge size="lg" color="red">
-                <flux:icon.globe-alt/>
-            </flux:badge>
-            <div>
-                <div class="text-sm text-gray-600 dark:text-gray-300">Website</div>
-                <a href="https://www.egames-org.com" target="_blank" class="text-black dark:text-white underline">
-                    www.egames-org.com
-                </a>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4">
-            <flux:badge size="lg" color="red">
-                <flux:icon.users/>
-            </flux:badge>
-            <div>
-                <div class="text-sm text-gray-600 dark:text-gray-300">Members</div>
-                <div class="font-semibold text-black dark:text-white">12,312 Active Members</div>
-            </div>
-        </div>
-    </div>
-</section>
+        
 
     </div>
 </div>
