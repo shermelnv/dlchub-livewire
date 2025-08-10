@@ -29,15 +29,14 @@ RUN composer install --no-dev --optimize-autoloader
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
-# Install npm dependencies and build assets (adjust if using Vite)
+# Build assets
 RUN npm install && npm run build
 
-# Permissions for Laravel storage and cache
+# Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 9000 for php-fpm (if using nginx)
-EXPOSE 8000
+# Expose port Railway expects
+EXPOSE 8080
 
-# Start PHP-FPM server (change as needed)
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
-
+# Start Laravel on port 8080
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080
