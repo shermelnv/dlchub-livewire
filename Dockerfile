@@ -1,39 +1,42 @@
-# Use official PHP 8.2 image
+# Use official PHP 8.2 image with required extensions
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies & PHP extensions for Laravel
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip supervisor \
-    libzip-dev libpng-dev libonig-dev libxml2-dev \
+    git \
+    curl \
+    libzip-dev \
+    zip \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Install Composer
+# Install Composer globally
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working dir
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy app files
+# Copy existing application files
 COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node.js for Vite build
+# Install Node.js (for building assets)
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
 # Build assets
 RUN npm install && npm run build
 
-# Laravel storage/cache permissions
+# Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Copy Supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Expose port Railway uses
+# Expose port Railway expects
 EXPOSE 8080
 
-# Start Supervisor (manages multiple processes)
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start Laravel on port 8080
+CMD php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=8080
