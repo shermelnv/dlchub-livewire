@@ -20,8 +20,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application files
-COPY . .
+# Copy only composer files first for caching
+COPY composer.json composer.lock ./
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -30,11 +30,18 @@ RUN composer install --no-dev --optimize-autoloader
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
-# Build assets
+# Copy the rest of the app
+COPY . .
+
+# Ensure .env is present before building assets (Railway injects at build time)
+# If you have a local .env for dev, uncomment:
+# COPY .env .env
+
+# Install Node modules & build assets
 RUN npm install && npm run build
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Copy Supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -43,4 +50,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 8080 6001
 
 # Start all processes using Supervisor
-CMD php artisan migrate:fresh --force --seed &&  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD php artisan migrate:fresh --force --seed && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
