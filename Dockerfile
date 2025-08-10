@@ -35,6 +35,7 @@ COPY supervisord.conf /etc/supervisord.conf
 # Expose HTTP and Reverb WebSocket ports
 EXPOSE 8080 6001
 
+ENV PORT=8080
 
 # Start Supervisor (manages all processes)
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
