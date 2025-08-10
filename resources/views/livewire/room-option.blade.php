@@ -10,12 +10,13 @@
         <!-- Position List -->
         <flux:navlist>
             <flux:navlist.group heading="Position" expandable :expanded="false">
-                
+                @if(auth()->user()->role != 'user')
                 <flux:modal.trigger name="add-positionOrcandidate">
                     <flux:navlist.item icon="plus" class="mb-5">
                         Add Position or Candidate
                     </flux:navlist.item>
                 </flux:modal.trigger>
+                @endif
                 <!-- President -->
 
                 {{-- CANDIDATE AND POSITION LIST --}}

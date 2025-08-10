@@ -24,15 +24,20 @@
     <!-- Back -->
     <div class="flex justify-between items-center mb-6">
         <a 
-            href="{{ route('admin.voting.manage-voting') }}"
+            href="{{ auth()->user()->role == 'user' 
+            ? route('user.voting')  
+            : route('admin.voting.manage-voting') }}"
+
             class="inline-flex items-center text-sm font-medium text-maroon-700 dark:text-maroon-300 hover:underline"
         >
             <flux:icon.chevron-left class="w-4 h-4 mr-1" />
             Back to Rooms
         </a>
+        @if($room->status != 'Closed')
         <flux:modal.trigger name="room-option">
             <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer hover:text-white" />
         </flux:modal.trigger>
+        @endif
     </div>
 
     @if($room->status !== 'Closed')
