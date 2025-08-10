@@ -218,6 +218,13 @@ Route::get('/test-join-request', function () {
 
     Route::view('/registered-success', 'registered-successfully')->name('registered-success');
     Route::view('/not-verified', 'not-verified')->name('not-verified');
+
+
+    // routes/web.php
+Route::get('/test', function () {
+    return 'Laravel is working!';
+});
+
 });
 
 require __DIR__.'/auth.php';
