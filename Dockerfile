@@ -33,7 +33,8 @@ RUN php artisan config:cache \
 COPY supervisord.conf /etc/supervisord.conf
 
 # Expose HTTP and Reverb WebSocket ports
-EXPOSE 80 6001
+EXPOSE 8080 6001
+
 
 # Start Supervisor (manages all processes)
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
