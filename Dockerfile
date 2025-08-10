@@ -30,9 +30,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
-# Copy env first
-COPY .env .env
-
 # Build assets
 RUN npm install && npm run build
 
