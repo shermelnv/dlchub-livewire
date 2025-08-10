@@ -43,4 +43,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 8080 6001
 
 # Start all processes using Supervisor
-CMD php artisan migrate:fresh --force --seed &&  for/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+CMD php artisan migrate:fresh --force --seed &&  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
