@@ -71,19 +71,26 @@
 
             {{-- TEXT CONTENT --}}
             <div class="p-4 space-y-3">
-                <div class="flex justify-between items-start">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-                        {{ $ad->title }}
-                    </h2>
-
-                    <flux:dropdown position="bottom" align="end">
-                        <button><flux:icon.ellipsis-horizontal /></button>
-                        <flux:menu>
-                            <flux:menu.item wire:click="editAdvertisement({{ $ad->id }})">Edit</flux:menu.item>
-                            <flux:menu.item wire:click="confirmDelete({{ $ad->id }})">Delete</flux:menu.item>
-                        </flux:menu>
-                    </flux:dropdown>
-                </div>
+                <!-- Header -->
+                            <div class="flex justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }}
+                                </p>
+                            </div>
+                            @if($ad->user_id === auth()->user()->id)
+                            <div>
+                                <flux:dropdown position="bottom" align="end">
+                                    <button><flux:icon.ellipsis-horizontal /></button>
+                                    <flux:menu>
+                                        <flux:menu.item wire:click="editAdvertisement({{ $ad->id }})">Edit</flux:menu.item>
+                                        <flux:menu.item wire:click="confirmDelete({{ $ad->id }})">Delete</flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
+                            @endif
+                            </div>
 
                 <p class="text-sm text-gray-600 dark:text-gray-300">{{ $ad->description }}</p>
 

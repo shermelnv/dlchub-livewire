@@ -26,8 +26,15 @@
                 <div class="col-span-2 space-y-3">
                     <flux:input label="Name" value="{{ $showUser['name'] ?? '' }}" readonly />
                     <flux:input label="Email" value="{{ $showUser['email'] ?? '' }}" readonly />
-                    <flux:input label="Organization" value="{{ $showUser['organization'] ?? '' }}" readonly />
+                    
                     <flux:input label="Role" value="{{ ucfirst($showUser['role'] ?? 'user') }}" readonly />
+
+                    <div class="flex justify-between">
+                        <p class="font-semibold">COR</p>
+                        <flux:modal.trigger name="COR_preview">
+                            <flux:button size="sm">View COR</flux:button>
+                        </flux:modal.trigger>
+                    </div>
                 </div>
             </div>
 
@@ -42,6 +49,22 @@
         <div class="p-6 text-center">
             <flux:icon.loading class="w-5 h-5 animate-spin text-primary mx-auto" />
             <flux:text class="mt-2">Loading user data...</flux:text>
+        </div>
+    @endif
+</flux:modal>
+
+<flux:modal name="COR_preview">
+    <flux:heading>COR PREVIEW</flux:heading>
+
+    @if (!empty($showUser['document']))
+        <div class="p-4">
+            <img src="{{ asset('storage/' . $showUser['document']) }}" 
+                 alt="User COR or ID" 
+                 class="max-w-full h-auto mx-auto rounded-lg border border-gray-300" />
+        </div>
+    @else
+        <div class="p-6 text-center">
+            <flux:text>No COR/ID document uploaded.</flux:text>
         </div>
     @endif
 </flux:modal>

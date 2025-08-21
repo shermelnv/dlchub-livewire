@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ config('app.name', 'DLCHub') }}</title>
+    <title>{{ config('app.name', 'PLCHub') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js']) {{-- Adjust if using other build tools --}}
     @livewireStyles
 </head>

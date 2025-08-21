@@ -7,8 +7,11 @@
     "
     class="col-span-1 md:col-span-2 flex flex-col rounded-xl bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 shadow"
 >
- <div class="p-4 text-lg font-semibold text-gray-700 dark:text-white">
-        Recent Activities
+    <div class="p-4 text-lg font-semibold text-gray-700 dark:text-white flex justify-between">
+        <p>Recent Activities</p>
+        <flux:modal.trigger>
+            <flux:button icon="eye" size="sm">View All</flux:button>
+        </flux:modal.trigger>
     </div>
 
     <div class="flex-1 max-h-[60vh] overflow-y-auto px-4 text-sm text-gray-600 dark:text-gray-300">

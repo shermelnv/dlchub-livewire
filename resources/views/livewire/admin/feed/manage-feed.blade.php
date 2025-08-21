@@ -4,12 +4,13 @@
                 .listen('.feed.post', (e) => {
                     console.log('new feed post', e.feed);
                     Livewire.dispatch('newFeedPosted');
-                });">
+                });"
+    class="px-5">
 
     <!-- ========== MAIN GRID ========== -->
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 h-full  lg:p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 h-full">
         <!-- ========== LEFT COLUMN: FEED AREA ========== -->
-        <div class="w-full col-span-3 flex flex-col gap-6">
+        <div class="w-full col-span-3 flex flex-col gap-6 py-5 scrollbar-auto-hide">
 
             <!-- ====== CREATE POST SECTION ====== -->
             @if(auth()->user()->role !== 'user')
@@ -82,7 +83,14 @@
                         <div class="p-4 space-y-3">
                             <!-- Header -->
                             <div class="flex justify-between">
-                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->title }}</h2>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }} -- {{ $feed->privacy }}
+                                </p>
+                            </div>
+                            @if($feed->user_id === auth()->user()->id)
+                            <div>
                                 <flux:dropdown position="bottom" align="end">
                                     <button><flux:icon.ellipsis-horizontal /></button>
                                     <flux:menu>
@@ -91,11 +99,13 @@
                                     </flux:menu>
                                 </flux:dropdown>
                             </div>
+                            @endif
+                            </div>
+                            
+                            
 
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }}
-                            </p>
-
+                            
+                            <h2 class="text-base font-semibold text-gray-800 dark:text-white">{{ $feed->title }}</h2>
                             <!-- Content -->
                             <p class="text-sm text-gray-600 dark:text-gray-300">{{ $feed->content }}</p>
 
@@ -128,34 +138,13 @@
         </div>
 
         <!-- ========== RIGHT SIDEBAR ========== -->
-        <div class="flex flex-col col-span-2 gap-6 xs:hidden h-[calc(100vh-1.5rem)] sticky self-start top-6 shadow overflow-y-auto">
-            {{-- search --}}
-            <flux:input icon-trailing="magnifying-glass" placeholder="Search" clearable/>
+        <div class="flex flex-col col-span-2 gap-6 xs:hidden h-[100vh] sticky top-0 shadow overflow-y-auto py-5 scrollbar-hover">
             
             <div class="space-y-4">
                 <flux:heading size="lg">Advertisement</flux:heading>
                 <div class="grid grid-cols-2 h-auto gap-4">
                     <div class="h-20 w-full bg-white"></div>
                     <div class="grid items-center">Lorem ipsum dolor sit amet!</div>
-                </div>
-            </div>
-            
-            <!-- Orgs -->
-            <div class="border w-full p-2 rounded-lg bg-white dark:bg-gray-800 shadow">
-                <h2 class="font-semibold mb-3 flex gap-2">
-                    <flux:icon.building-library /> Organizations
-                </h2>
-                <div class="max-h-[30vh] overflow-y-auto">
-                @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
-                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                            <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
-                            <span class="truncate">{{ $org->name }}</span>
-                        </div>
-                    </a>
-                @empty
-                    <p class="text-sm text-gray-400">No data available.</p>
-                @endforelse
                 </div>
             </div>
 
@@ -176,6 +165,30 @@
                     <li><a href="#" class="hover:underline">⚙️ Manage your organization</a></li>
                 </ul>
             </div>
+
+                        <!-- Orgs -->
+            <div class="border w-full p-2 rounded-lg bg-white dark:bg-gray-800 shadow">
+                <div class="flex justify-between">
+                    <h2 class="font-semibold mb-3 flex gap-2">
+                        <flux:icon.building-library /> Organizations
+                    </h2>
+                        <flux:icon.magnifying-glass/>
+                </div>
+                
+                <div class="h-auto">
+                @forelse ($orgs as $org)
+                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
+                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                            <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
+                            <span class="truncate">{{ $org->name }}</span>
+                        </div>
+                    </a>
+                @empty
+                    <p class="text-sm text-gray-400">No data available.</p>
+                @endforelse
+                </div>
+            </div>
+            
         </div>
     </div>
 

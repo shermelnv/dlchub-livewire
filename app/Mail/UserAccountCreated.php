@@ -23,7 +23,7 @@ class UserAccountCreated extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('Your DLCHub Account')
+        return $this->subject('Your PCHub Account')
                     ->markdown('emails.user-account-created');
     }
 

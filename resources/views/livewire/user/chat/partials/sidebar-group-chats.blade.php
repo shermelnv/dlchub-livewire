@@ -1,10 +1,10 @@
 
-<flux:navlist.group expandable heading="Group Chats" class="grid">
+<flux:navlist.group expandable heading="Group Chats" class="grid" >
     
     <div class="grid gap-2">
         <flux:modal.trigger name="create-group" >
-            <flux:navlist.item icon="plus">
-                Create / Join
+            <flux:navlist.item icon="plus" badge="{{ $groups->count() }}/4" badge-color="{{$groups->count() == 4 ? 'red' : 'lime'}}">
+                Create / Join 
             </flux:navlist.item>
         </flux:modal.trigger>
 

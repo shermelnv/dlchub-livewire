@@ -39,7 +39,7 @@
                         </a>
 
                         {{-- Manage Vote --}}
-                        <a href="{{ route('admin.voting.manage-voting') }}"
+                        <a href="{{ route('voting') }}"
                         class="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm hover:shadow-md transition text-center">
                             <div class="p-2 rounded-full bg-green-100 text-green-600 mb-2">
                                 <flux:icon.check-circle class="w-6 h-6" />
@@ -48,7 +48,7 @@
                         </a>
 
                         {{-- Manage Advertisement --}}
-                        <a href="{{ route('admin.advertisement.manage-advertisement') }}"
+                        <a href="{{ route('advertisement') }}"
                         class="flex flex-col items-center justify-center p-4 bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm hover:shadow-md transition text-center">
                             <div class="p-2 rounded-full bg-yellow-100 text-yellow-600 mb-2">
                                 <flux:icon.megaphone class="w-6 h-6" />

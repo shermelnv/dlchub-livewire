@@ -8,6 +8,7 @@ use App\Models\ChatMessage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Events\DashboardStats;
+use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\GroupMessageSent;
 use App\Models\GroupMemberRequest;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Events\GroupChat as GroupChatEvent;
 use Livewire\Features\SupportEvents\Browser;
 
+#[Title('Chat')]
 class Chat extends Component
 {
     

@@ -3,7 +3,7 @@
 
 Hi {{ $user->name }},
 
-We're excited to let you know that your account on **DLCHub** has been successfully **verified**. You can now log in and start using all features.
+We're excited to let you know that your account on **PLCHub** has been successfully **verified**. You can now log in and start using all features.
 
 ---
 

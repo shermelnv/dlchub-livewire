@@ -2,9 +2,11 @@
 
 
     {{-- Add Voting Modal Trigger --}}
+    @if(auth()->user()->role !== 'user')
     <flux:modal.trigger name="add-voting">
         <flux:button>Add Voting</flux:button>
     </flux:modal.trigger>
+    @endif
 
     {{-- Create Voting Modal --}}
     <flux:modal name="add-voting" class="md:w-[40rem]">

@@ -5,15 +5,17 @@ namespace App\Livewire\Admin\Feed;
 use App\Models\Org;
 use App\Models\Type;
 use Livewire\Component;
-use App\Events\ManageFeed as BroadcastFeed;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use App\Models\RecentActivity;
+use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
 use App\Models\Feed as FeedModel;
 use Illuminate\Support\Facades\Auth;
+use App\Events\ManageFeed as BroadcastFeed;
 
+#[Title('Feed')]
 class ManageFeed extends Component
 {
 

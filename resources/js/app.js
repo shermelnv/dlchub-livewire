@@ -14,3 +14,18 @@ window.Echo.channel('dashboard.stats')
             detail: e.stats
         }));
     });
+
+    
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   document.querySelectorAll('.scrollbar-auto-hide').forEach(el => {
+//     let timeout;
+//     el.addEventListener('scroll', () => {
+//       el.classList.add('scrolling');
+//       clearTimeout(timeout);
+//       timeout = setTimeout(() => {
+//         el.classList.remove('scrolling');
+//       }, 800); // hide after 0.8s idle
+//     });
+//   });
+// });

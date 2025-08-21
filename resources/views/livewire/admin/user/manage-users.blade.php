@@ -53,8 +53,9 @@
                     <th class="px-4 py-3">Username</th>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Email</th>
-                    <th class="px-4 py-3">Role</th>
+
                     <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Role</th>
                     <th class="px-4 py-3 text-center">Actions</th>
                 </tr>
             </thead>
@@ -64,8 +65,15 @@
                         <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageUser->username }}</td>
                         <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageUser->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->email }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->role ?? 'User' }}</td>
+
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->status ?? 'Unknown' }}</td>
+
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-400">
+                            <flux:select size="sm" wire:model="showUser.role">
+                                <flux:select.option value="user">User</flux:select.option>
+                                <flux:select.option value="org">Org</flux:select.option>
+                            </flux:select>
+                        </td>
 
                         {{-- MENU --}}
                         <td class="px-4 py-3 text-center">

@@ -26,6 +26,7 @@ protected $fillable = [
     'status',
     'profile_image',
     'username',
+    'document'
 ];
 
     /**

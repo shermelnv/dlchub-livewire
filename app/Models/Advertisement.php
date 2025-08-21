@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Advertisement extends Model
 {
     protected $fillable = [
+        'user_id',
         'title',
         'description',
         'organization',
@@ -16,5 +17,10 @@ class Advertisement extends Model
 {
     return $this->hasMany(AdvertisementPhoto::class);
 }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

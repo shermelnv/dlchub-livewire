@@ -5,17 +5,20 @@ namespace App\Livewire\Admin\Advertisement;
 use Storage;
 use App\Models\Org;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use App\Models\Advertisement;
 use App\Events\DashboardStats;
-use App\Events\ManageAdvertisement as BroadcastAdvertisement;
 
 use App\Models\RecentActivity;
+use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
 use App\Models\AdvertisementPhoto;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use App\Events\ManageAdvertisement as BroadcastAdvertisement;
 
+#[Title('Advertisement')]
 class ManageAdvertisement extends Component
 {
     use WithFileUploads;
@@ -35,6 +38,7 @@ class ManageAdvertisement extends Component
     public $showDeleteConfirm = false;
 
     // ───── Display Data ─────
+    public $adCount;
     public $trendingOrgs = [];
     public $advertisements = [];
     public $organizationFilter = null;
@@ -42,14 +46,18 @@ class ManageAdvertisement extends Component
 
     // ───── Stats ─────
 
-    public $stats = [
-        'total_ads' => 0,
-        'events' => 0,
-        'internships' => 0,
-        'jobs' => 0,
-        'scholarships' => 0,
-    ];
+    #[On('newAdPosted')]
+    public function newAdPosted()
+    {
+        Toaster::info('new ad just posted!');
+        $this->fetchAdvertisements();
+    }
 
+    #[On('newFeedPosted')]
+    public function newFeedPosted()
+    {
+        Toaster::info('new feed just posted!');
+    }
     // ───── Computed ─────
     public function getFilteredAdvertisementsProperty()
     {
@@ -90,19 +98,24 @@ class ManageAdvertisement extends Component
             ->orderByDesc('ad_count')
             ->limit(5)
             ->get();
+        $this->adCount = Advertisement::count();
     }
 
     // ───── Create or Update ─────
     public function createAdvertisement()
     {
         $validated = $this->validate([
+            
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'organization' => 'nullable|string|max:255',
             'photos.*' => 'nullable|image|max:2048',
         ]);
 
-         $ad = Advertisement::create($validated);
+        $ad = Advertisement::create([
+            'user_id' => Auth::id(), // assign directly
+            ...$validated,
+        ]);
 
        // Upload photos
         foreach ($this->photos as $photo) {

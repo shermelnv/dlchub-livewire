@@ -1,7 +1,7 @@
 <x-mail::message>
 # Hello {{ $user->name }},
 
-Your DLCHub account has been created successfully.
+Your PLCHub account has been created successfully.
 
 ---
 

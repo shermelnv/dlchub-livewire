@@ -6,11 +6,13 @@ use Livewire\Component;
 use App\Models\VotingRoom;
 use App\Events\DashboardStats;
 use App\Models\RecentActivity;
+use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
-use App\Events\ManageVoting as BroadcastVotingRoom;
 use Illuminate\Support\Facades\Auth;
+use App\Events\ManageVoting as BroadcastVotingRoom;
 
+#[Title('Voting')]
 class ManageVoting extends Component
 {
     public $title = '';

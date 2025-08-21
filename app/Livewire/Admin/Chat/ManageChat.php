@@ -4,7 +4,8 @@ namespace App\Livewire\Admin\Chat;
 
 use Livewire\Component;
 use App\Models\GroupChat;
-
+use Livewire\Attributes\Title;
+#[Title('Chat')]
 class ManageChat extends Component
 {
 

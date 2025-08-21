@@ -16,7 +16,8 @@ export default defineConfig({
     host: '0.0.0.0',            // Allow external devices to connect
     port: 5173,                 // Default Vite port
     hmr: {
-      host: '192.168.100.6',    // Your local IP (same as in APP_URL)
+      host: '192.168.100.6',   
+      // host: '192.168.32.123', // Your local IP (same as in APP_URL)
     },
   },
 });

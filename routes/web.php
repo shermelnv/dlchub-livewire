@@ -78,9 +78,9 @@ Route::get('redirectAfter_LoginOrRegister', function () {
     if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' ) {
         return redirect()->route('dashboard');
     } elseif(auth()->user()->role === 'user' ) {
-        return redirect()->route('user.feed');
+        return redirect()->route('feed');
     } elseif(auth()->user()->role === 'org') {
-        return redirect()->route('admin.feed.manage-feed');
+        return redirect()->route('feed');
     }
 
 })->name('redirectToPage');
@@ -109,23 +109,23 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::middleware('sharedRole')->group(function() {
 
         
-        Route::get('admin/voting/manage-voting', ManageVoting::class)->name('admin.voting.manage-voting');
+        // Route::get('admin/voting/manage-voting', ManageVoting::class)->name('admin.voting.manage-voting');
         Route::get('admin/chat/manage-chat', ManageChat::class)->name('admin.chat.manage-chat');
-        Route::get('admin/advertisement/manage-advertisement', ManageAdvertisement::class)->name('admin.advertisement.manage-advertisement');
-        Route::get('admin/feed/manage-feed', ManageFeed::class)->name('admin.feed.manage-feed');
+        // Route::get('admin/advertisement/manage-advertisement', ManageAdvertisement::class)->name('admin.advertisement.manage-advertisement');
+        // Route::get('admin/feed/manage-feed', ManageFeed::class)->name('admin.feed.manage-feed');
         
 
     });
 
 
     Route::middleware('user.only')->group(function () {
-            Route::get('user/feed', Feed::class)->name('user.feed');
-            Route::get('user/advertisement', Advertisement::class)->name('user.advertisement');
+            // Route::get('user/feed', Feed::class)->name('user.feed');
+            // Route::get('user/advertisement', Advertisement::class)->name('user.advertisement');
         // routes/web.php
 
             Route::get('user/chat/{groupCode?}', Chat::class)->name('user.chat');
 
-            Route::get('user/voting', Voting::class)->name('user.voting');
+            // Route::get('user/voting', Voting::class)->name('user.voting');
             // });
 
             
@@ -199,32 +199,31 @@ Route::middleware(['auth', 'approved'])->group(function () {
     });
 
     Route::get('/test-room-expired', function () {
-    $room = VotingRoomModel::latest()->first();
+        $room = VotingRoomModel::latest()->first();
 
-    // Fire the event manually
-    event(new RoomExpired());
+        // Fire the event manually
+        event(new RoomExpired());
 
-    return 'Broadcasted room.expired for: ' . $room->title;
+        return 'Broadcasted room.expired for: ' . $room->title;
+        });
+
+    Route::get('/test-join-request', function () {
+        $group = GroupChat::where('group_code', 'MBFUHO')->firstOrFail();
+
+        event(new ChatJoinRequest($group->id));
+
+        return 'Broadcasted chat.join.request for Group: ' . $group->group_code;
     });
-
-Route::get('/test-join-request', function () {
-    $group = GroupChat::where('group_code', 'MBFUHO')->firstOrFail();
-
-    event(new ChatJoinRequest($group->id));
-
-    return 'Broadcasted chat.join.request for Group: ' . $group->group_code;
-});
 
 
     Route::view('/registered-success', 'registered-successfully')->name('registered-success');
     Route::view('/not-verified', 'not-verified')->name('not-verified');
 
 
-    // routes/web.php
-Route::get('/test', function () {
-    return 'Laravel is working!';
-});
-
+    Route::get('admin/voting/manage-voting', ManageVoting::class)->name('voting');
+    Route::get('admin/advertisement/manage-advertisement', ManageAdvertisement::class)->name('advertisement');
+    Route::get('admin/feed/manage-feed', ManageFeed::class)->name('feed');
+    
 });
 
 require __DIR__.'/auth.php';

@@ -1,7 +1,20 @@
-<div class="p-10">
+<div 
+    x-init="Echo.channel('manage-ads')
+                .listen('.ads.post', (e) => {
+                    console.log('new ads post', e.ads);
+                    Livewire.dispatch('newAdPosted');
+                });
+            Echo.channel('manage-feeds')
+                .listen('.feed.post', (e) => {
+                    console.log('new feed post', e.feed);
+                    Livewire.dispatch('newFeedPosted');
+                });
+                
+            "
+class="px-5">
 
-    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 h-full">
-        <div class="w-full space-y-4 col-span-3 px-20">
+    <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-6 h-full">
+        <div class="w-full space-y-4 col-span-3 py-5">
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
                 <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
                 <flux:modal.trigger name="add-advertisement">
@@ -48,16 +61,22 @@
         </div>
 
         {{-- RIGHT SIDEBAR --}}
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col col-span-2 gap-6 xs:hidden h-[100vh] sticky top-0 shadow overflow-y-auto py-5 scrollbar-hover">
             <!-- QUICK STATS -->
             <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
                 <h2 class="font-semibold mb-3">📊 Quick Stats</h2>
                 <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-                    <li>Total Advertisements: <strong>{{ $stats['total_ads'] }}</strong></li>
-                    <li>Events: <strong>{{ $stats['events'] }}</strong></li>
-                    <li>Internships: <strong>{{ $stats['internships'] }}</strong></li>
-                    <li>Jobs: <strong>{{ $stats['jobs'] }}</strong></li>
-                    <li>Scholarships: <strong>{{ $stats['scholarships'] }}</strong></li>
+                    <li>Total Advertisements: <strong>{{ $adCount }}</strong></li>
+                @forelse($trendingOrgs as $org)
+
+                            <li class="flex justify-between text-sm py-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                                <span class="break-all">{{ $org->organization }}</span>
+                                <span class="text-gray-500">{{ $org->ad_count }} posts</span>
+                            </li>
+
+                @empty
+                    <li class="text-sm text-gray-400">No data available.</li>
+                @endforelse
                 </ul>
             </div>
 

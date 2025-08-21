@@ -24,9 +24,8 @@
     <!-- Back -->
     <div class="flex justify-between items-center mb-6">
         <a 
-            href="{{ auth()->user()->role == 'user' 
-            ? route('user.voting')  
-            : route('admin.voting.manage-voting') }}"
+            href="{{route('voting')}}"
+            
 
             class="inline-flex items-center text-sm font-medium text-maroon-700 dark:text-maroon-300 hover:underline"
         >
@@ -204,7 +203,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach($positions as $position)
                 @php
                     $maxVotes = $position->candidates->max('vote_count');

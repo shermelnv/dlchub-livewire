@@ -101,20 +101,13 @@
                     placeholder="Tell us something about this candidate..."
                 />
 
-                <!-- Photo URL -->
-                <flux:input
-                    label="Photo URL (optional)"
-                    wire:model.defer="newCandidate.photo_url"
-                    placeholder="https://example.com/photo.jpg"
-                    type="url"
-                />
 
                         <div class="flex justify-end gap-4">
                             <flux:modal.close>
                                 <flux:button variant="ghost" size="sm">Close</flux:button>
                             </flux:modal.close>
                             
-                            <flux:button type="submit" size="sm">Create</flux:button>
+                            <flux:button type="submit" size="sm">Create Candidate</flux:button>
                         </div>
                     </div>
                 </form>
@@ -135,7 +128,7 @@
                             <flux:modal.close>
                                 <flux:button variant="ghost" size="sm">Close</flux:button>
                             </flux:modal.close>
-                            <flux:button type="submit" size="sm">Join</flux:button>
+                            <flux:button type="submit" size="sm">Create Position</flux:button>
                         </div>
                     </div>
                 </form>

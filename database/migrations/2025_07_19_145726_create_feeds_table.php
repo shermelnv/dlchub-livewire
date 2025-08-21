@@ -17,6 +17,7 @@ return new class extends Migration
     $table->string('organization')->nullable();
     $table->string('type')->nullable();
     $table->string('title');
+    $table->enum('privacy', ['public', 'private'])->default('public');
     $table->text('content');
     $table->string('photo_url')->nullable();
     $table->date('published_at')->nullable(); // for sorting/filter

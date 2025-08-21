@@ -1,4 +1,4 @@
-<flux:modal name="post-feed">
+<flux:modal name="post-feed" :dismissible="false" class="w-sm md:w-lg">
     <form wire:submit.prevent="createPost" enctype="multipart/form-data">
         <div class="space-y-6">
             <div>
@@ -8,11 +8,22 @@
                 </flux:text>
             </div>
 
-            <div class="flex flex-col gap-4">
-    <flux:input label="Post Title" wire:model.defer="title" placeholder="Post Title" />
+            <flux:input label="Post Title" wire:model.defer="title" placeholder="Post Title" />
+
+
+    
     <flux:textarea label="Post Content" wire:model.defer="content" placeholder="What's on your mind? (Max 2000 Characters)" />
 
-    <div>
+                <div class="flex flex-col gap-4">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <flux:select label="Privacy" wire:model.defer="privacy" placeholder="Public / Private">
+                            <flux:select.option value="public">Public</flux:select.option>
+                            <flux:select.option value="private">Private</flux:select.option>
+                        </flux:select>
+                        <flux:input type="text" label="Type" wire:model.defer="type" placeholder="ex. Event, Announcement, etc." autocomplete="off" />
+                    </div>
+                <div>
         
             <div class="flex items-center justify-between">
                 <flux:label class="p-2">Image</flux:label>
@@ -35,19 +46,11 @@
         @error('photo')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
         @enderror
-        <div wire:loading wire:target="photo">
-            <p class="text-gray-500 text-sm mt-2">Uploading image...</p>
-        </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
-        <flux:input type="text" label="Type" wire:model.defer="type" placeholder="ex. Event, Announcement, etc." autocomplete="off" />
-        <flux:select label="Organization" wire:model.defer="organization" placeholder="Organization">
-            <flux:select.option selected>All</flux:select.option>
-            @foreach ($orgs as $org)
-                <flux:select.option value="{{ $org->name }}">{{ $org->name }}</flux:select.option>
-            @endforeach
-        </flux:select>
+    <div class="grid  gap-4">
+        
+
     </div>
 </div>
 
@@ -56,7 +59,15 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">Post</flux:button>
+                <flux:button 
+                    type="submit" 
+                    variant="primary"
+                    wire:loading.attr="disabled" 
+                    wire:target="photo">
+                    <span wire:loading.remove wire:target="photo">Post</span>
+                    <span wire:loading wire:target="photo">Uploading...</span>
+                </flux:button>
+
             </div>
         </div>
     </form>

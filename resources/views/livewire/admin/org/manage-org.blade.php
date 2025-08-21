@@ -1,13 +1,29 @@
-<div class="space-y-8">
+<div class="space-y-4 p-10">
 
     {{-- Header --}}
     <div class="relative grid grid-cols-2">
-    <section>        
-        <flux:heading size="xl" level="1">Manage Users</flux:heading>
-        <flux:subheading size="lg" class="mt-2 text-gray-600 dark:text-gray-400">
-            Manage your user accounts, edit details or remove users as needed.
-        </flux:subheading>
-    </section>
+        <section class="flex gap-2">
+            <flux:input 
+            icon="magnifying-glass" 
+            placeholder="Search user" 
+            wire:model.live="search"
+            />
+        <flux:dropdown>
+            <flux:button icon:trailing="chevron-down">
+                Status
+            </flux:button>
+
+            <flux:menu>
+                <flux:menu.radio.group wire:model.live="status">
+                    <flux:menu.radio value="all">All</flux:menu.radio>
+                    <flux:menu.radio value="pending">Pending</flux:menu.radio>
+                    <flux:menu.radio value="approved">Approved</flux:menu.radio>
+                    <flux:menu.radio value="rejected">Rejected</flux:menu.radio>
+                    <flux:menu.radio value="banned">Banned</flux:menu.radio>
+                </flux:menu.radio.group>
+            </flux:menu>
+        </flux:dropdown>
+        </section>
     <section class="flex justify-end items-center">
         <flux:modal.trigger name="create-org">
             <flux:button icon="plus">Create Org</flux:button>

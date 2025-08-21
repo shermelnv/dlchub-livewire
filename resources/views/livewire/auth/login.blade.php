@@ -99,7 +99,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             required
             autofocus
             autocomplete="email"
-            placeholder="email@example.com"
+            placeholder="123456789@pampangastateu.edu.ph"
         />
 
         <!-- Password -->
