@@ -1,7 +1,7 @@
 <flux:modal name="add-advertisement" class="md:w-[40rem]">
     <form wire:submit.prevent="createAdvertisement">
         <div class="space-y-6">
-            <flux:heading size="lg">Post an Opportunity</flux:heading>
+            <flux:heading size="lg">Post an Advertisement</flux:heading>
             <flux:text class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 Fill out the details below to publish your advertisement.
             </flux:text>
@@ -10,9 +10,9 @@
 
             <flux:textarea label="Description" rows="4" wire:model.defer="description" placeholder="Provide full details..." />
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1  gap-4">
                 
-                                               
+                        @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
                             <flux:select label="Organization" wire:model.defer="organization">
                                     <flux:select.option selected value="">All</flux:select.option>
                                 @foreach ($orgs as $org)
@@ -20,7 +20,17 @@
                                     <flux:select.option value="{{$org->name}}">{{$org->name}}</flux:select.option>
                                 @endforeach
                             </flux:select>
-                    
+                        @endif
+
+                        @if(auth()->user()->role === 'org')
+                    <div class="grid grid-cols-2 gap-4">
+                        <flux:select label="Privacy" wire:model.defer="privacy" placeholder="Public / Private" description="Public - All. Private - Org members" >
+                            <flux:select.option value="public">Public</flux:select.option>
+                            <flux:select.option value="private">Private</flux:select.option>
+                        </flux:select>
+                        <flux:input type="text" label="Type" description="Example: Event, Announcement, Etc." wire:model.defer="type" placeholder="ex. Event, Announcement, etc." autocomplete="off" />
+                    </div>
+                    @endif
 
                                        {{-- Image Upload --}}
             <div class="space-y-2">

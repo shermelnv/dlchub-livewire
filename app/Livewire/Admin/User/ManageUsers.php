@@ -39,9 +39,12 @@ class ManageUsers extends Component
     public string $search = '';
     public string $status = 'all';
 
+    public $roles = [];
+
     public function mount()
     {
         $this->user = auth()->user();
+        $this->roles = User::pluck('role', 'id')->toArray();
     }
 
     public function createUser()
@@ -130,6 +133,16 @@ class ManageUsers extends Component
     {
         $this->deleteUserId = $id;
         $this->modal('delete-user')->show();
+    }
+
+    public function updateRole($userId)
+    {
+        $user = User::findOrFail($userId);
+        $user->role = $this->roles[$userId];
+        $user->save();
+
+        Toaster::success('User role updated successfully!');
+        $this->reset('showUser');
     }
 
     public function deleteUser()
@@ -259,7 +272,12 @@ public function render()
         ->when($this->status !== 'all', function ($q) {
             $q->where('status', $this->status);
         })
-        ->orderBy('created_at', 'asc');
+        ->orderByRaw("CASE 
+            WHEN role = 'admin' THEN 1 
+            WHEN role = 'user' THEN 2 
+            ELSE 3 
+        END")
+        ->orderBy('created_at', 'desc');
 
     $manageUsers = $query->paginate(7);
 

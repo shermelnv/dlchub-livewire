@@ -18,7 +18,7 @@ Schema::create('candidates', function (Blueprint $table) {
     $table->string('short_name')->nullable();
     $table->text('bio')->nullable();
     $table->string('photo_url')->nullable();
-    $table->string('color', 7)->default('#3B82F6'); // HEX
+   
     $table->timestamps();
 });
 

@@ -46,13 +46,26 @@ public function run(): void
         'status' => 'approved',
     ]);
 
+    Org::create([
+        'name' => 'org Organization',
+    ]);
+
+    User::create([
+        'name' => 'user',
+        'email' => 'user@gmail.com',
+        'username' => 'user',
+        'password' => Hash::make('password'),
+        'role' => 'user',
+        'status' => 'approved',
+    ]);
+
     // // Seed 100 users with email = student#@pampangastateu.edu.ph
     User::factory()
         ->count(100)
         ->create()
         ->each(function ($user) {
             // Generate fake student number (8-digit number)
-            $studentNumber = fake()->unique()->numberBetween(10000000, 99999999);
+            $studentNumber = fake()->unique()->numberBetween(2000000000, 9999999999);
             $user->email = $studentNumber . '@pampangastateu.edu.ph';
             $user->username = (string) $studentNumber;
 

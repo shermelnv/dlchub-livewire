@@ -15,6 +15,8 @@ Schema::create('voting_rooms', function (Blueprint $table) {
     $table->id();
     $table->string('title');
     $table->text('description')->nullable();
+    // CREATOR ID
+    $table->foreignId('creator_id')->constrained('users')->onDelete('cascade');
     $table->enum('status', ['Pending', 'Ongoing', 'Closed'])->default('Pending');
     $table->timestamp('start_time')->nullable();
     $table->timestamp('end_time')->nullable();

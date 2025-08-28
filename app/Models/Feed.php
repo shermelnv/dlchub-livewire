@@ -14,10 +14,11 @@ class Feed extends Model
     'user_id',
     'title',         
     'content',
-    'organization',
+    'org_id',
     'type',
     'published_at',
-    'photo_url'
+    'photo_url',
+    'privacy'
 ];
 
 protected $casts = [
@@ -30,4 +31,36 @@ protected $casts = [
     {
         return $this->belongsTo(User::class);
     }
+        public function comments()
+    {
+        return $this->hasMany(\App\Models\Comment::class);
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(\App\Models\Reaction::class);
+    }
+
+// Feed.php
+public function org()
+{
+    return $this->belongsTo(Org::class, 'org_id');
+}
+
+    
+// Feed.php
+public function scopeVisibleToUser($query, $user)
+{
+    return $query->when(!in_array($user->role, ['admin', 'superadmin']), function($q) use ($user) {
+        $q->where('privacy', 'public') // public posts
+          ->orWhere(function($q2) use ($user) {
+              $q2->where('privacy', 'private')
+                 ->where(function($q3) use ($user) {
+                     $q3->whereHas('org.followers', fn($q4) => $q4->where('users.id', $user->id)) // followers
+                        ->orWhere('org_id', $user->id); // OR org itself
+                 });
+          });
+    });
+}
+
 }

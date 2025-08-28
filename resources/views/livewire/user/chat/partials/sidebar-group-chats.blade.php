@@ -1,21 +1,21 @@
+<div class="w-full space-y-4 p-2 h-auto">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-semibold mb-3 flex gap-2 items-center">
+                        Group Chats <flux:badge size="sm" color="{{$groups->count() == 4 ? 'red' : 'lime'}}">{{ $groups->count()}} / 4</flux:badge>
+                        {{-- GROUP LIMIT REACHED --}}
+                        
+                    </h2>
+                    <flux:modal.trigger name="create-group" :disabled="$groups->count() >= 4">
+                        <flux:button variant="ghost" size="sm" icon="plus" />
+                    </flux:modal.trigger>
+                </div>
 
-<flux:navlist.group expandable heading="Group Chats" class="grid" >
-    
-    <div class="grid gap-2">
-        <flux:modal.trigger name="create-group" >
-            <flux:navlist.item icon="plus" badge="{{ $groups->count() }}/4" badge-color="{{$groups->count() == 4 ? 'red' : 'lime'}}">
-                Create / Join 
-            </flux:navlist.item>
-        </flux:modal.trigger>
-
-        @forelse ($groups as $group)
-
-        <flux:navlist.item
-            href="/user/chat/{{ $group->group_code }}"
-            class="flex cursor-pointer"
-            :current=" request()->is('user/chat/' . $group->group_code)"
-        >
-            <div class="flex gap-4 items-center">
+                @forelse ($groups as $group)
+                    <a href="/user/chat/{{ $group->group_code }}" class="flex cursor-pointer rounded-lg py-2
+          {{ request()->is('user/chat/' . $group->group_code) 
+              ? 'bg-gray-200 dark:bg-gray-800' 
+              : 'hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                    <div class="flex gap-4 px-2 items-center">
                 <flux:avatar circle src="https://unavatar.io/x/calebporzio" size="sm" />
                 <div>
                     <div>{{ $group->name }}</div>
@@ -24,14 +24,16 @@
                     </div>
                 </div>
             </div>
-        </flux:navlist.item>
-
-
-        @empty
-            <div class="text-sm text-zinc-500 italic px-4">
+                    </a>
+                @empty
+                    <div class="text-sm text-zinc-500 italic px-2">
                 You're not part of any groups yet.
             </div>
-        @endforelse
-    </div>
+                @endforelse
+
     @include('livewire.user.chat.partials.create-group')
-</flux:navlist.group>
+
+            </div>
+
+
+

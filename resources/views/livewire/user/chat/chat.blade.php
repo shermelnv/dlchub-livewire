@@ -35,9 +35,11 @@
                     }
             });
     "
-    class="flex flex-col h-[calc(100dvh-5rem)] lg:h-[100dvh]"
+    class="grid grid-cols-1 md:grid-cols-4 "
 
 >
+
+<div class="flex flex-col h-[calc(100dvh-5rem)] lg:h-[100dvh] col-span-3 border-r border-gray-200 dark:border-gray-700">
 
     <!-- Chat Layout -->
     <div class="grid grid-rows-[auto_1fr_auto] flex-1 min-h-0">
@@ -154,4 +156,9 @@
     @if($selectedGroup)
     @include('livewire.user.chat.partials.group-setting')
     @endif
+</div>
+<div class="col-span-1">
+    <livewire:right-sidebar />
+</div>
+
 </div>

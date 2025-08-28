@@ -14,7 +14,10 @@ return new class extends Migration
   Schema::create('feeds', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
-    $table->string('organization')->nullable();
+    $table->foreignId('org_id')->nullable()->constrained('orgs')->onDelete('cascade');
+
+
+
     $table->string('type')->nullable();
     $table->string('title');
     $table->enum('privacy', ['public', 'private'])->default('public');

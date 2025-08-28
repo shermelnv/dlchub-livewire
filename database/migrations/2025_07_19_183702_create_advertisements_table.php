@@ -14,7 +14,8 @@ public function up(): void
     Schema::create('advertisements', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
-        $table->string('title');
+        $table->foreignId('org_id')->nullable()->constrained('users')->onDelete('cascade');
+$table->string('title');
         $table->text('description')->nullable();
         $table->string('organization')->nullable();
         $table->enum('privacy', ['public', 'private'])->default('public');

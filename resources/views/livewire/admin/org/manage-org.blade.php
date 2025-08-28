@@ -49,7 +49,13 @@
                 @forelse ($manageOrgs as $manageOrg)
                     <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800">
                         <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageOrg->id }}</td>
-                        <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageOrg->name }}</td>
+                        
+                            <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">
+                                <a href="{{ route('org.profile', ['org' => $manageOrg->id]) }}">
+                                    {{ $manageOrg->name }}
+                                </a>
+                            </td>
+                        
                         <td class="px-4 py-3 text-center">
                             <flux:dropdown position="left">
                                 <flux:button icon="ellipsis-horizontal" variant="ghost" />

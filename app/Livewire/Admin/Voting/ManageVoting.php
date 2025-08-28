@@ -51,8 +51,9 @@ class ManageVoting extends Component
         $this->validate([
         'title' => 'required|string|max:255',
         'description' => 'nullable|string',
-        'start_time' => 'nullable|date',
-        'end_time' => 'nullable|date|after:start_time',
+        'start_time' => 'required|date',
+        'end_time' => 'required|date|after:start_time',
+        
     ]);
 
     $status = now()->lt($this->start_time) ? 'Pending' : 'Ongoing';
@@ -63,6 +64,7 @@ class ManageVoting extends Component
         'start_time' => $this->start_time ?: null,
         'end_time' => $this->end_time ?: null,
         'status' => $status,
+        'creator_id' => Auth::id(),
     ]);
 
         $activity = '🗳️ ' . auth()->user()->name . ' created a voting room: "' . $this->title . '"';

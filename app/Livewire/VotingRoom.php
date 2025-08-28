@@ -9,6 +9,7 @@ use Livewire\Component;
 use App\Models\Position;
 use App\Models\Candidate;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 use App\Events\VotedCandidate;
 use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +17,13 @@ use App\Models\VotingRoom as VotingRoomModel;
 
 class VotingRoom extends Component
 {
+
+    use WithPagination;
+
     public $room;
     public $positions = [];
     public $totalStudents = 0;
+    
 
     // New position form
     public $newPosition = [
@@ -33,7 +38,6 @@ class VotingRoom extends Component
         'short_name' => '',
         'bio' => '',
         'photo_url' => '',
-        'color' => '#3B82F6',
     ];
 
     // Mount component
@@ -42,6 +46,22 @@ class VotingRoom extends Component
         $this->totalStudents = User::where('role', 'user')->count();
         $this->loadRoom($id);
     }
+
+
+public $voters = [];
+
+// public function showVoters($roomId)
+// {
+//     $this->room = VotingRoomModel::findOrFail($roomId);
+
+//     // Get voters for this room
+//     $this->voters = Vote::with('user')
+//         ->where('voting_rooms_id', $this->room->id)
+//         ->get();
+
+//     $this->modal('voters-list')->show();
+// }
+
 
     // ────────────────────────────────────────────────
     // Voting Logic
@@ -71,6 +91,7 @@ class VotingRoom extends Component
 
         Vote::create([
             'user_id'      => $userId,
+            'voting_rooms_id' => $candidate->position->votingRoom->id,
             'candidate_id' => $candidate->id,
             'position_id'  => $candidate->position_id,
         ]);
@@ -87,6 +108,9 @@ class VotingRoom extends Component
     {
         $roomId = $id ?? $this->room->id;
 
+      
+
+
         $this->room = VotingRoomModel::with([
             'positions' => fn($query) => $query->orderBy('order_index'),
             'positions.candidates.votes'
@@ -102,6 +126,18 @@ class VotingRoom extends Component
                 $candidate->vote_count = $candidate->votes->count();
             }
         }
+    }
+
+    public $perPage = 5;
+
+    public function voters()
+    {
+        return Vote::with('user')
+        ->where('voting_rooms_id', $this->room->id)
+        ->select('user_id') // select only user_id for uniqueness
+        ->distinct()
+        ->paginate(5);
+
     }
 
     // ────────────────────────────────────────────────
@@ -172,7 +208,7 @@ class VotingRoom extends Component
             'newCandidate.short_name'  => 'nullable|string|max:50',
             'newCandidate.bio'         => 'nullable|string',
             'newCandidate.photo_url'   => 'nullable|url|max:255',
-            'newCandidate.color'       => 'nullable|string|max:20',
+
         ]);
 
         Candidate::create($this->newCandidate);
@@ -228,6 +264,8 @@ class VotingRoom extends Component
 
     public function render()
     {
+
+        
         return view('livewire.voting-room', [
             'room'      => $this->room,
             'positions' => $this->positions,

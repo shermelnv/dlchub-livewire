@@ -4,11 +4,12 @@ namespace App\Livewire\Admin\Advertisement;
 
 use Storage;
 use App\Models\Org;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\Advertisement;
-use App\Events\DashboardStats;
 
+use App\Events\DashboardStats;
 use App\Models\RecentActivity;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
@@ -25,6 +26,7 @@ class ManageAdvertisement extends Component
 
 
     public ?string $previewPhoto = null;
+public $org_id;
 
 
     // ───── Form Fields ─────
@@ -32,6 +34,7 @@ class ManageAdvertisement extends Component
     public $title;
     public $description;
     public $organization;
+    public $privacy;
 
     public $editingAdId = null;
     public $deletingAdId = null;
@@ -59,12 +62,21 @@ class ManageAdvertisement extends Component
         Toaster::info('new feed just posted!');
     }
     // ───── Computed ─────
-    public function getFilteredAdvertisementsProperty()
-    {
-        return $this->organizationFilter
-            ? Advertisement::with('photos')->where('organization', $this->organizationFilter)->latest()->get()
-            : Advertisement::with('photos')->latest()->get();
+public function getFilteredAdvertisementsProperty()
+{
+    $user = Auth::user();
+
+    $query = Advertisement::with('photos')->visibleToUser($user);
+
+    if ($this->organizationFilter) {
+        $query->where('org_id', $this->organizationFilter);
     }
+
+    return $query->latest()->get();
+}
+
+
+
     
     public function resetFilters()
     {
@@ -86,20 +98,34 @@ class ManageAdvertisement extends Component
     }
 
     // ───── Data Fetching ─────
-    public function fetchAdvertisements()
-    {
-        $this->advertisements = Advertisement::with('photos')->latest()->get();
-        $this->orgs = Org::all();
+public function fetchAdvertisements()
+{
+    $user = Auth::user();
 
-        $this->trendingOrgs = Advertisement::select('organization')
-            ->whereNotNull('organization')
-            ->groupBy('organization')
-            ->selectRaw('organization, COUNT(*) as ad_count')
-            ->orderByDesc('ad_count')
-            ->limit(5)
-            ->get();
-        $this->adCount = Advertisement::count();
-    }
+
+    // ───── Orgs for filter ─────
+    $this->orgs = User::where('role', 'org')->get();
+
+    // ───── Trending Orgs ─────
+$this->trendingOrgs = Advertisement::visibleToUser($user)
+                                   ->whereNotNull('org_id')
+                                   ->select('org_id')
+                                   ->selectRaw('org_id, COUNT(*) as ad_count')
+                                   ->with('org')
+                                   ->groupBy('org_id')
+                                   ->orderByDesc('ad_count')
+                                   ->limit(5)
+                                   ->get();
+// Fetch advertisements visible to user
+        $this->advertisements = Advertisement::with('photos')
+                                             ->visibleToUser($user)
+                                             ->latest()
+                                             ->get();
+    // ───── Advertisement count ─────
+    // $this->adCount = $this->advertisements->count();
+}
+
+
 
     // ───── Create or Update ─────
     public function createAdvertisement()
@@ -108,13 +134,18 @@ class ManageAdvertisement extends Component
             
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
-            'organization' => 'nullable|string|max:255',
-            'photos.*' => 'nullable|image|max:2048',
-        ]);
+            // 'org_id' => 'nullable|exists:orgs,id',
 
+            'photos.*' => 'nullable|image|max:2048',
+            'privacy' => 'nullable',
+        ]);
+        $user = Auth::user();
+        
         $ad = Advertisement::create([
             'user_id' => Auth::id(), // assign directly
+            'org_id' => $user->role === 'org' ? $user->id : null,// assign directly
             ...$validated,
+            'privacy' => $validated['privacy'] ?? 'public',
         ]);
 
        // Upload photos
@@ -135,7 +166,7 @@ class ManageAdvertisement extends Component
             'message' => $activity,
             'type' => 'advertisement',
         ]);
-        broadcast(new BroadcastAdvertisement($ad));
+        broadcast(new BroadcastAdvertisement($ad))->toOthers();
         event(new RecentActivities($activity));
         event(new DashboardStats([
             'students' => \App\Models\User::where('role', 'user')->count(),
@@ -197,18 +228,6 @@ class ManageAdvertisement extends Component
             ]);
         }
         }
-
-
-        $user = Auth::user();
-        $activity = $user->name . ' updated an advertisement for ' . ($ad->organization ?? 'Unknown Org');
-
-        RecentActivity::create([
-            'message' => $activity,
-            'type' => 'advertisement',
-        ]);
-
-        event(new RecentActivities($activity));
-
         Toaster::success('Advertisement updated!');
 
         $this->reset(['editingAdId', 'showAd', 'photos']);

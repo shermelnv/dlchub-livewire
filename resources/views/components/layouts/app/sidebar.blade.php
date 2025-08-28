@@ -13,7 +13,7 @@
                 <x-app-logo />
             </a>
             @else
-            <a href="{{ route('feed') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
             @endif
@@ -78,7 +78,7 @@
 
                     </flux:navlist.group>
 
-                    @livewire('sidebar-group-chats')
+                    {{-- @livewire('sidebar-group-chats') --}}
                 @endif
 
 

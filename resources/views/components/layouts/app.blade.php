@@ -15,4 +15,15 @@
         
     </flux:main>
     <x-toaster-hub />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Initialize AOS normally
+    document.addEventListener('DOMContentLoaded', () => {
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+    });
+    
+</script>
 </x-layouts.app.sidebar>

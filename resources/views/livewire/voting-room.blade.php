@@ -48,14 +48,19 @@
                 <h1 class="text-2xl font-bold text-maroon-900 dark:text-white">{{ $room->title }}</h1>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $room->description }}</p>
             </div>
-            <div class="text-sm text-right space-y-1">
-                <div class="text-gray-500 dark:text-gray-400">Ends at</div>
-                <div class="font-semibold" id="ends-in-clock">Loading...</div>
-                <div class="font-bold {{ $this->statusTextColor }}">
-                    Status: {{ $room->status }}
-                </div>
-            </div>
+                @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty() && $room->status === 'Ongoing')
+
+                    <div class="text-sm text-right space-y-1">
+                        <div class="text-gray-500 dark:text-gray-400">Ends at</div>
+                        <div class="font-semibold" id="ends-in-clock">Loading...</div>
+                        <div class="font-bold {{ $this->statusTextColor }}">
+                            Status: {{ $room->status }}
+                        </div>
+                    </div>
+                @endif
         </div>
+
+        @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty() && $room->status === 'Ongoing')
 
         <!-- Metrics -->
         @php
@@ -71,6 +76,69 @@
             $votingRate = $totalStudents ? round(($totalUniqueVoters / $totalStudents) * 100) : 0;
         @endphp
 
+        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'super-admin' || auth()->user()->id === $room->creator_id)
+            <div class="flex justify-end gap-4">
+                @if($room->status === 'Ongoing' )
+                    <flux:modal.trigger name="voters-list">
+                        <flux:button icon="document-text" >Voters List</flux:button>
+                    </flux:modal.trigger>
+                @elseif($room->status === 'Pending')
+                    <flux:modal.trigger name="add-positionOrcandidate">
+                    <flux:button icon="plus">Create Position or Candidate</flux:button>
+                    </flux:modal.trigger>
+                @endif
+            </div>
+        @endif
+            <flux:modal name="voters-list" class="min-w-sm">
+                <div class="space-y-4">
+                    <flux:heading size="lg">Voters List</flux:heading>
+                
+                    {{-- <ul class="space-y-2">
+                        @forelse ($this->voters() as $vote)
+                            <li class="flex items-center gap-2">
+                                <flux:avatar src="{{ $vote->user->avatar_url ?? 'https://i.pravatar.cc/50?u=' . $vote->user->id }}" class="size-6"/>
+                                <span>{{ $vote->user->name }} ({{ $vote->user->email }})</span>
+                            </li>
+                        @empty
+                            <li class="text-gray-400">No voters yet.</li>
+                        @endforelse
+                    </ul> --}}
+
+                    <table class="w-full text-sm text-left ">
+                        <thead>
+                            <tr class="bg-gray-200 dark:bg-gray-700">
+                                <th class="px-4 py-2">Voter Info</th>
+                                <th class="py-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($this->voters() as $vote)
+                                <tr class="border-b dark:border-gray-600">
+                                    <td class="px-4 py-2 flex items-center gap-2">
+                                        <flux:avatar circle src="{{ $vote->user->avatar_url ?? 'https://i.pravatar.cc/50?u=' . $vote->user->id }}" class="size-12"/>
+                                            <div>
+                                                <strong>{{ $vote->user->name }}</strong>
+                                                <p class="text-xs">{{ $vote->user->username }}</p>
+                                                <p class="text-xs">{{ $vote->user->email }}</p>
+                                            </div>
+                                    </td>
+                                    <td >
+                                        <flux:button icon="eye" variant="ghost"/>
+                                    </td>
+                            
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    
+                        <div class="mt-2">
+                            {{ $this->voters()->links() }}
+                        </div>
+                    
+                </div>
+            </flux:modal>
+
+        
         {{-- Voting Stats --}}
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
@@ -145,6 +213,24 @@
 
         <!-- Candidate Cards -->
         @foreach ($positions as $position)
+           @php
+        // Check if the current user has voted in this position
+        $userVotedInPosition = $position->candidates
+            ->pluck('votes')
+            ->flatten()
+            ->contains('user_id', auth()->id());
+ $buttonLabel = '';
+
+    if ($room->status !== 'Ongoing') {
+        $buttonLabel = 'Voting Unavailable';
+    } elseif ($userVotedInPosition) {
+        $buttonLabel = 'Already Voted';
+    } elseif (auth()->user()->role !== 'user') {
+        $buttonLabel = 'Only user can vote';
+    } else {
+        $buttonLabel = 'Vote';
+    }
+        @endphp
             <div class="bg-gray-800 p-4 rounded-lg">
                 <flux:heading class="uppercase text-lg lg:text-xl">{{ $position->name }} Candidates</flux:heading>
                 <flux:text class="mb-4 text-xs lg:text-base">Choose your {{ $position->name }} candidate</flux:text>
@@ -161,14 +247,15 @@
                             <div class="relative group my-4">
                                 <button
                                     wire:click.prevent="voteCandidate({{ $candidate->id }})"
-                                    @disabled($room->status !== 'Ongoing')
+                                    @disabled($room->status !== 'Ongoing' || $userVotedInPosition || auth()->user()->role !== 'user')
                                     class="w-full py-2 rounded transition text-xs md:text-base
-                                        {{ $room->status !== 'Ongoing'
+                                        {{ $room->status !== 'Ongoing' || $userVotedInPosition || auth()->user()->role !== 'user'
                                             ? 'bg-gray-400 text-white cursor-not-allowed'
                                             : 'bg-[#7B2E2E] text-white hover:bg-[#5c2222] cursor-pointer'
                                         }}"
                                 >
-                                    {{ $room->status !== 'Ongoing' ? 'Voting Unavailable' : 'Vote for ' . explode(' ', $candidate->name)[0] }}
+                                    {{ $buttonLabel }}
+                                    
                                 </button>
                                 @if($room->status !== 'Ongoing')
                                     <div class="absolute top-full mt-1 text-xs bg-black text-white px-2 py-1 rounded hidden group-hover:block">
@@ -184,6 +271,14 @@
             </div>
         @endforeach
     @else
+        <div class="text-center text-gray-500 dark:text-gray-400 py-10">
+            This voting is blank
+        </div>
+
+    @endif
+
+    @else
+    
         @php
             $start_time = Carbon\Carbon::parse($room->start_time);
             $end_time = Carbon\Carbon::parse($room->end_time);
@@ -202,8 +297,13 @@
                 </p>
             </div>
         </div>
-
+        @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty())
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             @if($positions->isEmpty())
+                <div class="col-span-full text-center text-gray-500 dark:text-gray-400 py-10">
+                    This voting is blank
+                </div>
+            @else
             @foreach($positions as $position)
                 @php
                     $maxVotes = $position->candidates->max('vote_count');
@@ -229,7 +329,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        @foreach($position->candidates as $candidate)
+                        @forelse($position->candidates as $candidate)
                             @php
                                 $total = $position->candidates->sum('vote_count') ?: 1;
                                 $percent = round(($candidate->vote_count / $total) * 100);
@@ -246,13 +346,23 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <flux:text class="text-center text-sm text-gray-500">No candidates available.</flux:text>
+                        @endforelse
                     </div>
                 </div>
             @endforeach
+            @endif
 
         </div>
+            @else
+        <div class="text-center text-gray-500 dark:text-gray-400 py-10">
+            This voting is blank
+        </div>
     @endif
+    @endif
+
+
 </div>
 
 <script>

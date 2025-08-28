@@ -36,6 +36,7 @@ class ManageOrg extends Component
             // use explode to remove the '@ up to the end of the email' in the password then add 'password' to the end
             'password' => bcrypt(explode('@', $this->email)[0] . 'password'),
             'role' => 'org',
+            'status' => 'approved',
         ]);
 
         $this->reset('name');

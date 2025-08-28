@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Org;
+use Illuminate\Support\Str;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -23,6 +24,7 @@ protected $fillable = [
     'email',
     'password',
     'role',
+    'org_id',
     'status',
     'profile_image',
     'username',
@@ -80,6 +82,10 @@ public function chatMessages()
     return $this->hasMany(ChatMessage::class);
 }
 
+public function isSuperAdmin()
+{
+    return $this->role === 'superadmin';
+}
 public function isAdmin()
 {
     return $this->role === 'admin';
@@ -92,6 +98,16 @@ public function isOrg()
 public function hasAnyRole(...$roles)
 {
     return in_array($this->role, $roles);
+}
+
+public function followingOrgs()
+{
+    return $this->belongsToMany(Org::class, 'org_user')->withTimestamps();
+}
+
+public function org()
+{
+    return $this->belongsTo(Org::class, 'org_id');
 }
 
 

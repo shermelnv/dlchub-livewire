@@ -18,16 +18,15 @@ class OrgProfile extends Component
         $this->org = $org;
 
         // Feed type posts
-        $this->feeds = Feed::where('organization', $org->name)
+        $this->feeds = Feed::where('org_id', $org->id)
             ->latest()
             ->get();
 
         // Advertisement type posts
         $this->ads = Advertisement::with('photos')
-            ->where('organization', $org->name)
+            ->where('org_id', $org->id)
             ->latest()
             ->get();
-        
     }
 
     public function render()

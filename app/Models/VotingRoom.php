@@ -14,7 +14,7 @@ class VotingRoom extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'status', 'start_time', 'end_time'];
+    protected $fillable = ['title', 'description', 'status', 'start_time', 'end_time', 'creator_id'];
 
  public function positions()
 {

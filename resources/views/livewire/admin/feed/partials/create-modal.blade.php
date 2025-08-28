@@ -16,6 +16,7 @@
 
                 <div class="flex flex-col gap-4">
 
+                    @if(auth()->user()->role === 'org')
                     <div class="grid grid-cols-2 gap-4">
                         <flux:select label="Privacy" wire:model.defer="privacy" placeholder="Public / Private">
                             <flux:select.option value="public">Public</flux:select.option>
@@ -23,6 +24,7 @@
                         </flux:select>
                         <flux:input type="text" label="Type" wire:model.defer="type" placeholder="ex. Event, Announcement, etc." autocomplete="off" />
                     </div>
+                    @endif
                 <div>
         
             <div class="flex items-center justify-between">

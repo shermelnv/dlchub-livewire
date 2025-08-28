@@ -15,16 +15,18 @@ use App\Events\RoomExpired;
 use App\Livewire\User\Chat;
 use App\Livewire\User\Feed;
 use App\Livewire\OrgProfile;
-use App\Livewire\VotingRoom;
+use App\Livewire\VotersList;
 
 // GLOBAL
 
-use Illuminate\Http\Request;
+use App\Livewire\VotingRoom;
 
 
 // MODELS
 
 
+use Illuminate\Http\Request;
+use App\Livewire\LandingPage;
 use App\Livewire\User\Voting;
 use App\Events\UserRegistered;
 use App\Events\VotedCandidate;
@@ -56,6 +58,23 @@ Route::get('/test-email', function () {
 
 
 
+
+Route::get('redirectAfter_LoginOrRegister', function () {
+
+    if (!auth()->check()) {
+        return redirect()->route('login'); 
+    }
+
+    if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' ) {
+        return redirect()->route('dashboard');
+    } elseif(auth()->user()->role === 'user' ) {
+        return redirect()->route('landing-page');
+    } elseif(auth()->user()->role === 'org') {
+        return redirect()->route('landing-page');
+    }
+
+})->name('redirectToPage');
+
 Route::get('/', function () {
 
 
@@ -66,27 +85,13 @@ Route::get('/', function () {
     }
 })->name('home');
 
-Route::get('redirectAfter_LoginOrRegister', function () {
-
-
-    
-
-    if (!auth()->check()) {
-        return redirect()->route('login'); 
-    }
-
-    if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' ) {
-        return redirect()->route('dashboard');
-    } elseif(auth()->user()->role === 'user' ) {
-        return redirect()->route('feed');
-    } elseif(auth()->user()->role === 'org') {
-        return redirect()->route('feed');
-    }
-
-})->name('redirectToPage');
-
 
 Route::middleware(['auth', 'approved'])->group(function () {
+
+    Route::get('home', LandingPage::class)->name('landing-page');
+
+
+
     Route::redirect('settings', 'settings/profile');
 
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
@@ -135,6 +140,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
     // ALL
     Route::get('/voting-room/{id}', VotingRoom::class)->name('voting.room');
+    Route::get('/voters-list', VotersList::class)->name('voters.list');
     Route::get('org-profile/{org}', OrgProfile::class)->name('org.profile');
     // Route::get('org-profile', OrgProfile::class)->name('org.profile');
 
@@ -220,9 +226,13 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::view('/not-verified', 'not-verified')->name('not-verified');
 
 
-    Route::get('admin/voting/manage-voting', ManageVoting::class)->name('voting');
-    Route::get('admin/advertisement/manage-advertisement', ManageAdvertisement::class)->name('advertisement');
-    Route::get('admin/feed/manage-feed', ManageFeed::class)->name('feed');
+    Route::get('voting', ManageVoting::class)->name('voting');
+    Route::get('advertisement', ManageAdvertisement::class)->name('advertisement');
+    Route::get('feed', ManageFeed::class)->name('feed');
+
+    
+
+
     
 });
 

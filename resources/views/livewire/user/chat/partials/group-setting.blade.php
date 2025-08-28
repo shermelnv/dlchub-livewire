@@ -73,9 +73,12 @@
             <div class="flex items-center justify-between p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
                 <div class="flex items-center gap-3 max-w-40">
                     <flux:avatar src="{{ $member->avatar_url }}" class="size-8" />
-                    <div class="truncate">{{ $member->name }}</div>
+                    <div class="truncate">{{ $member->name }}  @if($selectedGroup->group_owner_id === $member->id) <br> <flux:badge size="sm">Admin</flux:badge> @endif </div>
+
                 </div>
+                @if(auth()->user()->id !== $member->id && auth()->user()->id === $selectedGroup->group_owner_id)
                 <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button>
+                @endif
             </div>
         @endforeach
     </div>

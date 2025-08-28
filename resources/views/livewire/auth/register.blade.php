@@ -78,7 +78,7 @@
             Mail::to($user->email)->send(new EmailVerification($user));
 
             // Redirect
-            $this->redirectIntended(route('feed', absolute: false), navigate: true);
+            $this->redirectIntended(route('redirectToPage', absolute: false), navigate: true);
         }
     };
 ?>

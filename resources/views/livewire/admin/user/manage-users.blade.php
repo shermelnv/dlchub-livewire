@@ -66,14 +66,31 @@
                         <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageUser->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->email }}</td>
 
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->status ?? 'Unknown' }}</td>
+                        
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-400">
+
+                            @if($manageUser->status === 'pending')
+                                <flux:button size="sm" wire:click="confirmApprove({{ $manageUser->id }})">
+                                Approve
+                                </flux:button>
+                            @else
+                                {{ ucfirst($manageUser->status) }}
+                            @endif
+                        </td>
+
 
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">
-                            <flux:select size="sm" wire:model="showUser.role">
+                            <flux:select 
+                                size="sm" 
+                                wire:model="roles.{{ $manageUser->id }}" 
+                                wire:change="updateRole({{ $manageUser->id }})"
+                            >
                                 <flux:select.option value="user">User</flux:select.option>
                                 <flux:select.option value="org">Org</flux:select.option>
+                                <flux:select.option value="admin">Admin</flux:select.option>
                             </flux:select>
                         </td>
+
 
                         {{-- MENU --}}
                         <td class="px-4 py-3 text-center">

@@ -15,16 +15,28 @@ class="px-5">
 
     <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-6 h-full">
         <div class="w-full space-y-4 col-span-3 py-5">
+            @if(auth()->user()->role !== 'user')
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
-                <flux:avatar circle src="https://unavatar.io/x/calebporzio" />
+            <flux:avatar 
+                circle 
+                src="{{ auth()->user()->profile_image 
+                    ? asset('storage/' . auth()->user()->profile_image) 
+                    : 'https://unavatar.io/x/calebporzio' }}" 
+            />
+
+
                 <flux:modal.trigger name="add-advertisement">
                     <flux:button class="w-full">What's on your mind?</flux:button>
                 </flux:modal.trigger>                
             </section>
+            @endif
             <div class="flex justify-between">
                 <flux:dropdown class="flex items-center">
                     <flux:button icon:trailing="chevron-down" size="sm">
-                        {{ $organizationFilter ? ucfirst($organizationFilter) : 'All Organizations' }}
+                        {{ $organizationFilter 
+                            ? $orgs->firstWhere('id', $organizationFilter)?->name 
+                            : 'All Organizations' 
+                        }}
                     </flux:button>
 
                     <span class="text-xs flex gap-2 p-2">
@@ -37,7 +49,7 @@ class="px-5">
                             All Organizations
                         </flux:menu.item>
                         @foreach($orgs as $org)
-                            <flux:menu.item wire:click="$set('organizationFilter', '{{ $org->name }}')">
+                            <flux:menu.item wire:click="$set('organizationFilter', '{{ $org->id }}')">
                                 {{ $org->name }}
                             </flux:menu.item>
                         @endforeach
@@ -49,6 +61,9 @@ class="px-5">
                         Reset Filters
                     </flux:button>
                 @endif
+                <flux:modal.trigger name="mobile-right-sidebar" class="md:hidden">
+                        <flux:button variant="ghost" icon="bars-2" size="sm"/>
+                    </flux:modal.trigger>
             </div>
 
             {{-- ADVERTISEMENTS --}}
@@ -61,40 +76,68 @@ class="px-5">
         </div>
 
         {{-- RIGHT SIDEBAR --}}
-        <div class="flex flex-col col-span-2 gap-6 xs:hidden h-[100vh] sticky top-0 shadow overflow-y-auto py-5 scrollbar-hover">
-            <!-- QUICK STATS -->
-            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
-                <h2 class="font-semibold mb-3">📊 Quick Stats</h2>
-                <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-                    <li>Total Advertisements: <strong>{{ $adCount }}</strong></li>
-                @forelse($trendingOrgs as $org)
+        <livewire:right-sidebar />
+    </div>
+{{-- 
+    <flux:modal name="mobile-right-sidebar" class="md:hidden" variant="flyout">
+        <div class="flex flex-col col-span-2 gap-6 shadow  my-5 ">
+            
+            <livewire:active-voting />
 
-                            <li class="flex justify-between text-sm py-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                                <span class="break-all">{{ $org->organization }}</span>
-                                <span class="text-gray-500">{{ $org->ad_count }} posts</span>
-                            </li>
 
-                @empty
-                    <li class="text-sm text-gray-400">No data available.</li>
-                @endforelse
-                </ul>
+            @if(auth()->user()->role === 'user')
+            <div class="w-full p-2 h-auto">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-semibold mb-3 flex gap-2 items-center">
+                        Group Chats <flux:badge size="sm" color="green">3 / 4</flux:badge>
+                        
+                        
+                    </h2>
+                    <flux:modal.trigger name="create-group-chat">
+                        <flux:button variant="ghost" size="sm" icon="plus" />
+                    </flux:modal.trigger>
+                </div>
             </div>
+            @endif
 
-            <!-- TRENDING ORGS -->
-            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
-                <h2 class="font-semibold mb-3">🔥 Trending Organizations</h2>
-                @forelse($trendingOrgs as $org)
-                    <div class="flex justify-between text-sm py-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                        <span class="truncate">{{ $org->organization }}</span>
-                        <span class="text-gray-500">{{ $org->ad_count }} posts</span>
-                    </div>
+                        
+            <div class="w-full p-2 rounded-lg h-auto">
+                <div class="flex justify-between">
+                    <h2 class="font-semibold mb-3 flex gap-2">
+                         Organizations
+                    </h2>
+                       
+                </div>
+                
+                <div>
+                @forelse ($orgs as $org)
+                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
+                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                           
+                             @if ($org->profile_image)
+                                <flux:avatar
+                                    circle
+                                    src="{{ asset('storage/' . $org->profile_image) }}"
+                                    
+                                />
+                            @else
+                                <flux:avatar
+                                    circle
+                                    :initials="$org->initials()"
+                                    
+                                />
+                            @endif
+                            <span class="truncate">{{ $org->name }}</span>
+                        </div>
+                    </a>
                 @empty
                     <p class="text-sm text-gray-400">No data available.</p>
                 @endforelse
+                </div>
             </div>
 
-            <!-- HELP & SUPPORT -->
-            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
+            
+            <div class=" w-full p-4 rounded-lg  shadow">
                 <h2 class="font-semibold mb-3">💬 Help & Support</h2>
                 <ul class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                     <li><a href="#" class="hover:underline">📘 How to post an advertisement</a></li>
@@ -103,7 +146,7 @@ class="px-5">
                 </ul>
             </div>
         </div>
-    </div>
+    </flux:modal> --}}
 
     {{-- ADVERTISEMENT MODAL --}}
     @include('livewire.admin.advertisement.partials.create-modal') 

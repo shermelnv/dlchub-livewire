@@ -73,11 +73,26 @@
             <div class="p-4 space-y-3">
                 <!-- Header -->
                             <div class="flex justify-between">
-                            <div>
+                            <div class="flex gap-4 items-center">
+
+                                <flux:avatar 
+                                circle 
+                                src="{{ auth()->user()->profile_image 
+                                    ? asset('storage/' . auth()->user()->profile_image) 
+                                    : 'https://unavatar.io/x/calebporzio' }}" 
+                                />
+
+                                <div>
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }}
+                                <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
+                                    @if($ad->privacy === 'public') 
+                                        <flux:icon.globe-asia-australia class="size-4" /> 
+                                    @else 
+                                        <flux:icon.lock-closed class="size-4" />
+                                    @endif
                                 </p>
+                                </div>
                             </div>
                             @if($ad->user_id === auth()->user()->id)
                             <div>
@@ -105,17 +120,6 @@
                     </div>
                 @endif
 
-                {{-- Footer --}}
-                <div class="flex items-center gap-6 pt-2 text-gray-500 dark:text-gray-400 text-sm">
-                    <div class="flex items-center gap-1">
-                        <flux:icon.eye class="w-4 h-4" />
-                        <span>1.2k views</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <flux:icon.chat-bubble-oval-left-ellipsis class="w-4 h-4" />
-                        <span>8 comments</span>
-                    </div>
-                </div>
             </div>
         </div>
     @empty

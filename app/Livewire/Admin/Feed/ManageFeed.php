@@ -4,7 +4,10 @@ namespace App\Livewire\Admin\Feed;
 
 use App\Models\Org;
 use App\Models\Type;
+use App\Models\User;
+use App\Models\Comment;
 use Livewire\Component;
+use App\Models\Reaction;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use App\Models\RecentActivity;
@@ -18,54 +21,31 @@ use App\Events\ManageFeed as BroadcastFeed;
 #[Title('Feed')]
 class ManageFeed extends Component
 {
-
     use WithFileUploads;
 
-    public $dateFrom , $dateTo;
-
+    public $dateFrom, $dateTo;
     public $feeds = [];
-
-
     public $showPost = [
         'title' => '',
         'content' => '',
         'organization' => '',
         'type' => '',
     ];
-
-
     public $orgs, $types;
-
     public $organizationFilter = null;
-    public $typeFilter = null; // for filtering
-
-
-
+    public $typeFilter = null;
     public $title, $content, $organization, $type;
     public $photo;
+    public $org_id;
 
-    public function getFilteredFeedsProperty()
-    {
-    $query = FeedModel::query();
+public $privacy;
 
-    if ($this->organizationFilter) {
-        $query->where('organization', $this->organizationFilter);
-    }
+    public ?int $postToEdit = null;
+    public string $editContent = '';
 
-    if ($this->typeFilter) {
-        $query->where('type', $this->typeFilter);
-    }
+    public ?int $postToDelete = null;
 
-    return $query->latest()->get();
-    }
-
-    public function resetFilters()
-{
-    $this->organizationFilter = null;
-    $this->typeFilter = null;
-}
-
-
+    public $comments = []; // For new comment input
 
     public function mount()
     {
@@ -78,197 +58,216 @@ class ManageFeed extends Component
         $this->fetchFeeds();
     }
 
-    public function fetchFeeds()
-    {
-        $this->feeds = FeedModel::latest()->get();
+public function fetchFeeds()
+{
+    $user = Auth::user();
 
-        $this->orgs = Org::all();
-        $this->types = Type::all();
+    $this->feeds = FeedModel::with(['comments.user', 'reactions'])
+                            ->visibleToUser($user)
+                            ->latest()
+                            ->get();
+
+    $this->orgs = User::where('role', 'org')->get();
+    $this->types = Type::all();
+}
+
+
+public function getFilteredFeedsProperty()
+{
+    $user = Auth::user();
+
+    $query = FeedModel::with(['comments.user', 'reactions'])
+                      ->visibleToUser($user);
+
+    if ($this->organizationFilter) {
+        $query->where('org_id', $this->organizationFilter);
     }
 
-// ───── Create ─────
+    if ($this->typeFilter) {
+        $query->where('type', $this->typeFilter);
+    }
+
+    return $query->latest()->get();
+}
+
+
+    public function resetFilters()
+    {
+        $this->organizationFilter = null;
+        $this->typeFilter = null;
+    }
+
 public function createPost()
 {
     $validated = $this->validate([
-        'title' => 'required|string|max:255',
+        'title'   => 'required|string|max:255',
         'content' => 'required|string|max:2000',
-        'organization' => 'nullable|string|max:255',
-        'type' => 'nullable|string|max:100',
-        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        'type'    => 'nullable|string|max:100',
+        'photo'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+ 
     ]);
 
     $photoPath = $this->photo?->store('feeds', 'public');
 
+    $user = Auth::user();
+
     $post = FeedModel::create([
-        'user_id' => Auth::id(),
-        'title' => $validated['title'],
+        'user_id' => $user->id,
+        'org_id'  => $user->role === 'org' ? $user->id : null, // ✅ fixed
+        'title'   => $validated['title'],
         'content' => $validated['content'],
-        'organization' => $validated['organization'],
-        'type' => $validated['type'],
+        'type'    => $validated['type'],
         'photo_url' => $photoPath,
-        'published_at' => now(),
+        'privacy' => $validated['privacy'] ?? 'public',
     ]);
 
     if ($this->type && !Type::where('type_name', $this->type)->exists()) {
         Type::create(['type_name' => $this->type]);
     }
 
-    $userName = auth()->user()->name;
-    $orgName = $post->organization ?? 'Unknown Org';
+    $userName = $user->name;
+    $orgName  = $post->org?->name ?? 'Public'; // ✅ will show "Public" if no org_id
     $activity = "📰 {$userName} from {$orgName} posted a feed: \"{$post->title}\"";
 
     RecentActivity::create([
         'message' => $activity,
-        'type' => 'feed',
+        'type'    => 'feed',
     ]);
-    event(new RecentActivities($activity));
 
-    $this->reset(['title', 'content', 'organization', 'type', 'photo']);
+    event(new RecentActivities($activity));
+    broadcast(new BroadcastFeed($post));
+
+    $this->reset(['title', 'content', 'org_id', 'type', 'photo', 'privacy']);
     $this->modal('post-feed')->close();
     $this->fetchFeeds();
 
     Toaster::success('Feed post created!');
-    broadcast(new BroadcastFeed($post));
 }
 
 
-    
-    public ?int $postToEdit = null;
-    public string $editContent = '';
-    
-public function editPost($id)
+public function addComment($feedId)
 {
-    $post = FeedModel::findOrFail($id);
+    // Ensure the key exists
+    $commentText = $this->comments[$feedId] ?? '';
 
-    $this->postToEdit = $post->id;
-    $this->showPost = [
-        'title' => $post->title,
-        'content' => $post->content,
-        'organization' => $post->organization,
-        'type' => $post->type,
-    ];
-
-    $this->modal('edit-post')->show();
-}
-
-public function updatePost()
-{
     $this->validate([
-        'showPost.title' => 'required|string|max:255',
-        'showPost.content' => 'required|string|max:2000',
-        'showPost.organization' => 'nullable|string|max:255',
-        'showPost.type' => 'nullable|string|max:100',
-        'photo' => 'nullable|image|max:2048',
+        "comments.$feedId" => 'required|string|max:500',
     ]);
 
-    $post = FeedModel::findOrFail($this->postToEdit);
-
-    // Upload new photo
-    if ($this->photo) {
-        $photoPath = $this->photo->store('feeds', 'public');
-        $post->photo_url = $photoPath;
-    }
-
-    // Update fields
-    $post->update([
-        'title' => $this->showPost['title'],
-        'content' => $this->showPost['content'],
-        'organization' => $this->showPost['organization'],
-        'type' => $this->showPost['type'],
-        'photo_url' => $post->photo_url,
+    Comment::create([
+        'feed_id' => $feedId,
+        'user_id' => Auth::id(),
+        'comment' => $commentText,
     ]);
 
-    // Create type if doesn't exist
-    if ($this->showPost['type'] && !Type::where('type_name', $this->showPost['type'])->exists()) {
-        Type::create(['type_name' => $this->showPost['type']]);
-    }
+    // Clear the input for this feed
+    $this->comments[$feedId] = '';
 
-    $this->reset(['showPost', 'photo', 'postToEdit']);
-    $this->modal('edit-post')->close();
     $this->fetchFeeds();
-
-    Toaster::success('Feed post updated!');
 }
 
 
+    // ───── Reactions ─────
+    public function toggleHeart(FeedModel $feed)
+    {
+        $reaction = Reaction::where('feed_id', $feed->id)
+            ->where('user_id', Auth::id())
+            ->where('type', 'heart')
+            ->first();
 
-    public ?int $postToDelete = null;
+        if ($reaction) {
+            $reaction->delete();
+        } else {
+            Reaction::create([
+                'feed_id' => $feed->id,
+                'user_id' => Auth::id(),
+                'type' => 'heart',
+            ]);
+        }
+
+        $this->fetchFeeds();
+    }
+
+    // ───── Edit / Update Post ─────
+    public function editPost($id)
+    {
+        $post = FeedModel::findOrFail($id);
+
+        $this->postToEdit = $post->id;
+        $this->showPost = [
+    'title' => $post->title,
+    'content' => $post->content,
+    'org_id' => $post->org_id,
+    'type' => $post->type,
+];
 
 
+        $this->modal('edit-post')->show();
+    }
+
+    public function updatePost()
+    {
+        $this->validate([
+    'showPost.title' => 'required|string|max:255',
+    'showPost.content' => 'required|string|max:2000',
+    'showPost.org_id' => 'nullable|exists:orgs,id',
+    'showPost.type' => 'nullable|string|max:100',
+    'photo' => 'nullable|image|max:2048',
+]);
+
+
+        $post = FeedModel::findOrFail($this->postToEdit);
+
+        if ($this->photo) {
+            $photoPath = $this->photo->store('feeds', 'public');
+            $post->photo_url = $photoPath;
+        }
+
+        $post->update([
+    'title' => $this->showPost['title'],
+    'content' => $this->showPost['content'],
+    'org_id' => $this->showPost['org_id'],
+    'type' => $this->showPost['type'],
+    'photo_url' => $post->photo_url,
+]);
+
+
+        if ($this->showPost['type'] && !Type::where('type_name', $this->showPost['type'])->exists()) {
+            Type::create(['type_name' => $this->showPost['type']]);
+        }
+
+        $this->reset(['showPost', 'photo', 'postToEdit']);
+        $this->modal('edit-post')->close();
+        $this->fetchFeeds();
+
+        Toaster::success('Feed post updated!');
+    }
+
+    // ───── Delete Post ─────
     public function confirmDelete(int $id)
     {
         $this->postToDelete = $id;
-        $this->modal('deletePost')->show(); // open modal
+        $this->modal('deletePost')->show();
     }
 
     public function deletePost()
     {
-    if ($this->postToDelete) {
-        $post = FeedModel::findOrFail($this->postToDelete);
-        $type = $post->type;
+        if ($this->postToDelete) {
+            $post = FeedModel::findOrFail($this->postToDelete);
+            $type = $post->type;
 
-        $post->delete();
-        $this->reset('postToDelete');
-        Toaster::success('Feed post deleted.');
+            $post->delete();
+            $this->reset('postToDelete');
+            Toaster::success('Feed post deleted.');
 
-        // 🧹 Check if this type is now unused and delete it
-        if ($type && !FeedModel::where('type', $type)->exists()) {
-            Type::where('type_name', $type)->delete();
+            if ($type && !FeedModel::where('type', $type)->exists()) {
+                Type::where('type_name', $type)->delete();
+            }
+
+            $this->modal('deletePost')->close();
+            $this->fetchFeeds();
         }
-
-        $this->modal('deletePost')->close();
-        $this->fetchFeeds();
     }
-    }
-
-
-
-
-
-    // public function filter()
-    // {
-    //     $this->validate([
-    //         'filterOrganization' => 'nullable|string',
-    //         'filterType' => 'nullable|string',
-    //         'dateFrom' => 'nullable|date',
-    //         'dateTo' => 'nullable|date|after_or_equal:dateFrom',
-    //     ]);
-
-    //     $query = FeedModel::query();
-
-    //     if ($this->filterOrganization) {
-    //         $query->where('organization', $this->filterOrganization);
-    //     }
-
-    //     if ($this->filterType) {
-    //         $query->where('type', $this->filterType);
-    //     }
-
-    //     if ($this->dateFrom) {
-    //         $query->whereDate('published_at', '>=', $this->dateFrom);
-    //     }
-
-    //     if ($this->dateTo) {
-    //         $query->whereDate('published_at', '<=', $this->dateTo);
-    //     }
-
-    //     $this->feeds = $query->latest('published_at')->get();
-    // }
-
-
-
-
-
-    // public function resetFilters()
-    // {
-    //     $this->reset([
-    //         'filterOrganization', 'filterType', 'dateFrom', 'dateTo',
-    //     ]);
-
-    // $this->fetchFeeds();
-    // }
-
-
 
     public function render()
     {

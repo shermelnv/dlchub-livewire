@@ -91,12 +91,14 @@
                     <a href="{{ route('voting.room', $room->id) }}" class="text-green-500 hover:text-green-700 text-sm">
                         <flux:icon.eye class="w-5 h-5" />
                     </a>
+                    @if(auth()->user()->role === 'admin' || auth()->user()->role === 'super-admin' || auth()->user()->id === $room->creator_id)
                     <button wire:click="editRoom({{ $room->id }})" class="text-blue-500 hover:text-blue-700 text-sm">
                         <flux:icon.pencil class="w-5 h-5" />
                     </button>
                     <button wire:click="deleteRoom({{ $room->id }})" class="text-red-500 hover:text-red-700 text-sm">
                         <flux:icon.trash class="w-5 h-5" />
                     </button>
+                    @endif
                 </div>
             </div>
         @empty
