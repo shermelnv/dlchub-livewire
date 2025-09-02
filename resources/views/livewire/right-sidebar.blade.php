@@ -11,10 +11,11 @@
             </div>
 
 
-            @if(auth()->user()->role === 'user')
+            @if(auth()->user()->isUser())
                 <livewire:sidebar-group-chats/>
+                {{-- @include('livewire.user.chat.partials.create-group') --}}
             @endif
-            
+           
             <livewire:active-voting />
 
            
@@ -32,7 +33,7 @@
                 @forelse ($orgs as $org)
                     <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
                         <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                             @if ($org->profile_image)
+                            @if ($org->profile_image)
                                 <flux:avatar
                                     circle
                                     src="{{ asset('storage/' . $org->profile_image) }}"
@@ -73,6 +74,8 @@
 
             @if(auth()->user()->role === 'user')
                 <livewire:sidebar-group-chats/>
+                {{-- @include('livewire.user.chat.partials.create-group') --}}
+                
             @endif
             
             <livewire:active-voting />

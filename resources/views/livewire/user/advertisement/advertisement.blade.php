@@ -24,7 +24,7 @@ class="space-y-4">
         <flux:separator variant="subtle" class="col-span-2" />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6 h-full ">
+    <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-6 h-full ">
         <div class="w-full col-span-3 space-y-4 px-4 sm:px-6 md:px-10 lg:px-15 xl:px-20">
             
             <div class="flex justify-between">
@@ -62,14 +62,10 @@ class="space-y-4">
             {{-- ADVERTISEMENTS --}}
             @include('livewire.user.advertisement.partials.advertisement-feed') 
 
-
-
-           
-
         </div>
 
         {{-- RIGHT SIDEBAR --}}
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 col-span-2">
             <!-- QUICK STATS -->
             <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
                 <h2 class="font-semibold mb-3">📊 Quick Stats</h2>

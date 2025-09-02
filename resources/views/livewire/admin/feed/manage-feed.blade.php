@@ -69,9 +69,7 @@
                     </flux:button>
                     
                 @endif
-                    <flux:modal.trigger name="mobile-right-sidebar" class="md:hidden">
-                        <flux:button variant="ghost" icon="bars-2" size="sm"/>
-                    </flux:modal.trigger>
+    
 
             </div>
 
@@ -94,12 +92,20 @@
                             <!-- Header -->
                             <div class="flex justify-between">
                             <div class="flex gap-4 items-center">
-                                <flux:avatar 
-                                circle 
-                                src="{{ auth()->user()->profile_image 
-                                    ? asset('storage/' . auth()->user()->profile_image) 
-                                    : 'https://unavatar.io/x/calebporzio' }}" 
-                                />
+                                @if ($feed->user->profile_image)
+                                    <flux:avatar
+                                        avatar="{{ asset('storage/' . $feed->user->profile_image) }}"
+                                        icon:trailing="chevrons-up-down"
+                                        class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                    />
+                                    @else
+                                        <flux:avatar
+                                        circle
+                                            :initials="$feed->user->initials()"
+                                            icon:trailing="chevrons-up-down"
+                                            class="w-8 h-8 rounded-full"
+                                        />
+                                    @endif
                                 <div>
                                     <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
@@ -187,10 +193,10 @@
         $sortedComments = $feed->comments->sortByDesc('created_at');
     @endphp
 
-    @if($sortedComments->count() > 3)
+    @if($sortedComments->count() > 1)
         <!-- Toggle button -->
         <flux:button variant="ghost" @click="open = !open" 
-                class="flex items-center gap-1 text-xs text-blue-500 m-1">
+                class="w-full flex items-center justify-center gap-1 text-xs text-blue-500 m-1">
             <span x-text="open ? 'Hide comments' : 'View all comments'"></span>
 
             <flux:icon.chevron-down x-bind:class="open ? 'rotate-180' : ''" 
@@ -198,12 +204,28 @@
         </flux:button>
     @endif
 
-    @if($sortedComments->count() <= 3)
+    @if($sortedComments->count() <= 1)
         <!-- Just show all comments if 3 or fewer -->
         <div class="space-y-1">
             @foreach($sortedComments as $comment)
                 <div class="flex items-start gap-2">
-                    <flux:avatar circle src="https://unavatar.io/x/calebporzio" class="size-6 mt-0.5"/>
+                    @if ($comment->user->profile_image)
+                <flux:profile
+                circle
+
+                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                    icon:trailing="chevrons-up-down"
+                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                />
+                @else
+                    <flux:profile
+                    circle
+                        
+                        :initials="$comment->user->initials()"
+                        icon:trailing="chevrons-up-down"
+                        class="w-8 h-8 rounded-full"
+                    />
+                @endif
                     <div>
                         <div class="bg-gray-700 rounded-lg p-2">
                             <div class="font-semibold">{{ $comment->user->name }}:</div>
@@ -219,9 +241,25 @@
     @else
         <!-- Show latest 3 by default -->
         <div class="space-y-1">
-            @foreach($sortedComments->take(3) as $comment)
+            @foreach($sortedComments->take(1) as $comment)
                 <div class="flex items-start gap-2">
-                    <flux:avatar circle src="https://unavatar.io/x/calebporzio" class="size-6 mt-0.5"/>
+                    @if ($comment->user->profile_image)
+                <flux:profile
+                circle
+
+                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                    icon:trailing="chevrons-up-down"
+                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                />
+                @else
+                    <flux:profile
+                    circle
+                        
+                        :initials="$comment->user->initials()"
+                        icon:trailing="chevrons-up-down"
+                        class="w-8 h-8 rounded-full"
+                    />
+                @endif
                     <div>
                         <div class="bg-gray-700 rounded-lg p-2">
                             <div class="font-semibold">{{ $comment->user->name }}:</div>
@@ -239,9 +277,25 @@
 
         <!-- Hidden comments -->
         <div class="space-y-1 mt-2" x-show="open" x-collapse>
-            @foreach($sortedComments->skip(3) as $comment)
+            @foreach($sortedComments->skip(1) as $comment)
                 <div class="flex items-start gap-2">
-                    <flux:avatar circle src="https://unavatar.io/x/calebporzio" class="size-6 mt-0.5"/>
+                    @if ($comment->user->profile_image)
+                <flux:profile
+                circle
+
+                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                    icon:trailing="chevrons-up-down"
+                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                />
+                @else
+                    <flux:profile
+                    circle
+                        
+                        :initials="$comment->user->initials()"
+                        icon:trailing="chevrons-up-down"
+                        class="w-8 h-8 rounded-full"
+                    />
+                @endif
                     <div>
                         <div class="bg-gray-700 rounded-lg p-2">
                             <div class="font-semibold">{{ $comment->user->name }}:</div>

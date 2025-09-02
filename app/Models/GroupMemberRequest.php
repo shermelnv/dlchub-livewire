@@ -19,4 +19,6 @@ class GroupMemberRequest extends Model
     {
         return $this->belongsTo(GroupChat::class, 'group_chat_id');
     }
+
+
 }

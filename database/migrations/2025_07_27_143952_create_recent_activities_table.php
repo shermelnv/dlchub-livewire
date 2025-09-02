@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('recent_activities', function (Blueprint $table) {
                 $table->id();
-                $table->string('message');
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
                 $table->string('type')->nullable();
+                $table->string('action')->nullable();
+                $table->text('message'); 
                 $table->string('status')->nullable();
                 $table->timestamps();
         });

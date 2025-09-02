@@ -13,8 +13,8 @@
             "
 class="px-5">
 
-    <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-6 h-full">
-        <div class="w-full space-y-4 col-span-3 py-5">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 h-full">
+        <div class="w-full space-y-4 col-span-2 py-5">
             @if(auth()->user()->role !== 'user')
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
             <flux:avatar 
@@ -61,9 +61,7 @@ class="px-5">
                         Reset Filters
                     </flux:button>
                 @endif
-                <flux:modal.trigger name="mobile-right-sidebar" class="md:hidden">
-                        <flux:button variant="ghost" icon="bars-2" size="sm"/>
-                    </flux:modal.trigger>
+
             </div>
 
             {{-- ADVERTISEMENTS --}}

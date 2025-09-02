@@ -5,9 +5,6 @@
                         {{-- GROUP LIMIT REACHED --}}
                         
                     </h2>
-                    <flux:modal.trigger name="create-group" :disabled="$groups->count() >= 4">
-                        <flux:button variant="ghost" size="sm" icon="plus" />
-                    </flux:modal.trigger>
                 </div>
 
                 @forelse ($groups as $group)
@@ -16,7 +13,19 @@
               ? 'bg-gray-200 dark:bg-gray-800' 
               : 'hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     <div class="flex gap-4 px-2 items-center">
-                <flux:avatar circle src="https://unavatar.io/x/calebporzio" size="sm" />
+                @if ($group->group_image)
+                                <flux:avatar
+                                    circle
+                                    src="{{ asset('storage/' . $group->group_image) }}"
+                                    
+                                />
+                            @else
+                                <flux:avatar
+                                    circle
+                                    name="{{$group->name}}"
+                                    
+                                />
+                            @endif
                 <div>
                     <div>{{ $group->name }}</div>
                     <div class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
@@ -31,7 +40,7 @@
             </div>
                 @endforelse
 
-    @include('livewire.user.chat.partials.create-group')
+
 
             </div>
 

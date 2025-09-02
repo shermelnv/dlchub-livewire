@@ -60,8 +60,7 @@
                 @endif
         </div>
 
-        @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty() && $room->status === 'Ongoing')
-
+       
         <!-- Metrics -->
         @php
             $totalVotes = \App\Models\Vote::whereHas('candidate.position', function ($query) use ($room) {
@@ -219,17 +218,17 @@
             ->pluck('votes')
             ->flatten()
             ->contains('user_id', auth()->id());
- $buttonLabel = '';
+        $buttonLabel = '';
 
-    if ($room->status !== 'Ongoing') {
-        $buttonLabel = 'Voting Unavailable';
-    } elseif ($userVotedInPosition) {
-        $buttonLabel = 'Already Voted';
-    } elseif (auth()->user()->role !== 'user') {
-        $buttonLabel = 'Only user can vote';
-    } else {
-        $buttonLabel = 'Vote';
-    }
+            if ($room->status !== 'Ongoing') {
+                $buttonLabel = 'Voting Unavailable';
+            } elseif ($userVotedInPosition) {
+                $buttonLabel = 'Already Voted';
+            } elseif (auth()->user()->role !== 'user') {
+                $buttonLabel = 'Only user can vote';
+            } else {
+                $buttonLabel = 'Vote';
+            }
         @endphp
             <div class="bg-gray-800 p-4 rounded-lg">
                 <flux:heading class="uppercase text-lg lg:text-xl">{{ $position->name }} Candidates</flux:heading>
@@ -270,12 +269,7 @@
                 </div>
             </div>
         @endforeach
-    @else
-        <div class="text-center text-gray-500 dark:text-gray-400 py-10">
-            This voting is blank
-        </div>
 
-    @endif
 
     @else
     

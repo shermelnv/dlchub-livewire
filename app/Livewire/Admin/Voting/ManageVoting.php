@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Voting;
 
+use App\Models\User;
 use Livewire\Component;
 use App\Models\VotingRoom;
 use App\Events\DashboardStats;
@@ -10,6 +11,7 @@ use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\UniversalNotification;
 use App\Events\ManageVoting as BroadcastVotingRoom;
 
 #[Title('Voting')]
@@ -67,15 +69,28 @@ class ManageVoting extends Component
         'creator_id' => Auth::id(),
     ]);
 
-        $activity = '🗳️ ' . auth()->user()->name . ' created a voting room: "' . $this->title . '"';
+    $users = User::where('id', '!=', Auth::id())->get();
+foreach ($users as $u) {
+    $u->notify(new UniversalNotification([
+        'type'    => 'voting',
+        'room_id' => $votingRoom->id,
+        'title'   => $votingRoom->title,
+        'user_id' => $votingRoom->auth()->user()->id,
+        'message' => auth()->user()->name . " created a voting room titled \"{$votingRoom->title}\"",
+    ]));
+}
+
 
         RecentActivity::create([
-            'message' => $activity,
-            'type' => 'voting',
+            'user_id'   => auth()->user()->id,
+            'message'   => "{$user->name} created a new voting: \"$votingRoom->title\" ",
+            'type'      => 'voting',
+            'action'    => 'created',
         ]);
+        event(new RecentActivities());
 
         broadcast(new BroadcastVotingRoom($votingRoom));
-        event(new RecentActivities($activity));
+
 
         event(new DashboardStats([
             'students' => \App\Models\User::where('role', 'user')->count(),
@@ -136,14 +151,6 @@ class ManageVoting extends Component
         $roomTitle = $room->title;
         $room->delete();
 
-        // Create activity message
-        $activity = '🗑️ ' . auth()->user()->name . ' deleted the voting room "' . $roomTitle . '"';
-
-        // Save to DB
-        RecentActivity::create(['message' => $activity]);
-
-        // Broadcast to dashboard
-        event(new RecentActivities($activity));
 
         $this->loadRooms();
         Toaster::success('Voting room deleted successfully.');

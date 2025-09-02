@@ -95,6 +95,11 @@ public function isOrg()
 {
     return $this->role === 'org';
 }
+
+public function isUser()
+{
+    return $this->role === 'user';
+}
 public function hasAnyRole(...$roles)
 {
     return in_array($this->role, $roles);

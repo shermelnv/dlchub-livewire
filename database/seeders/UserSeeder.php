@@ -59,6 +59,15 @@ public function run(): void
         'status' => 'approved',
     ]);
 
+    User::create([
+        'name' => 'user1',
+        'email' => 'user1@gmail.com',
+        'username' => 'user1',
+        'password' => Hash::make('password'),
+        'role' => 'user',
+        'status' => 'approved',
+    ]);
+
     // // Seed 100 users with email = student#@pampangastateu.edu.ph
     User::factory()
         ->count(100)

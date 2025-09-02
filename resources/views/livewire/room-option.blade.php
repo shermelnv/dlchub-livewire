@@ -48,22 +48,23 @@
 </flux:modal>
 
     <flux:modal name="add-positionOrcandidate" class="w-xs lg:w-full" :closable="false">
-        <div x-data="{ tab: 'create' }" class="w-full h-auto grid gap-6">
+        <div x-data="{ tab: 'join' }" class="w-full h-auto grid gap-6">
             <!-- Tab Buttons -->
             <div class="grid grid-cols-2 gap-2">
-                <button
-                    @click="tab = 'create'"
-                    :class="tab === 'create' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
-                    class="py-2 rounded-md text-sm font-medium transition"
-                >
-                    Create Candidate
-                </button>
+
                 <button
                     @click="tab = 'join'"
                     :class="tab === 'join' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
                     class="py-2 rounded-md text-sm font-medium transition"
                 >
                     Create Position
+                </button>
+                                <button
+                    @click="tab = 'create'"
+                    :class="tab === 'create' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
+                    class="py-2 rounded-md text-sm font-medium transition"
+                >
+                    Create Candidate
                 </button>
             </div>
 

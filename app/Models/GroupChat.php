@@ -12,7 +12,8 @@ class GroupChat extends Model
         'group_owner_id', 
         'name', 
         'description', 
-        'group_code'
+        'group_code',
+        'group_profile'
     ];
 
 

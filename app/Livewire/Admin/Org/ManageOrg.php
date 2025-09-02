@@ -5,8 +5,12 @@ namespace App\Livewire\Admin\Org;
 use App\Models\Org;
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Masmerise\Toaster\Toaster;
+use App\Mail\UserAccountCreated;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class ManageOrg extends Component
 {
@@ -23,21 +27,17 @@ class ManageOrg extends Component
 
     public function createOrg()
     {
+         $password = Str::random(10);
 
-        $org = Org::create([
-            'name' => $this->name,
-        ]);
-
-        User::create([
+        $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
-            'password' => bcrypt($this->password),
-
-            // use explode to remove the '@ up to the end of the email' in the password then add 'password' to the end
-            'password' => bcrypt(explode('@', $this->email)[0] . 'password'),
+            'password' => Hash::make($password),
             'role' => 'org',
             'status' => 'approved',
         ]);
+
+        Mail::to($user->email)->send(new UserAccountCreated($user, $password));
 
         $this->reset('name');
         $this->modal('create-org')->close();
@@ -46,19 +46,19 @@ class ManageOrg extends Component
 
     public function viewOrg($id)
     {
-        $this->showOrg = Org::findOrFail($id)->toArray();
+        $this->showOrg = User::findOrFail($id)->toArray();
         $this->modal('view-org')->show();
     }
 
     public function getOrg($id)
     {
-        $this->showOrg = Org::findOrFail($id)->toArray();
+        $this->showOrg = User::findOrFail($id)->toArray();
         $this->modal('edit-org')->show();
     }
 
     public function updateOrg()
     {
-        $org = Org::findOrFail($this->showOrg['id']);
+        $org = User::findOrFail($this->showOrg['id']);
 
         $org->update([
             'name' => $this->showOrg['name'],
@@ -74,7 +74,7 @@ class ManageOrg extends Component
 
 
         if ($this->deleteOrgId) {
-            Org::findOrFail($this->deleteOrgId)->delete();
+            User::findOrFail($this->deleteOrgId)->delete();
 
             $this->reset(['name', 'showOrg', 'deleteOrgId']);
             $this->modal('delete-org')->close();
@@ -93,7 +93,9 @@ class ManageOrg extends Component
 
     public function render()
     {
-        $manageOrgs = Org::orderBy('created_at', 'desc')->paginate(7);
+        // $manageOrgs = User::orderBy('created_at', 'desc')->paginate(7);
+        $manageOrgs = User::where('role', 'org')
+        ->orderBy('created_at', 'asc')->paginate(7);
 
         return view('livewire.admin.org.manage-org', [
             'manageOrgs' => $manageOrgs,

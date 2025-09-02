@@ -16,7 +16,10 @@ use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
 use App\Models\Feed as FeedModel;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\FeedNotification;
 use App\Events\ManageFeed as BroadcastFeed;
+use App\Notifications\UniversalNotification;
+use Illuminate\Support\Facades\Notification;
 
 #[Title('Feed')]
 class ManageFeed extends Component
@@ -126,15 +129,25 @@ public function createPost()
     }
 
     $userName = $user->name;
-    $orgName  = $post->org?->name ?? 'Public'; // ✅ will show "Public" if no org_id
-    $activity = "📰 {$userName} from {$orgName} posted a feed: \"{$post->title}\"";
+    $orgName  = $post->org?->name ?? 'Public'; 
+ 
 
-    RecentActivity::create([
-        'message' => $activity,
-        'type'    => 'feed',
-    ]);
+        RecentActivity::create([
+            'user_id'   => $user->id,
+            'message'   => "{$user->name} created a new feed: \"$post->title\" ",
+            'type'      => 'feed',
+            'action'    => 'posted',
+        ]);
 
-    event(new RecentActivities($activity));
+            // Get all users whose ID is not equal to the authenticated user's ID
+            $otherUsers = User::where('id', '!=', $user)->get();
+
+            Notification::send($otherUsers, new UniversalNotification(
+                type: 'feed',
+                message: 'New feed posted!'
+            ));
+
+    event(new RecentActivities());
     broadcast(new BroadcastFeed($post));
 
     $this->reset(['title', 'content', 'org_id', 'type', 'photo', 'privacy']);
@@ -145,48 +158,71 @@ public function createPost()
 }
 
 
+// ───── Comments ─────
 public function addComment($feedId)
 {
-    // Ensure the key exists
     $commentText = $this->comments[$feedId] ?? '';
 
     $this->validate([
         "comments.$feedId" => 'required|string|max:500',
     ]);
 
-    Comment::create([
+    $comment = Comment::create([
         'feed_id' => $feedId,
         'user_id' => Auth::id(),
         'comment' => $commentText,
     ]);
 
-    // Clear the input for this feed
-    $this->comments[$feedId] = '';
+    $user = Auth::user();
+    $feed = FeedModel::find($feedId);
+    $feedOwner = User::find($feed->user_id);
 
+    
+    if($feedOwner !== $user){
+
+    Notification::send($feedOwner, new UniversalNotification(
+                type: 'feed',
+                message: "$user->name commented on your post \"$feed->title\"",
+            ));
+    }
+
+    $this->comments[$feedId] = '';
     $this->fetchFeeds();
 }
 
+// ───── Reactions ─────
+public function toggleHeart(FeedModel $feed)
+{
+    $reaction = Reaction::where('feed_id', $feed->id)
+        ->where('user_id', Auth::id())
+        ->where('type', 'heart')
+        ->first();
 
-    // ───── Reactions ─────
-    public function toggleHeart(FeedModel $feed)
-    {
-        $reaction = Reaction::where('feed_id', $feed->id)
-            ->where('user_id', Auth::id())
-            ->where('type', 'heart')
-            ->first();
+    $user = Auth::user();
+    $feedOwner = User::find($feed->user_id);
 
-        if ($reaction) {
-            $reaction->delete();
-        } else {
-            Reaction::create([
-                'feed_id' => $feed->id,
-                'user_id' => Auth::id(),
-                'type' => 'heart',
-            ]);
-        }
-
-        $this->fetchFeeds();
+    if ($reaction) {
+        $reaction->delete();
+        $action = 'removed a heart on your post';
+    } else {
+        Reaction::create([
+            'feed_id' => $feed->id,
+            'user_id' => $user->id,
+            'type' => 'heart',
+        ]);
+        $action = 'reacted ❤️ on your post ';
     }
+
+        if($feedOwner !== $user){
+
+    Notification::send($feedOwner, new UniversalNotification(
+                type: 'feed',
+                message: "$user->name $action \"$feed->title\" ",
+            ));
+    }
+
+    $this->fetchFeeds();
+}
 
     // ───── Edit / Update Post ─────
     public function editPost($id)

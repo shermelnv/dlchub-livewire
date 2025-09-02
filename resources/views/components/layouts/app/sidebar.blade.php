@@ -13,13 +13,15 @@
                 <x-app-logo />
             </a>
             @else
-            <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
             @endif
             <flux:navlist variant="outline">
 
-                
+                <flux:navlist.item icon="home" :href="route('landing-page')" :current="request()->routeIs('landing-page')" >
+                            {{ __('Home') }}
+                        </flux:navlist.item>
                 
                 {{-- ADMIN / SUPERADMIN --}}
                 @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
@@ -68,12 +70,12 @@
 
 
                
-                @if (auth()->user()->role === 'user')
+                @if (auth()->user()->isUser())
                     {{-- USER --}}
                     <flux:navlist.group :heading="__('User')" class="grid">
                         <flux:navlist.item icon="megaphone" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>{{ __('News Feed') }}</flux:navlist.item>
                         <flux:navlist.item icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
-                        {{-- <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item> --}}
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item>
                         <flux:navlist.item icon="check-circle" :href="route('voting')" :current="request()->routeIs('voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
 
                     </flux:navlist.group>
@@ -82,11 +84,22 @@
                 @endif
 
 
+                <flux:navlist.item 
                 
-                    
-                    
                 
+                icon="users" :href="route('inbox')" :current="request()->routeIs('inbox')" wire:navigate>
+                            <livewire:sidebar-inbox/>
+                        </flux:navlist.item>
 
+     
+                    
+                    
+
+                        {{-- MEMBERS --}}
+                        {{-- <flux:navlist.item icon="users" :href="route('members')" :current="request()->routeIs('members')" wire:navigate>
+                            {{ __('Members') }}
+                        </flux:navlist.item> --}}
+                    {{-- </flux:navlist.group> --}}
             </flux:navlist>
 
             <flux:spacer />
@@ -226,6 +239,7 @@
                     </form>
                 </flux:menu>
             </flux:dropdown>
+            
         </flux:header>
 
         {{ $slot }}

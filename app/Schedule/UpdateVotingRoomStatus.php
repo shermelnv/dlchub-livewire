@@ -25,13 +25,13 @@ class UpdateVotingRoomStatus
         foreach ($startingRooms as $room) {
             $room->update(['status' => 'Ongoing']);
 
-            $activity = '🟢 Voting room "' . $room->title . '" just started.';
             RecentActivity::create([
-                'message' => $activity,
-                'type' => 'voting',
-                'status' => 'started',
+                'user_id'   => auth()->user()->id,
+                'message'   => "{$room->title} is active",
+                'type'      => 'voting',
+                'action'    => 'active',
             ]);
-            event(new RecentActivities($activity));
+            event(new RecentActivities());
         }
 
         
@@ -43,16 +43,15 @@ class UpdateVotingRoomStatus
             foreach ($endingRooms as $room) {
             $room->update(['status' => 'Closed']);
 
-            $activity = '🔴 Voting room "' . $room->title . '" has ended.';
-            
-            RecentActivity::create([
-                'message' => $activity,
-                'type' => 'voting',
-                'status' => 'closed',
-            ]);
+        RecentActivity::create([
+            'user_id'   => $user->id,
+            'message'   => "{$room->title} has ended",
+            'type'      => 'voting',
+            'action'    => 'ended',
+        ]);
 
             event(new RoomExpired());
-            event(new RecentActivities($activity));
+            event(new RecentActivities());
         }
 
 

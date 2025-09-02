@@ -6,25 +6,26 @@ use App\Models\User;
 // USER
 use App\Mail\TestMail;
 use App\Events\Example;
+use App\Livewire\Inbox;
 use Livewire\Volt\Volt;
-use App\Models\GroupChat;
 
 // ADMIN / SUPERADMIN
 
+use App\Models\GroupChat;
 use App\Events\RoomExpired;
 use App\Livewire\User\Chat;
 use App\Livewire\User\Feed;
 use App\Livewire\OrgProfile;
-use App\Livewire\VotersList;
 
 // GLOBAL
 
-use App\Livewire\VotingRoom;
+use App\Livewire\VotersList;
 
 
 // MODELS
 
 
+use App\Livewire\VotingRoom;
 use Illuminate\Http\Request;
 use App\Livewire\LandingPage;
 use App\Livewire\User\Voting;
@@ -45,6 +46,7 @@ use App\Livewire\DashboardRecentActivity;
 use App\Events\ManageFeed as BroadcastFeed;
 use App\Livewire\Admin\Voting\ManageVoting;
 use App\Events\GroupChat as  GroupChatEvent;
+use App\Notifications\UniversalNotification;
 use App\Models\VotingRoom as  VotingRoomModel;
 use App\Events\ManageVoting as BroadcastVotingRoom;
 use App\Models\Advertisement as  AdvertisementModel;
@@ -144,84 +146,6 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('org-profile/{org}', OrgProfile::class)->name('org.profile');
     // Route::get('org-profile', OrgProfile::class)->name('org.profile');
 
-
-
-    Route::get('/broadcast-test', function () {
-        $group = GroupChat::first();
-        $message = $group->messages()->latest()->first();
-
-        broadcast(new GroupChatEvent($message));
-
-        return 'Broadcast sent';
-    });
-
-    Route::get('/test-email', function () {
-        Mail::raw('This is a test email from Laravel.', function ($message) {
-            $message->to('carreon.carll@gmail.com')
-                    ->subject('Test Email from Laravel');
-        });
-
-        return 'Email sent!';
-    });
-
-    Route::get('/test-broadcast-user', function () {
-        $user = User::latest()->first(); // or fake user
-
-        broadcast(new UserRegistered(   ));
-
-        return 'Broadcasted user.registered for: ' . $user->name;
-    });
-
-    Route::get('/test-broadcast-feeds', function () {
-        $feeds = FeedModel::latest()->first(); // or fake user
-
-        broadcast(new BroadcastFeed($feeds));
-
-        return 'Broadcasted feed.posted from: ' . $feeds->title;
-    });
-
-    Route::get('/test-broadcast-ads', function () {
-        $ads = AdvertisementModel::latest()->first(); // or fake user
-
-        broadcast(new BroadcastAdvertisement($ads));
-
-        return 'Broadcasted ads.posted from: ' . $ads->title;
-    });
-    Route::get('/test-broadcast-room', function () {
-        $voting = VotingRoomModel::latest()->first(); // or fake user
-
-        broadcast(new BroadcastVotingRoom($voting));
-
-        return 'Broadcasted voting.posted from: ' . $voting->title;
-    });
-
-    Route::get('/test-voting-room', function () {
-        $voted = VotingRoomModel::latest()->first(); // or fake user
-
-        event(new VotedCandidate($voted->id));
-
-
-        return 'Broadcasted voting.posted from: ' . $voted->title;
-    });
-
-    Route::get('/test-room-expired', function () {
-        $room = VotingRoomModel::latest()->first();
-
-        // Fire the event manually
-        event(new RoomExpired());
-
-        return 'Broadcasted room.expired for: ' . $room->title;
-        });
-
-    Route::get('/test-join-request', function () {
-        $group = GroupChat::where('group_code', 'MBFUHO')->firstOrFail();
-
-        event(new ChatJoinRequest($group->id));
-
-        return 'Broadcasted chat.join.request for Group: ' . $group->group_code;
-    });
-
-
     Route::view('/registered-success', 'registered-successfully')->name('registered-success');
     Route::view('/not-verified', 'not-verified')->name('not-verified');
 
@@ -229,11 +153,41 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('voting', ManageVoting::class)->name('voting');
     Route::get('advertisement', ManageAdvertisement::class)->name('advertisement');
     Route::get('feed', ManageFeed::class)->name('feed');
+    Route::get('inbox', Inbox::class)->name('inbox');
 
-    
 
 
-    
+
 });
+
+    Route::get('test-notif', function () {
+
+
+
+
+    // $user = User::find(4);
+
+    // $user->notify(new UniversalNotification(
+    //     type: 'feed',
+    //     message: 'New feed posted!'
+    // ));
+
+
+    // dd('sent at ' . $user->name);
+
+    $authId = Auth::id();
+
+if ($authId) {
+    // Get all users whose ID is not equal to the authenticated user's ID
+    $otherUsers = User::where('id', '!=', $authId)->get();
+
+    Notification::send($otherUsers, new UniversalNotification(
+        type: 'feed',
+        message: 'New feed posted!'
+    ));
+}
+
+return 'sent';
+    });
 
 require __DIR__.'/auth.php';

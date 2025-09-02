@@ -12,11 +12,11 @@ class RecentActivities implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public string $message;
+    // public string $message;
 
-    public function __construct(string $message)
+    public function __construct()
     {
-        $this->message = $message;
+        // $this->message = $message;
     }
 
     public function broadcastOn(): Channel

@@ -16,8 +16,11 @@ use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
 use App\Models\AdvertisementPhoto;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\UniversalNotification;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use App\Events\ManageAdvertisement as BroadcastAdvertisement;
+
 
 #[Title('Advertisement')]
 class ManageAdvertisement extends Component
@@ -160,14 +163,29 @@ $this->trendingOrgs = Advertisement::visibleToUser($user)
         // Log Activity
         $user = Auth::user();
         $orgName = $ad->organization ?? 'Unknown Org';
-        $activity = $user->name . ' created a new advertisement for ' . $orgName;
+  
+
+
+            // Get all users whose ID is not equal to the authenticated user's ID
+            $otherUsers = User::where('id', '!=', $user)->get();
+
+            Notification::send($otherUsers, new UniversalNotification(
+                type: 'advertisement',
+                message: 'New advertisement posted!'
+            ));
+        
+
 
         RecentActivity::create([
-            'message' => $activity,
-            'type' => 'advertisement',
+            'user_id'   => $user->id,
+            'message'   => "{$user->name} created a new advertisement: \" $ad->title\" ",
+            'type'      => 'advertisement',
+            'action'    => 'posted',
         ]);
+
+        
         broadcast(new BroadcastAdvertisement($ad))->toOthers();
-        event(new RecentActivities($activity));
+        event(new RecentActivities());
         event(new DashboardStats([
             'students' => \App\Models\User::where('role', 'user')->count(),
             'groupChats' => \App\Models\GroupChat::count(),

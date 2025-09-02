@@ -24,10 +24,7 @@
     });
  Echo.channel('dashboard.activity')
             .listen('.activity.created', (e) => {
-                console.log('Broadcast received:', e.message)
-                window.dispatchEvent(new CustomEvent('activity-created', {
-                    detail: { message: e.message }
-                }))
+                Livewire.dispatch('activity-created', { message: e.message })
             });
 
 

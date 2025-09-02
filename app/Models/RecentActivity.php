@@ -10,10 +10,19 @@ class RecentActivity extends Model
         'message',
         'type',
         'status',
-    
+        'user_id',
+        'action',     
     ];
 
+
     protected $casts = [
-        'created_at' => 'datetime',
+        'message'   => 'array',
+        'created_at'=> 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
