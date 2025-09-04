@@ -61,7 +61,7 @@
             </thead>
             <tbody class="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700">
                 @forelse ($manageUsers as $manageUser)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800" wire:key="user-{{ $manageUser->id }}">
                         <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageUser->username }}</td>
                         <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">{{ $manageUser->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">{{ $manageUser->email }}</td>
@@ -82,11 +82,10 @@
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-400">
                             <flux:select 
                                 size="sm" 
-                                wire:model="roles.{{ $manageUser->id }}" 
+                                wire:model.defer="roles.{{ $manageUser->id }}" 
                                 wire:change="updateRole({{ $manageUser->id }})"
                             >
                                 <flux:select.option value="user">User</flux:select.option>
-                                <flux:select.option value="org">Org</flux:select.option>
                                 <flux:select.option value="admin">Admin</flux:select.option>
                             </flux:select>
                         </td>

@@ -2,49 +2,70 @@
 
     {{-- HEADER --}}
     <section class="min-h-screen flex flex-col items-center justify-center text-center space-y-6 px-4" data-aos="fade-up">
-        <h1 class="max-w-2xl text-5xl font-bold">Introducing PLC HUB Students Collaboration</h1>
-        <flux:text class="max-w-2xl text-lg text-gray-600">
-        A one-stop hub that connects students, organizations, and faculty. Stay updated with announcements, join events, 
-        participate in voting rooms, and collaborate through real-time chats — all in one place.
+        <h1 class="max-w-2xl text-3xl md:text-5xl font-bold">Introducing PLC HUB Students Collaboration</h1>
+        <flux:text class="max-w-2xl text-base md:text-lg text-gray-600">
+       Connect. Collaborate. Stay updated. PLC HUB brings students, organizations, and faculty together in a single hub — from events and announcements to voting and real-time chats.
         </flux:text>
     </section>
 
     {{-- GROUP CHAT --}}
-    <section class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center bg-red-950">
-        <div class="w-3/4 h-72 rounded-lg shadow-lg bg-amber-100 m-auto" data-aos="zoom-in"></div>
-        <div class="space-y-6 text-white px-10" data-aos="fade-left">
-            <h1 class="text-sm md:text-4xl font-bold">Make Your Group Chats More Fun</h1>
-            <flux:text class="max-w-lg text-lg text-gray-200">
-            Stay connected and collaborate effortlessly with classmates, friends, or organizations. 
-            Access group chats anytime from the sidebar, making it easy to jump into discussions, 
-            share ideas, and keep your projects organized.
+    <section class="min-h-screen flex flex-col lg:grid lg:grid-cols-2 items-center bg-red-950">
+        {{-- PHOTO --}}
+        <img 
+            src="{{ asset('images/chatting.png') }}" 
+            alt="Group Chat" 
+            class="w-full max-h-96 lg:max-h-[500px] rounded-lg object-contain mx-auto my-6 lg:my-0"
+            data-aos="zoom-in"
+        />
+
+        <div class="space-y-6 text-white px-6 md:px-10 text-center lg:text-left" data-aos="fade-left">
+            <h1 class="text-2xl md:text-4xl font-bold">Make Your Group Chats More Fun</h1>
+            <flux:text class="max-w-lg text-base md:text-lg text-gray-200 text-justify mx-auto lg:mx-0">
+                Collaborate in real-time! Join group chats with classmates or organizations, share ideas, and keep your projects organized — all from your dashboard.
             </flux:text>
-            <ul class="space-y-3">
-                <li class="flex items-center gap-2" data-aos="fade-up" data-aos-delay="100"><flux:icon.check class="size-4"/> Real-time messaging and file sharing</li>
-                <li class="flex items-center gap-2" data-aos="fade-up" data-aos-delay="200"><flux:icon.check class="size-4"/> Create study groups and project teams</li>
-                <li class="flex items-center gap-2" data-aos="fade-up" data-aos-delay="300"><flux:icon.check class="size-4"/> Integrated calendar and event planning</li>
-            </ul>
+            <div class="grid grid-cols-2 lg:flex flex-col gap-4">
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="100">
+                        <flux:icon.check class="size-4"/> Real-time messaging and file sharing 
+                    </li>
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="200">
+                        <flux:icon.check class="size-4"/> Create study groups and project teams
+                    </li>
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="300">
+                        <flux:icon.check class="size-4"/> Integrated calendar and event planning
+                    </li>
+                </ul>
+                <div class="flex justify-between items-center lg:block">
+                    <flux:button href="{{route('user.chat')}}" icon="chat-bubble-oval-left" variant="primary" color="rose" data-aos="fade-up" data-aos-delay="400">Start Chatting</flux:button>
+                </div>
+            </div>
+            
         </div>
     </section>
 
     {{-- VOTE OFFICER --}}
-    <section class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center bg-gray-900">
-        <div class="space-y-6 text-white px-10" data-aos="fade-right">
-            <h1 class="text-sm md:text-4xl font-bold">Student Voting Made Simple</h1>
-            <flux:text class="max-w-lg text-lg text-gray-300">
-            Take part in campus elections with just a few clicks. Your voice matters—choose your leaders and shape the future of your student community.
+    <section class="min-h-screen flex flex-col md:flex-row items-center bg-gray-900">
+        <div class="space-y-6 text-white px-6 md:px-10 text-center md:text-left order-2 md:order-1" data-aos="fade-right">
+            <h1 class="text-2xl md:text-4xl font-bold">Student Voting Made Simple</h1>
+            <flux:text class="max-w-lg text-base md:text-lg text-gray-300 text-justify mx-auto md:mx-0">
+                Make your voice count! Vote for student leaders, track ongoing elections, and participate in campus decision-making with ease.
             </flux:text>
             <flux:button href="{{route('voting')}}" icon="check-circle" variant="primary" color="rose" class="mt-6" data-aos="zoom-in-up">Start Voting</flux:button>
         </div>
-        <div class="w-3/4 h-72 rounded-lg shadow-lg bg-amber-100 m-auto" data-aos="zoom-in"></div>
+        <img 
+            src="{{ asset('images/voting.png') }}" 
+            alt="Voting" 
+            class="w-full max-h-96 md:max-h-[500px] rounded-lg object-contain mx-auto my-6 md:my-0 order-1 md:order-2"
+            data-aos="zoom-in"
+        />
     </section>
 
     {{-- DUMMY HERE --}}
 
     {{-- STUDENTS REGISTERED / ORGANIZATIONS / VOTING ROOMS / UPCOMING EVENTS --}}
-    <section class="flex items-center justify-center bg-gradient-to-r from-yellow-400 via-amber-700 to-red-800 px-6 py-16">
+    <section class="flex items-center justify-center bg-gradient-to-r from-yellow-400 via-amber-700 to-red-800 px-6 py-8">
         <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-10 w-full max-w-6xl">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
                 
                 <!-- Students Enrolled -->
                 <div data-aos="fade-up" data-aos-delay="100">
@@ -81,17 +102,19 @@
 
     {{-- NEWS FEED --}}
     <section class="max-h-screen flex flex-col items-center bg-gray-100 dark:bg-gray-900 pb-10">
-        <h2 class="w-full py-2 bg-red-900 dark:bg-red-700 text-center text-white font-semibold" data-aos="fade-down">
-            News Feed
+         <h2 class="w-full py-2 bg-red-900 dark:bg-red-700 text-center text-white font-semibold" data-aos="fade-down">
+        Latest News & Updates
         </h2>
-        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+
+        <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-6 p-6">
            @forelse($latestFeeds as $i => $feed)
+           <a href="{{route('feed')}}">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3" 
                  data-aos="fade-up" 
                  data-aos-delay="{{ $i * 200 }}">
                  
-                @if($feed->image)
-                    <img src="{{ asset('storage/'.$feed->image) }}" 
+                @if($feed->photo_url)
+                    <img src="{{ asset('storage/'. $feed->photo_url) }}" 
                          alt="News Image" 
                          class="w-full h-48 object-cover rounded-md bg-gray-200 dark:bg-gray-700"/>
                 @else
@@ -104,6 +127,7 @@
                     {{ $feed->content }}
                 </p>
             </div>
+        </a>
         @empty
             <p class="col-span-3 text-center text-gray-500 dark:text-gray-400">
                 No news available yet.
@@ -118,7 +142,7 @@
 
 
 {{-- ADVERTISEMENT & ORGS --}}
-    <section class="min-h-screen grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900">
+    <section class="max-h-screen grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900">
 
         {{-- Advertisement --}}
         <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700" data-aos="fade-right">
@@ -127,8 +151,10 @@
             </div>
 
             {{-- Content grows and scrolls if needed --}}
-            <div class=" p-6 grid grid-cols-1 md:grid-cols-2 gap-6 ">
+            <div class=" p-6 grid grid-cols-2 gap-6 ">
+                
                 @forelse($latestAds as $i => $ad)
+                <a href="{{route('advertisement')}}">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
                         data-aos="fade-up"
                         data-aos-delay="{{ $i * 200 }}">
@@ -151,6 +177,7 @@
                             {{ $ad->description }}
                         </p>
                     </div>
+                </a>
                 @empty
                     <p class="col-span-3 text-center text-gray-500 dark:text-gray-400">
                         No advertisements yet.
@@ -179,7 +206,7 @@
             <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 ">
                 @forelse($organizations as $org)
                 <a href="{{ route('org.profile', ['org' => $org->id]) }}">
-                    <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
+                    <div class="flex items-center gap-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
                         @if($org->logo_path)
                             <img src="{{ Storage::url($org->logo_path) }}"
                                 class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"

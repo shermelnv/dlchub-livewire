@@ -11,18 +11,8 @@
             <flux:textarea label="Description" rows="4" wire:model.defer="description" placeholder="Provide full details..." />
 
             <div class="grid grid-cols-1  gap-4">
-                
-                        @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'admin')
-                            <flux:select label="Organization" wire:model.defer="organization">
-                                    <flux:select.option selected value="">All</flux:select.option>
-                                @foreach ($orgs as $org)
-                         
-                                    <flux:select.option value="{{$org->name}}">{{$org->name}}</flux:select.option>
-                                @endforeach
-                            </flux:select>
-                        @endif
 
-                        @if(auth()->user()->role === 'org')
+                    @if(auth()->user()->role === 'org')
                     <div class="grid grid-cols-2 gap-4">
                         <flux:select label="Privacy" wire:model.defer="privacy" placeholder="Public / Private" description="Public - All. Private - Org members" >
                             <flux:select.option value="public">Public</flux:select.option>

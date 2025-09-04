@@ -14,9 +14,12 @@ use Masmerise\Toaster\Toaster;
 use App\Events\ChatJoinRequest;
 use App\Events\GroupMessageSent;
 
+use App\Events\GroupUserApproved;
 use App\Models\GroupMemberRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Events\GroupChat as GroupChatEvent;
+use App\Notifications\UniversalNotification;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportEvents\Browser;
 use App\Models\GroupMemberRequest as UserRequest;
 
@@ -24,7 +27,7 @@ use App\Models\GroupMemberRequest as UserRequest;
 class Chat extends Component
 {
     use WithFileUploads;
-    public $group_image; 
+    public $group_profile; 
 
     public $groups = [];
     public $selectedGroup = null;
@@ -34,6 +37,7 @@ class Chat extends Component
     public $newGroupDescription = '';
     public $groupCode = '';
     
+
 
 public function mount($groupCode = null)
 {
@@ -99,19 +103,44 @@ public function approveRequest($requestId)
     // Only allow if current user is group admin/owner (you may want to add this check)
     if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_chat_id) return;
 
-    // if ($request->groupChats()->count() >= 4) {
-    // Toaster::error('This user have reached the group limit.');
-    // return;
-    // }
+    if ($request->user->groupChats()->count() >= 4) {
+    Toaster::error('This user have reached the group limit.');
+    return;
+    }
 
 
     $request->update([
         'status' => 'accepted',
     ]);
 
+    ChatMessage::create([
+        'group_chat_id' => $this->selectedGroup->id,
+        'user_id' => null, // system message
+        'message' => ($request->user->name ?? 'unknown') . ' has been approved by the admin',
+    ]);
+
+    
+    // Broadcast to other users via Reverb/Pusher
+    broadcast(new GroupUserApproved($this->selectedGroup->id));
+
+
     $this->selectedGroup->members()->attach($request->user_id);
+
     Toaster::success('Request approved');
 }
+#[On('user-approved')]
+public function addSystemMessage()
+{
+
+    
+    // dd('received');
+    $this->loadMessages();
+}
+
+
+
+
+
 
 public function rejectRequest($requestId)
 {
@@ -141,6 +170,9 @@ public function rejectRequest($requestId)
 
             $this->mount();
         }
+        $this->modal('group-settings-large-devices')->close();
+        return redirect()->route('user.chat');
+        Toaster::success('You have left the group successfully.');
     }
 
 public function openGroup($groupCode)
@@ -167,8 +199,18 @@ public function removeMember($id)
     $this->selectedGroup->members()->detach($id);
     $this->selectedGroup->refresh();
     $this->messages = $this->selectedGroup->messages()->with('user')->get(); // optional refresh
+       
+            Notification::send($id, new UniversalNotification(
+                'Group Chat',
+                auth()->user()->name ." removed you from group \"{$group->name}\"!",
+                auth()->id() 
+            ));
+        
+
     Toaster::success('Member Removed');
 }
+
+
 
 
     public function sendMessage()
@@ -204,6 +246,8 @@ public function newJoinRequest()
     if (!$this->selectedGroup) {
         return;
     }
+
+
     Toaster::info('New join request');
     $this->selectedGroup->refresh();
 }
@@ -235,14 +279,16 @@ public function updateGroupInfo()
 
     $group->name = $this->editGroup['name'];
 
-    if ($this->group_image) {
-        $path = $this->group_image->store('group_images', 'public');
-        $group->group_image = $path;
+    if ($this->group_profile) {
+        $path = $this->group_profile->store('group_profile', 'public');
+        $group->group_profile = $path; // <— now matches DB + Blade
     }
+
 
     $group->save();
 
     $this->modal('edit-group-info')->close();
+    $this->modal('group-settings')->close();
     // Refresh selected group
     $this->selectedGroup = $group;
 
@@ -260,9 +306,10 @@ public function createGroup()
             'group_owner_id' => Auth::id(),
             'name' => $this->newGroupName,
             'description' => $this->newGroupDescription,
-            'group_code' => strtoupper(Str::random(6)), // Generates something like "A1B2C3"
+            'group_code' => strtoupper(Str::random(6)),
+            'expires_at' => now()->addDays(7), 
         ]);
-
+        
         $group->members()->attach(Auth::id());
 
         event(new DashboardStats([
@@ -270,9 +317,14 @@ public function createGroup()
             
         ]));
         $this->reset(['newGroupName', 'newGroupDescription']);
+
+        $this->groups = GroupChat::whereHas('members', function ($q) {
+        $q->where('user_id', Auth::id());
+        })->with('members')->get();
+
         $this->modal('create-group')->close();
         Toaster::success('Group Created Successfully!');
-        return redirect()->route('user.chat', ['groupCode' => $group->group_code]);
+        // return redirect()->route('user.chat', ['groupCode' => $group->group_code]);
 
     }
 
@@ -285,6 +337,7 @@ public function joinGroup()
         return;
     }
     if (auth()->user()->groupChats()->count() >= 4) {
+    $this->reset(['groupCode']);
     Toaster::error('You have reached the group limit.');
     return;
     }
@@ -310,6 +363,16 @@ public function joinGroup()
         );
 
         event(new ChatJoinRequest($group->id));
+
+        $groupOwner = User::find($group->group_owner_id); // fetch the User model
+        if ($groupOwner) {
+            Notification::send($groupOwner, new UniversalNotification(
+                'Group Chat',
+                auth()->user()->name . " requested to join your group \"{$group->name}\"!",
+                auth()->id() // or null for system
+            ));
+        }
+
 
         Toaster::success('Join request submitted!');
     }

@@ -39,7 +39,7 @@ class ManageUsers extends Component
     public string $search = '';
     public string $status = 'all';
 
-    public $roles = [];
+
 
     public function mount()
     {
@@ -135,14 +135,16 @@ class ManageUsers extends Component
         $this->modal('delete-user')->show();
     }
 
+
+    public $roles = [];
     public function updateRole($userId)
     {
         $user = User::findOrFail($userId);
         $user->role = $this->roles[$userId];
         $user->save();
 
+
         Toaster::success('User role updated successfully!');
-        $this->reset('showUser');
     }
 
     public function deleteUser()

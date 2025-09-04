@@ -13,10 +13,10 @@
               ? 'bg-gray-200 dark:bg-gray-800' 
               : 'hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     <div class="flex gap-4 px-2 items-center">
-                @if ($group->group_image)
+                @if ($group->group_profile)
                                 <flux:avatar
                                     circle
-                                    src="{{ asset('storage/' . $group->group_image) }}"
+                                    src="{{ asset('storage/' . $group->group_profile) }}"
                                     
                                 />
                             @else

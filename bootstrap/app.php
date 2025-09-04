@@ -4,6 +4,7 @@ use App\Http\Middleware\OrgOnly;
 use App\Http\Middleware\UserOnly;
 use App\Http\Middleware\AdminOnly;
 
+use App\Schedule\ExpireGroupChats;
 use App\Http\Middleware\AdminOrOrg;
 use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Application;
@@ -34,7 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
     })
     ->withSchedule(function ($schedule) {
-    $schedule->call(UpdateVotingRoomStatus::class)->everyMinute();
+        $schedule->call(UpdateVotingRoomStatus::class)->everyMinute();
+        $schedule->call(ExpireGroupChats::class)->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

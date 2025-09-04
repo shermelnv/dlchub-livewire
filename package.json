@@ -4,7 +4,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "dev:all": "concurrently \"php artisan serve --host=192.168.100.6\" \"npm run dev\" \"php artisan schedule:work\" "
+        "dev:all": "concurrently \"php artisan serve --host=192.168.100.6\" \"npm run dev\" \"php artisan queue:work\" \"php artisan schedule:work\"  \"php artisan reverb:start --debug\" "
+      
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",

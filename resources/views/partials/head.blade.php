@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover" />
 
 <title>{{ $title ?? config('app.name') }}</title>
 
@@ -26,7 +26,14 @@
             .listen('.activity.created', (e) => {
                 Livewire.dispatch('activity-created', { message: e.message })
             });
+ const userId = @js(auth()->id());
+    window.Echo.private(`App.Models.User.${userId}`)
+        .notification((notification) => {
+            console.log('Realtime notification:', notification);
 
+            // Dispatch to Livewire globally
+            Livewire.dispatch('notificationReceived', { notification });
+        });
 
     });
 </script>

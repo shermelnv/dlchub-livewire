@@ -3,66 +3,76 @@
 namespace App\Schedule;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\VotingRoom;
 use App\Events\RoomExpired;
 use App\Events\DashboardStats;
 use App\Models\RecentActivity;
 use App\Events\RecentActivities;
+use App\Notifications\UniversalNotification;
+use Illuminate\Support\Facades\Notification;
 
 class UpdateVotingRoomStatus
 {
     public function __invoke(): void
     {
         $now = Carbon::now();
+        $users = User::all();
 
+        // Pending → Ongoing
         $startingRooms = VotingRoom::where('status', 'Pending')
-        ->whereNotNull('start_time')
-        ->where('start_time', '<=', $now)
-        ->get();
+            ->whereNotNull('start_time')
+            ->where('start_time', '<=', $now)
+            ->get();
 
-
-        // Update their status to Ongoing
         foreach ($startingRooms as $room) {
             $room->update(['status' => 'Ongoing']);
 
             RecentActivity::create([
-                'user_id'   => auth()->user()->id,
-                'message'   => "{$room->title} is active",
-                'type'      => 'voting',
-                'action'    => 'active',
+                'user_id' => $room->creator_id ?? null,
+                'message' => "Voting: \"{$room->title}\" is now active",
+                'type'    => 'voting',
+                'action'  => 'active',
             ]);
-            event(new RecentActivities());
+
+            Notification::send($users, new UniversalNotification(
+                'Voting',
+                "Voting \"{$room->title}\" is now ongoing!",
+                $user->id,
+            ));
         }
 
-        
-         $endingRooms = VotingRoom::where('status', 'Ongoing')
+        // Ongoing → Closed
+        $endingRooms = VotingRoom::where('status', 'Ongoing')
             ->whereNotNull('end_time')
             ->where('end_time', '<=', $now)
             ->get();
 
-            foreach ($endingRooms as $room) {
+        foreach ($endingRooms as $room) {
             $room->update(['status' => 'Closed']);
 
-        RecentActivity::create([
-            'user_id'   => $user->id,
-            'message'   => "{$room->title} has ended",
-            'type'      => 'voting',
-            'action'    => 'ended',
-        ]);
+            RecentActivity::create([
+                'user_id' => $room->creator_id ?? null,
+                'message' => "Voting: \"{$room->title}\" has ended",
+                'type'    => 'voting',
+                'action'  => 'ended',
+            ]);
+
+            Notification::send($users, new UniversalNotification(
+                'Voting',
+                "Voting \"{$room->title}\" has ended!",
+                $user->id,
+            ));
 
             event(new RoomExpired());
-            event(new RecentActivities());
         }
 
+        // Fire event once for all new activities
+        event(new RecentActivities());
 
-        VotingRoom::where('status', 'Ongoing')
-            ->whereNotNull('end_time')
-            ->where('end_time', '<=', $now)
-            ->update(['status' => 'Closed']);
-
-            event(new DashboardStats([
+        // Update dashboard stats
+        event(new DashboardStats([
             'activeVotings' => VotingRoom::where('status', 'Ongoing')->count(),
         ]));
-
     }
 }

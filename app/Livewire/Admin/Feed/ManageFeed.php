@@ -143,8 +143,9 @@ public function createPost()
             $otherUsers = User::where('id', '!=', $user)->get();
 
             Notification::send($otherUsers, new UniversalNotification(
-                type: 'feed',
-                message: 'New feed posted!'
+                 'feed',
+                 "$user->name posted a feed \"$post->title\"",
+                $user->id,
             ));
 
     event(new RecentActivities());
@@ -181,8 +182,9 @@ public function addComment($feedId)
     if($feedOwner !== $user){
 
     Notification::send($feedOwner, new UniversalNotification(
-                type: 'feed',
-                message: "$user->name commented on your post \"$feed->title\"",
+                 'feed',
+                 "$user->name commented on your post \"$feed->title\"",
+ $user->id,
             ));
     }
 
@@ -216,8 +218,9 @@ public function toggleHeart(FeedModel $feed)
         if($feedOwner !== $user){
 
     Notification::send($feedOwner, new UniversalNotification(
-                type: 'feed',
-                message: "$user->name $action \"$feed->title\" ",
+                'feed',
+                "$user->name $action \"$feed->title\" ",
+ $user->id,
             ));
     }
 

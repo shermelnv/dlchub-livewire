@@ -1,6 +1,6 @@
-<div>
+<div >
         {{-- DESKTOP --}}
-    <div class="hidden md:flex flex-col xs:hidden h-[100vh] sticky top-0 shadow overflow-y-auto py-5 gap-6 scrollbar-hover">
+    <div class="hidden lg:flex flex-col h-[100vh] sticky top-0 shadow overflow-y-auto py-5 gap-6 scrollbar-hover bg-zinc-900">
 
             <div class="space-y-4  w-full rounded-lg p-2">
                 <flux:heading size="lg">Trending</flux:heading>
@@ -57,11 +57,11 @@
                 </div>
             </div>
             
-        </div>
+    </div>
 
 
         {{-- MOBILE --}}
-        <flux:modal name="mobile-right-sidebar" class="md:hidden" variant="flyout">
+        <flux:modal name="mobile-right-sidebar" class="bg-zinc-900" variant="flyout">
             
             <div class="space-y-4  w-full rounded-lg p-2">
                 <flux:heading size="lg">Trending</flux:heading>

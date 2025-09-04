@@ -13,16 +13,18 @@ class UniversalNotification extends Notification implements ShouldBroadcast
 
     public string $type;
     public string $message;
+    public ?int $user_id; // add creator ID
 
-    public function __construct(string $type, string $message)
+    // Include user_id as optional
+    public function __construct(string $type, string $message, ?int $user_id = null)
     {
         $this->type = $type;
         $this->message = $message;
+        $this->user_id = $user_id;
     }
 
     public function via(object $notifiable): array
     {
-        // send both database + broadcast
         return ['database', 'broadcast'];
     }
 
@@ -31,6 +33,7 @@ class UniversalNotification extends Notification implements ShouldBroadcast
         return [
             'type' => $this->type,
             'message' => $this->message,
+            'user_id' => $this->user_id, // store creator
         ];
     }
 
@@ -39,6 +42,7 @@ class UniversalNotification extends Notification implements ShouldBroadcast
         return new BroadcastMessage([
             'type' => $this->type,
             'message' => $this->message,
+            'user_id' => $this->user_id, // include in broadcast
         ]);
     }
 

@@ -6,8 +6,8 @@
         <div class="size-40 rounded-full overflow-hidden border border-gray-300 dark:border-gray-700">
             @if ($group_image)
                 <img src="{{ $group_image->temporaryUrl() }}" class="object-cover w-full h-full" />
-            @elseif ($selectedGroup->group_image)
-                <img src="{{ asset('storage/' . $selectedGroup->group_image) }}" class="object-cover w-full h-full" />
+            @elseif ($selectedGroup->group_profile)
+                <img src="{{ asset('storage/' . $selectedGroup->group_profile) }}" class="object-cover w-full h-full" />
             @else
                 <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
                     No avatar

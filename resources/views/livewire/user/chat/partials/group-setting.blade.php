@@ -1,110 +1,158 @@
 {{-- Group Settings Modal (Large Devices) --}}
-<flux:modal name="group-settings-large-devices" variant="flyout">
+<flux:modal name="group-settings" variant="flyout" class="min-w-sm h-screen">
+    <div class="h-full grid grid-rows-[1fr_auto] gap-4">
+        <div class=" grid grid-rows-[auto_1fr_1fr] overflow-hidden">
 
-    <!-- Group Info -->
-    <div class="flex flex-col items-center gap-2 w-full">
+        <!-- Group Info -->
+        <div class="flex flex-col items-center gap-2 w-full">
 
-        <div class="size-40 rounded-full overflow-hidden border border-gray-300 dark:border-gray-700">
+                    @if ($selectedGroup->group_profile )
+                                    <flux:avatar
+                                        circle
+                                        src="{{ asset('storage/' . $selectedGroup->group_profile) }}"
+                                        class="size-40"
+                                    />
+                                @else
+                                    <flux:avatar
+                                        circle
+                                        name="{{$selectedGroup->name}}"
+                                        class="size-40 text-2xl"
+                                    />
+                                @endif
+            
 
-                @if ($selectedGroup->group_image)
-                    <img src="{{ asset('storage/' . $selectedGroup->group_image) }}" class="object-cover w-full h-full" />
-                @else
-                    <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
-                        No Image
+                        <div class="text-center font-bold">{{ $selectedGroup->name }}</div>
+
+            {{-- <flux:modal.trigger name="edit-group-info"> --}}
+                <flux:button wire:click.prevent="editGroupInfo({{$selectedGroup->id}})" variant="ghost" class="text-blue-500 cursor-pointer">
+                    Change name or image
+                </flux:button>
+            {{-- </flux:modal.trigger> --}}
+
+        </div>
+
+        
+
+        <!-- Members Section -->
+        <div class="flex flex-col gap-4 flex-1 p-2 overflow-hidden scrollbar-hover">
+            <flux:heading size="sm" 
+            class="flex justify-between items-center"
+           
+            >Members
+            <flux:badge size="sm" inset="top bottom">{{$selectedGroup->members->count()}}</flux:badge>
+        </flux:heading>
+            <div class="flex-1 overflow-y-auto space-y-2">
+            @foreach ($selectedGroup->members as $member)
+                <div class="flex items-center justify-between  bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        @if ($member->profile_image)
+                            <flux:avatar circle src="{{ asset('storage/' . $member->profile_image) }}" />
+                        @else
+                            <flux:avatar circle :initials="$member->initials()" />
+                        @endif
+                        <div>{{ $member->name }}</div>
                     </div>
-                @endif
-        </div>
+                    @if(auth()->user()->id !== $member->id && auth()->user()->id === $selectedGroup->group_owner_id)
+                        {{-- <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button> --}}
+                        <flux:dropdown  position="bottom">
+                            <flux:button icon="ellipsis-vertical" size="xs" variant="ghost"/>
 
-        <div class="text-center font-bold">{{ $selectedGroup->name }}</div>
-
-        {{-- <flux:modal.trigger name="edit-group-info"> --}}
-            <flux:button wire:click.prevent="editGroupInfo({{$selectedGroup->id}})" variant="ghost" class="text-blue-500 cursor-pointer">
-                Change name or image
-            </flux:button>
-        {{-- </flux:modal.trigger> --}}
-
-    </div>
-
-    <hr class="my-4 border-gray-300 dark:border-gray-700" />
-
-    <!-- Members Section -->
-    <div class="space-y-3">
-        <flux:heading size="sm">Members</flux:heading>
-        @foreach ($selectedGroup->members as $member)
-            <div class="flex items-center justify-between p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
-                <div class="flex items-center gap-3">
-                    @if ($member->profile_image)
-                        <flux:avatar circle src="{{ asset('storage/' . $member->profile_image) }}" />
-                    @else
-                        <flux:avatar circle :initials="$member->initials()" />
+                            <flux:menu>
+                                
+                                <flux:menu.item icon="cog-6-tooth" 
+                                    wire:click="makeAdmin({{ $member->id }})">
+                                    View User
+                                </flux:menu.item>
+                                <flux:menu.item 
+                                    icon="trash" 
+                                    variant="danger" 
+                                    wire:click="removeMember({{ $member->id }})">
+                                    Remove
+                                </flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
+                    
                     @endif
-                    <div>{{ $member->name }}</div>
+                    @if ($member->id === $selectedGroup->group_owner_id)
+                        <flux:badge>Admin</flux:badge>
+                    @endif
+
                 </div>
-                @if(auth()->user()->id !== $member->id && auth()->user()->id === $selectedGroup->group_owner_id)
-                    <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button>
-                
-                @endif
-                @if ($member->id === $selectedGroup->group_owner_id)
-                    <flux:badge>Owner</flux:badge>
-                @endif
-
+            @endforeach
             </div>
-        @endforeach
-    </div>
-
-    <hr class="my-4 border-gray-300 dark:border-gray-700" />
-
-    <!-- Member Requests Section -->
-    <div class="space-y-3">
-        <div class="flex justify-between">
-            <flux:heading size="sm">Join Requests</flux:heading>
-            <flux:modal.trigger name="rejected-list">
-                <flux:button size="xs">Rejected List</flux:button>
-            </flux:modal.trigger>
         </div>
 
-        @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
-            <div class="border p-4 rounded-lg flex justify-between items-center">
-                <div>
-                    <p class="font-bold text-white truncate">{{ $request->user->name }}</p>
-                    <p class="text-sm text-gray-300 truncate">{{ $request->user->email }}</p>
-                </div>
-                <div class="flex gap-2">
-                    <flux:button size="xs" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
-                    <flux:button size="xs" variant="danger" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
-                </div>
-            </div>
-        @empty
-            <div class="text-gray-500 dark:text-gray-400 text-sm">No pending requests.</div>
-        @endforelse
-    </div>
+        
 
+        <!-- Member Requests Section -->
+        <div class="flex flex-col flex-1 gap-4 p-2 overflow-hidden scrollbar-hover">
+            <div class="flex justify-between">
+                <flux:heading size="sm">Join Requests</flux:heading>
+                <flux:badge size="sm" inset="top bottom">{{$selectedGroup->requests()->where('status', 'pending')->count()}}</flux:badge>
+            </div>
+            <div class="max-h-50 overflow-y-auto scrollbar-hover ">
+                @forelse ($selectedGroup->requests()->where('status', 'pending')->with('user')->get() as $request)
+                    <div class="border p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-white truncate">{{ $request->user->name }}</p>
+                            <p class="text-sm text-gray-300 truncate">{{ $request->user->email }}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <flux:button size="xs" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
+                            <flux:button size="xs" variant="danger" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-gray-500 dark:text-gray-400 text-sm">No pending requests.</div>
+                @endforelse
+            </div>
+        </div>
+
+        </div>
+        <div class="">
+            <flux:button size="sm" variant="danger" wire:click="leaveGroup({{$selectedGroup->id}})">
+                Leave
+            </flux:button>
+        </div>
+    </div>
 </flux:modal>
 
-<flux:modal name="edit-group-info">
+<flux:modal name="edit-group-info" class="min-w-sm">
     <flux:heading>Edit Group Info</flux:heading>
 
-    <div class="flex flex-col items-center gap-4 p-6">
+    <div class="flex flex-col items-center gap-4 w-full">
         <!-- Group Photo -->
-        <div class="size-40 rounded-full overflow-hidden border border-gray-300 dark:border-gray-700">
-            @if ($group_image)
-                <img src="{{ $group_image->temporaryUrl() }}" class="object-cover w-full h-full" />
-            @elseif ($selectedGroup->group_image)
-                <img src="{{ asset('storage/' . $selectedGroup->group_image) }}" class="object-cover w-full h-full" />
+        <div>
+            @if ($group_profile)
+                <div class="size-40 rounded-full overflow-hidden border border-gray-300 dark:border-gray-700"> 
+                    <img src="{{ $group_profile->temporaryUrl() }}" class="object-cover w-full h-full" />
+                </div> 
+            @elseif ($selectedGroup->group_profile)
+                <flux:avatar
+                    circle
+                    src="{{ asset('storage/' . $selectedGroup->group_profile) }}"
+                    class="size-40"
+                />
             @else
-                <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
-                    Insert image
-                </div>
+                <flux:avatar
+                    circle
+                    name="{{$selectedGroup->name}}"
+                    class="size-40 text-2xl"
+                />
             @endif
+            <div wire:loading wire:target="group_profile" class="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                Uploading…
+            </div>
         </div>
 
         <!-- Change Photo Input -->
-        <flux:input wire:model="group_image" type="file" label="Select Image" accept="image/*" />
-
-        <!-- Group Name Input -->
         <div class="w-full">
-            <label class="text-sm font-medium">Group Name</label>
-            <flux:input wire:model="editGroup.name" type="text" placeholder="Enter new group name" class="w-full mt-1" />
+            <flux:input wire:model="group_profile" type="file" label="Select Image" accept="image/*" />
+        </div>
+        <!-- Group Name Input -->
+ 
+        <div class="w-full">
+            <flux:input wire:model="editGroup.name" type="text" label="Group Name" placeholder="Enter new group name" class="w-full mt-1" />
         </div>
 
         <!-- Action Buttons -->

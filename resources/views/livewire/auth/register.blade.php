@@ -122,6 +122,7 @@
             <flux:input wire:model="email" :label="__('Email address')" type="email" required autocomplete="email" placeholder="2023001234@pampangastateu.edu.ph" />
             <flux:input wire:model="password" :label="__('Password')" type="password" required autocomplete="new-password" placeholder="Password" viewable />
             <flux:input wire:model="password_confirmation" :label="__('Confirm password')" type="password" required autocomplete="new-password" placeholder="Confirm password" viewable />
+            
 
             <flux:button type="submit" variant="primary" class="w-full">
                 {{ __('Next Step') }}
@@ -131,16 +132,76 @@
 
     {{-- Step 2: Photo Upload --}}
     @if($step === 2)
-        <form wire:submit.prevent="register" class="space-y-6 max-w-xs">
-            <flux:input type="file" wire:model="photo" :label="__('Upload your COR or ID')" required size="sm"/>
-            @if($photo)
-                <img src="{{ $photo->temporaryUrl() }}" class="w-full h-full object-cover mx-auto" />
-            @endif
-            <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Submit Registration') }}
-            </flux:button>
-        </form>
-    @endif
+    <form wire:submit.prevent="register" class="space-y-6 max-w-xs">
+        <flux:input 
+            type="file" 
+            wire:model="photo" 
+            :label="__('Upload your COR or ID')" 
+            required 
+            size="sm"
+            accept="image/*" 
+        />
+
+        {{-- Loader while uploading --}}
+        {{-- <div wire:loading wire:target="photo" class="flex justify-center text-sm text-gray-600 dark:text-gray-300" >
+            <div class="text-center">
+                Loading...
+            </div>
+                
+        </div> --}}
+
+        <div 
+    wire:loading 
+    wire:target="photo" 
+    class="w-full flex justify-center items-center py-4"
+>
+    <div class="flex flex-col items-center space-y-2 text-gray-600 dark:text-gray-300">
+        {{-- Spinner --}}
+        <div class="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+        
+        {{-- Text --}}
+        <span class="text-sm">Loading...</span>
+    </div>
+</div>
+  @error('photo')
+        <p class="text-sm text-red-600 dark:text-red-400 mt-1">
+            {{ $message }}
+        </p>
+    @enderror
+
+
+        @if($photo)
+            {{-- <flux:modal.trigger class="flex justify-center" name="review_image">
+                <flux:button align="center">review image</flux:button>
+            </flux:modal.trigger> --}}
+
+            <flux:modal name="review_image" class="max-h-[calc(100vh-10rem)] w-full m-2">
+                <div class="space-y-2 pb-2">
+                    <flux:heading size="lg">Review Image</flux:heading>
+
+                    <img 
+                        src="{{ $photo->temporaryUrl() }}" 
+                        class="max-h-[60vh] w-auto mx-auto object-contain rounded-xl shadow" 
+                    />
+
+                </div>
+            </flux:modal>
+                <flux:modal.trigger class="flex justify-center" name="review_image">
+                    
+                         <img 
+                            src="{{ $photo->temporaryUrl() }}" 
+                            class="w-40 h-40 object-cover mx-auto rounded-xl shadow" 
+                        />
+            </flux:modal.trigger>
+        @endif
+
+        <flux:button type="submit" variant="primary" class="w-full" wire:loading.attr="disabled"
+        wire:target="register">
+            {{ __('Submit Registration') }}
+        </flux:button>
+    </form>
+@endif
+
 
     {{-- Login link --}}
     <div class="text-center text-sm text-zinc-600 dark:text-zinc-400">

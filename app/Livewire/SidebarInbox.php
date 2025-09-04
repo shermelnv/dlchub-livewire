@@ -15,7 +15,7 @@ class SidebarInbox extends Component
         $this->refreshUnreadCount();
     }
 
-    #[On('notificationUpdated')]
+    #[On('notificationReceived')]
     public function refreshUnreadCount()
     {
         $this->unreadCount = Auth::user()

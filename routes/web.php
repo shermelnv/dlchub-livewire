@@ -33,6 +33,7 @@ use App\Events\UserRegistered;
 use App\Events\VotedCandidate;
 use App\Events\ChatJoinRequest;
 use App\Events\RecentActivities;
+use App\Events\GroupUserApproved;
 use App\Models\Feed as FeedModel;
 use App\Models\User as  UserModel;
 use App\Livewire\User\Advertisement;
@@ -159,35 +160,52 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
 
 });
+Route::get('/test-broadcast', function() {
+    broadcast(new GroupUserApproved(6));
+    return 'event sent';
+});
 
     Route::get('test-notif', function () {
-
-
-
-
-    // $user = User::find(4);
-
-    // $user->notify(new UniversalNotification(
-    //     type: 'feed',
-    //     message: 'New feed posted!'
-    // ));
-
-
-    // dd('sent at ' . $user->name);
-
     $authId = Auth::id();
+
+$otherUsers = User::where('id', '!=', $authId)->get();
+
+    $user = User::find(2);
+
+    Notification::send($otherUsers, new UniversalNotification(
+         'feed',
+         "$user->name posted a feed!",
+          $user->id,
+    ));
+
+
+    dd('sent at ' . $user->name);
+
+
 
 if ($authId) {
     // Get all users whose ID is not equal to the authenticated user's ID
-    $otherUsers = User::where('id', '!=', $authId)->get();
+    
 
     Notification::send($otherUsers, new UniversalNotification(
-        type: 'feed',
-        message: 'New feed posted!'
+        'feed',
+         "$user->name posted a feed!",
+          $user->id,
     ));
 }
 
 return 'sent';
     });
+
+Route::get('expire', function(){
+    $user = User::find(5);
+
+              Notification::send($user, new UniversalNotification(
+                'Group Chat',
+                "Group \"group\" has expired!",
+                null // sender_id, you can use owner or system
+            ));
+        return 'sent';
+});
 
 require __DIR__.'/auth.php';

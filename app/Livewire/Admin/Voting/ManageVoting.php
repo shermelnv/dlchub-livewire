@@ -10,8 +10,10 @@ use App\Models\RecentActivity;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\RecentActivities;
+
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\UniversalNotification;
+use Illuminate\Support\Facades\Notification;
 use App\Events\ManageVoting as BroadcastVotingRoom;
 
 #[Title('Voting')]
@@ -50,6 +52,9 @@ class ManageVoting extends Component
 
     public function createVoting()
     {
+    
+        $user = Auth::user();
+
         $this->validate([
         'title' => 'required|string|max:255',
         'description' => 'nullable|string',
@@ -66,24 +71,21 @@ class ManageVoting extends Component
         'start_time' => $this->start_time ?: null,
         'end_time' => $this->end_time ?: null,
         'status' => $status,
-        'creator_id' => Auth::id(),
+        'creator_id' => $user->id,
     ]);
 
-    $users = User::where('id', '!=', Auth::id())->get();
-foreach ($users as $u) {
-    $u->notify(new UniversalNotification([
-        'type'    => 'voting',
-        'room_id' => $votingRoom->id,
-        'title'   => $votingRoom->title,
-        'user_id' => $votingRoom->auth()->user()->id,
-        'message' => auth()->user()->name . " created a voting room titled \"{$votingRoom->title}\"",
-    ]));
-}
+        $otherUsers = User::where('id', '!=', $user)->get();
+
+            Notification::send($otherUsers, new UniversalNotification(
+                 'Voting',
+                 "$user->name create a Voting \"$votingRoom->title\"",
+ $user->id,
+            ));
 
 
         RecentActivity::create([
-            'user_id'   => auth()->user()->id,
-            'message'   => "{$user->name} created a new voting: \"$votingRoom->title\" ",
+            'user_id'   => $user->id,
+            'message'   => "{$user->name} created a new voting: \" $votingRoom->title\" ",
             'type'      => 'voting',
             'action'    => 'created',
         ]);

@@ -170,8 +170,10 @@ $this->trendingOrgs = Advertisement::visibleToUser($user)
             $otherUsers = User::where('id', '!=', $user)->get();
 
             Notification::send($otherUsers, new UniversalNotification(
-                type: 'advertisement',
-                message: 'New advertisement posted!'
+                'advertisement',
+                "$user->name posted a advertisement \"$ad->title\"",
+                $user->id,
+
             ));
         
 

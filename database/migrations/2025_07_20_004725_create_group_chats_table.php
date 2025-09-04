@@ -18,6 +18,7 @@ return new class extends Migration
         $table->string('name');
         $table->text('description')->nullable();
         $table->string('group_code')->unique();
+        $table->timestamp('expires_at');
         $table->timestamps();
     });
     }

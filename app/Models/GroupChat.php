@@ -13,7 +13,12 @@ class GroupChat extends Model
         'name', 
         'description', 
         'group_code',
-        'group_profile'
+        'group_profile',
+        'expires_at'
+    ];
+
+    protected $casts = [
+    'expires_at' => 'datetime',
     ];
 
 
@@ -33,6 +38,9 @@ class GroupChat extends Model
         return $this->belongsToMany(User::class, 'group_chat_user', 'group_chat_id', 'user_id');
     }
 
+
+
+
     /**
      * Alias for members(), used interchangeably.
      */
@@ -46,9 +54,9 @@ class GroupChat extends Model
     return $this->belongsTo(User::class, 'group_owner_id');
 }
 
-public function requests()
-{
-    return $this->hasMany(GroupMemberRequest::class, 'group_chat_id');
-}
+    public function requests()
+    {
+        return $this->hasMany(GroupMemberRequest::class, 'group_chat_id');
+    }
 
 }

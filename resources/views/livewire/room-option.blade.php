@@ -48,44 +48,47 @@
 </flux:modal>
 
     <flux:modal name="add-positionOrcandidate" class="w-xs lg:w-full" :closable="false">
-        <div x-data="{ tab: 'join' }" class="w-full h-auto grid gap-6">
-            <!-- Tab Buttons -->
-            <div class="grid grid-cols-2 gap-2">
+<div x-data="{
+        tab: 'join'
+    }" class="w-full min-h-30 grid gap-6">
 
-                <button
-                    @click="tab = 'join'"
-                    :class="tab === 'join' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
-                    class="py-2 rounded-md text-sm font-medium transition"
-                >
-                    Create Position
-                </button>
-                                <button
-                    @click="tab = 'create'"
-                    :class="tab === 'create' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
-                    class="py-2 rounded-md text-sm font-medium transition"
-                >
-                    Create Candidate
-                </button>
-            </div>
+    <!-- Tab Buttons -->
+    <div class="grid grid-cols-2 gap-2">
+        <button
+            @click="tab = 'join'"
+            :class="tab === 'join' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
+            class="py-2 rounded-md text-sm font-medium transition"
+        >
+            Create Position
+        </button>
+        <button
+            @click="tab = 'create'"
+            :class="tab === 'create' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
+            class="py-2 rounded-md text-sm font-medium transition"
+        >
+            Create Candidate
+        </button>
+    </div>
 
-            <!-- Create Group Form -->
-            <div x-show="tab === 'create'"  >
-                <form wire:submit.prevent="createCandidate">
-                    <div class="space-y-6">
-
-                        <!-- Position Selector -->
+    <!-- Create Candidate Form -->
+    <div x-show="tab === 'create'" >
+        <form wire:submit.prevent="createCandidate">
+            <div class="space-y-6">
+                <!-- Position Selector -->
                 <flux:select label="Position" wire:model.defer="newCandidate.position_id">
                     <option value="">Select Position</option>
                     @foreach ($positions as $position)
                         <option value="{{ $position->id }}">{{ $position->name }}</option>
                     @endforeach
                 </flux:select>
-                        <!-- Name -->
+
+                <!-- Name -->
                 <flux:input
                     label="Full Name"
                     wire:model.defer="newCandidate.name"
                     placeholder="e.g. Juan Dela Cruz"
                     required
+                    class="h-10"
                 />
 
                 <!-- Short Name -->
@@ -93,6 +96,7 @@
                     label="Short Name (optional)"
                     wire:model.defer="newCandidate.short_name"
                     placeholder="e.g. Juan"
+                    class="h-10"
                 />
 
                 <!-- Bio -->
@@ -102,39 +106,78 @@
                     placeholder="Tell us something about this candidate..."
                 />
 
-
-                        <div class="flex justify-end gap-4">
-                            <flux:modal.close>
-                                <flux:button variant="ghost" size="sm">Close</flux:button>
-                            </flux:modal.close>
-                            
-                            <flux:button type="submit" size="sm">Create Candidate</flux:button>
-                        </div>
-                    </div>
-                </form>
+                <div class="flex justify-end gap-4">
+                    <flux:modal.close>
+                        <flux:button variant="ghost" size="sm">Close</flux:button>
+                    </flux:modal.close>
+                    <flux:button type="submit" size="sm">Create Candidate</flux:button>
+                </div>
             </div>
+        </form>
+    </div>
 
-            <!-- Join Group Form -->
-            <div x-show="tab === 'join'"  >
-                <form wire:submit.prevent="createPosition">
-                    <div class="space-y-6">
-                        <!-- Position Name -->
-                        <flux:input
-                            label="Position Name"
-                            wire:model.defer="newPosition.name"
-                            placeholder="e.g. President"
-                            required
-                        />
-                        <div class="flex justify-end gap-4">
-                            <flux:modal.close>
-                                <flux:button variant="ghost" size="sm">Close</flux:button>
-                            </flux:modal.close>
-                            <flux:button type="submit" size="sm">Create Position</flux:button>
-                        </div>
-                    </div>
-                </form>
+    
+   <!-- Create Position Form -->
+<div x-show="tab === 'join'" >
+    <form wire:submit.prevent="createPosition" class="space-y-6">
+        <div x-data="{
+                query: @entangle('newPosition.name'),
+                options: ['President','Vice President','Secretary','Treasurer'],
+                open: false,
+                highlightedIndex: -1,
+                filteredOptions() {
+                    return this.options.filter(o => o.toLowerCase().includes(this.query.toLowerCase()));
+                }
+            }"
+            x-init="$watch('query', () => highlightedIndex = -1); $watch('tab', () => open = false)"
+            @keydown.arrow-down.prevent="if (highlightedIndex < filteredOptions().length -1) highlightedIndex++"
+            @keydown.arrow-up.prevent="if (highlightedIndex > 0) highlightedIndex--"
+            @keydown.enter.prevent="if (highlightedIndex > -1) { query = filteredOptions()[highlightedIndex]; open = false; highlightedIndex = -1 }"
+            @click.outside="open = false"
+            class="relative"
+        >
+            <!-- Input -->
+            <input 
+                type="text" 
+                x-model="query" 
+                @focus="open = true" 
+                placeholder="Choose or type position" 
+                class="border rounded p-2 w-full h-10
+                       bg-white text-gray-900 
+                       dark:bg-gray-800 dark:text-gray-100 
+                       border-gray-300 dark:border-gray-700 
+                       focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            >
+
+            <!-- Dropdown in flow -->
+            <div x-show="open && filteredOptions().length"  class="mt-1">
+                <ul class="w-full max-h-40 min-h-[40px] overflow-auto 
+                           bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
+                           rounded shadow">
+                    <template x-for="(option, index) in filteredOptions()" :key="option">
+                        <li 
+                            @mousedown.prevent="query = option; open = false; highlightedIndex = -1" 
+                            :class="index === highlightedIndex ? 'bg-indigo-100 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'"
+                            class="p-2 cursor-pointer"
+                            x-text="option"
+                        ></li>
+                    </template>
+                </ul>
             </div>
         </div>
+
+        <!-- Form Buttons -->
+        <div class="flex justify-end gap-4">
+            <flux:modal.close>
+                <flux:button variant="ghost" size="sm">Close</flux:button>
+            </flux:modal.close>
+            <flux:button type="submit" size="sm">Create Position</flux:button>
+        </div>
+    </form>
+</div>
+
+
+</div>
     </flux:modal>
 
     <flux:modal name="candidate-card" class="min-w-[20rem] max-w-md" :closable="false">

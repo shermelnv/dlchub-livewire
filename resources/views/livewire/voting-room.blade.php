@@ -48,7 +48,7 @@
                 <h1 class="text-2xl font-bold text-maroon-900 dark:text-white">{{ $room->title }}</h1>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $room->description }}</p>
             </div>
-                @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty() && $room->status === 'Ongoing')
+              
 
                     <div class="text-sm text-right space-y-1">
                         <div class="text-gray-500 dark:text-gray-400">Ends at</div>
@@ -57,7 +57,7 @@
                             Status: {{ $room->status }}
                         </div>
                     </div>
-                @endif
+            
         </div>
 
        

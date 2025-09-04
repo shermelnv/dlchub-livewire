@@ -31,6 +31,13 @@ class Inbox extends Component
         $this->fetchNotifications();
     }
 
+    public function markAllAsRead()
+    {
+    auth()->user()->unreadNotifications->markAsRead();
+    $this->fetchNotifications();
+    }
+
+
     public function markAsRead($id)
     {
         $notif = auth()->user()->notifications()->find($id);

@@ -15,12 +15,20 @@
             <!-- ====== CREATE POST SECTION ====== -->
             @if(auth()->user()->role !== 'user')
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
-                <flux:avatar 
-                circle 
-                src="{{ auth()->user()->profile_image 
-                    ? asset('storage/' . auth()->user()->profile_image) 
-                    : 'https://unavatar.io/x/calebporzio' }}" 
-                />
+                @if(auth()->user()->profile_image)
+                    <flux:avatar 
+                        circle 
+                        src="{{ asset('storage/' . auth()->user()->profile_image) }}" 
+                        />
+                @else
+                    <flux:avatar
+                        circle
+                        :initials="auth()->user()->initials()"   
+                        />
+                            @endif
+   
+                                
+                            
                 <flux:modal.trigger name="post-feed">
                     <flux:button class="w-full">What's on your mind?</flux:button>
                 </flux:modal.trigger>
@@ -88,10 +96,10 @@
                             </div>
                         @endif
 
-                        <div class="p-4 space-y-3">
+                        <div class="p-2 pb-0 space-y-2">
                             <!-- Header -->
                             <div class="flex justify-between">
-                            <div class="flex gap-4 items-center">
+                            <div class="flex gap-2 items-center">
                                 @if ($feed->user->profile_image)
                                     <flux:avatar
                                         avatar="{{ asset('storage/' . $feed->user->profile_image) }}"
@@ -150,7 +158,7 @@
                             <!-- Footer -->
                             
 <!-- Footer -->
-<div class="flex flex-col gap-2 pt-2 text-gray-500 dark:text-gray-400 text-sm">
+<div class="flex flex-col gap-2  text-gray-500 dark:text-gray-400 text-sm">
     <div class="flex items-center gap-6">
         <!-- Heart -->
         <div class="flex items-center gap-1 cursor-pointer" wire:click="toggleHeart({{ $feed->id }})">
@@ -170,7 +178,7 @@
 
         <!-- Comment count -->
         <div class="flex items-center gap-1 cursor-pointer">
-            <flux:icon.chat-bubble-oval-left-ellipsis class="w-4 h-4" />
+            <flux:icon.chat-bubble-oval-left-ellipsis  />
             <span>{{ $feed->comments->count() }}</span>
         </div>
     </div>

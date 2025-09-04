@@ -20,11 +20,11 @@
 <div 
  x-data 
     x-init="
-        Echo.private(`App.Models.User.${@js(auth()->id())}`)
+        {{-- Echo.private(`App.Models.User.${@js(auth()->id())}`)
             .notification((notification) => {
                 console.log('Realtime notif:', notification);
                 Livewire.dispatch('notificationReceived', { notification });
-            });
+            }); --}}
     "
     class="flex justify-between">
     <div>{{ __('inbox') }} </div>

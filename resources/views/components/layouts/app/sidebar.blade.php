@@ -8,15 +8,11 @@
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
 
-            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+
+            <a href="{{ route('landing-page') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
-            @else
-            <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
-                <x-app-logo />
-            </a>
-            @endif
+          
             <flux:navlist variant="outline">
 
                 <flux:navlist.item icon="home" :href="route('landing-page')" :current="request()->routeIs('landing-page')" >
@@ -180,7 +176,10 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
+        <flux:header class="lg:hidden sticky top-0 
+           bg-white/60 dark:bg-black/60 
+           backdrop-blur-md 
+           z-50 shadow-sm">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />
@@ -240,6 +239,11 @@
                 </flux:menu>
             </flux:dropdown>
             
+            
+            <flux:modal.trigger name="mobile-right-sidebar">
+                <flux:button icon="bars-3-bottom-left" variant="ghost"/>
+            </flux:modal.trigger>
+   
         </flux:header>
 
         {{ $slot }}
