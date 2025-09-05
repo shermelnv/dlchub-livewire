@@ -12,6 +12,7 @@ use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Events\VotedCandidate;
 use Masmerise\Toaster\Toaster;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use App\Models\VotingRoom as VotingRoomModel;
 
@@ -173,10 +174,21 @@ public $voters = [];
     // Add Position
     // ────────────────────────────────────────────────
 
+    protected $messages = [
+    'newPosition.name.unique' => 'This position name already exists in this voting room.',
+    'newCandidate.name.unique' => 'This candidate name already exists in this voting room.',
+];
+
+
     public function createPosition()
     {
         $this->validate([
-            'newPosition.name'         => 'required|string|max:255',
+        'newPosition.name' => [
+            'string',
+            'required',
+            Rule::unique('positions', 'name')
+                ->where('voting_room_id', $this->room->id),
+        ],
             'newPosition.order_index'  => 'nullable|integer|min:0',
         ]);
 
@@ -204,7 +216,12 @@ public $voters = [];
     {
         $this->validate([
             'newCandidate.position_id' => 'required|exists:positions,id',
-            'newCandidate.name'        => 'required|string|max:255',
+            'newCandidate.name' => [
+            'string',
+            'required',
+            Rule::unique('candidates', 'name')
+                ->where(fn ($q) => $q->where('position_id', $this->newCandidate['position_id'])),
+            ],
             'newCandidate.short_name'  => 'nullable|string|max:50',
             'newCandidate.bio'         => 'nullable|string',
             'newCandidate.photo_url'   => 'nullable|url|max:255',

@@ -29,7 +29,13 @@
                             <flux:button variant="ghost" size="sm">Close</flux:button>
                         </flux:modal.close>
                         
-                        <flux:button type="submit" size="sm">Create</flux:button>
+                        <flux:button type="submit" 
+                            size="sm"
+                            wire:loading.attr="disabled" 
+                            wire:target="createGroup">
+                            Create
+                            <flux:icon.loading size="sm" wire:loading wire:target="createGroup" class="ml-2"/>
+                        </flux:button>
                     </div>
                 </div>
             </form>
@@ -44,7 +50,13 @@
                         <flux:modal.close>
                             <flux:button variant="ghost" size="sm">Close</flux:button>
                         </flux:modal.close>
-                        <flux:button type="submit" size="sm">Join</flux:button>
+                        <flux:button 
+                            type="submit" size="sm"
+                            wire:loading.attr="disabled" 
+                            wire:target="joinGroup"
+                            >Join
+                            <flux:icon.loading size="sm" wire:loading wire:target="joinGroup" class="ml-2"/>
+                        </flux:button>
                     </div>
                 </div>
             </form>

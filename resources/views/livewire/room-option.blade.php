@@ -85,11 +85,16 @@
                 <!-- Name -->
                 <flux:input
                     label="Full Name"
-                    wire:model.defer="newCandidate.name"
+                    wire:model="newCandidate.name"
                     placeholder="e.g. Juan Dela Cruz"
                     required
                     class="h-10"
                 />
+                
+                @error('newCandidate.name')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+         
 
                 <!-- Short Name -->
                 <flux:input
@@ -148,6 +153,11 @@
                        border-gray-300 dark:border-gray-700 
                        focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
+
+            @error('newPosition.name')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+            
 
             <!-- Dropdown in flow -->
             <div x-show="open && filteredOptions().length"  class="mt-1">

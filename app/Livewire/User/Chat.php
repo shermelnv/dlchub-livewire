@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Models\User;
 use Livewire\Component;
 use App\Models\GroupChat;
 use App\Models\ChatMessage;
@@ -12,8 +13,8 @@ use App\Events\DashboardStats;
 use Livewire\Attributes\Title;
 use Masmerise\Toaster\Toaster;
 use App\Events\ChatJoinRequest;
-use App\Events\GroupMessageSent;
 
+use App\Events\GroupMessageSent;
 use App\Events\GroupUserApproved;
 use App\Models\GroupMemberRequest;
 use Illuminate\Support\Facades\Auth;
@@ -116,9 +117,18 @@ public function approveRequest($requestId)
     ChatMessage::create([
         'group_chat_id' => $this->selectedGroup->id,
         'user_id' => null, // system message
-        'message' => ($request->user->name ?? 'unknown') . ' has been approved by the admin',
+        'message' => $request->user->name . ' has been approved by ' . auth()->user()->name ,
     ]);
 
+    $user = User::find($request);
+
+
+
+    Notification::send($user, new UniversalNotification(
+                'Group Chat',
+                " Your request from group \"{$this->selectedGroup->name}\"was accepted by " . auth()->user()->name,
+                auth()->id()
+            ));
     
     // Broadcast to other users via Reverb/Pusher
     broadcast(new GroupUserApproved($this->selectedGroup->id));
@@ -128,6 +138,7 @@ public function approveRequest($requestId)
 
     Toaster::success('Request approved');
 }
+
 #[On('user-approved')]
 public function addSystemMessage()
 {
@@ -156,24 +167,44 @@ public function rejectRequest($requestId)
     Toaster::error('Request Rejected');
 }
 
-    public function leaveGroup($groupId)
-    {
-        $group = GroupChat::find($groupId);
+public function leaveGroup($groupId)
+{
+    $group = GroupChat::find($groupId);
 
-        if ($group) {
-            $group->members()->detach(Auth::id());
+    if (!$group) {
+        Toaster::error('Group not found.');
+        return;
+    }
 
-            if ($this->selectedGroup && $this->selectedGroup->id == $group->id) {
-                $this->selectedGroup = null;
-                $this->messages = [];
-            }
+    // Check if current user is the group owner
+    if (auth()->id() === $group->group_owner_id) {
+        // Delete the group completely
+        $group->members()->detach(); // remove all members
+        $group->delete();
 
-            $this->mount();
+        if ($this->selectedGroup && $this->selectedGroup->id === $group->id) {
+            $this->selectedGroup = null;
+            $this->messages = [];
         }
-        $this->modal('group-settings-large-devices')->close();
-        return redirect()->route('user.chat');
+
+        Toaster::success('You were the owner, so the group was deleted successfully.');
+    } else {
+        // Just leave the group
+        $group->members()->detach(auth()->id());
+
+        if ($this->selectedGroup && $this->selectedGroup->id === $group->id) {
+            $this->selectedGroup = null;
+            $this->messages = [];
+        }
+
         Toaster::success('You have left the group successfully.');
     }
+
+    $this->mount(); // reload component state
+    $this->modal('group-settings-large-devices')->close();
+
+    return redirect()->route('user.chat');
+}
 
 public function openGroup($groupCode)
 {
@@ -200,11 +231,20 @@ public function removeMember($id)
     $this->selectedGroup->refresh();
     $this->messages = $this->selectedGroup->messages()->with('user')->get(); // optional refresh
        
-            Notification::send($id, new UniversalNotification(
-                'Group Chat',
-                auth()->user()->name ." removed you from group \"{$group->name}\"!",
-                auth()->id() 
-            ));
+    $user = User::find($id);
+
+    ChatMessage::create([
+        'group_chat_id' => $this->selectedGroup->id,
+        'user_id' => null, // system message
+        'message' => $user->name . ' was removed by ' . auth()->user()->name ,
+    ]);
+
+
+    Notification::send($user, new UniversalNotification(
+        'Group Chat',
+        auth()->user()->name ." removed you from group \"{$this->selectedGroup->name}\"!",
+        auth()->id() 
+    ));
         
 
     Toaster::success('Member Removed');
@@ -378,7 +418,7 @@ public function joinGroup()
     }
 
     $this->reset('groupCode');
-    $this->modal('create-group-desktop')->close();
+    $this->modal('create-group')->close();
 }
 
     public function render()

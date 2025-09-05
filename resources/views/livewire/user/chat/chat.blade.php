@@ -47,7 +47,7 @@
 
 >
 
-<div class="flex flex-col h-full col-span-2 border-r border-gray-200 dark:border-gray-700">
+<div class="flex flex-col h-full lg:h-screen col-span-2 border-r border-gray-200 dark:border-gray-700">
 
     <!-- Chat Layout -->
     
@@ -153,11 +153,11 @@
 
                             @if ($msg->user_id === null)
                                 <div class="text-center text-sm text-gray-400 dark:text-gray-500 my-2 ">
-                                    
-                                        {{ $msg->message }}
                                         <div class="text-xs">
                                             {{ $currentTimestamp->format('g:i A') }}
                                         </div>
+                                        {{ $msg->message }}
+                                        
                
                                 </div>
                             @else

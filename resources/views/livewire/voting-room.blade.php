@@ -52,9 +52,26 @@
 
                     <div class="text-sm text-right space-y-1">
                         <div class="text-gray-500 dark:text-gray-400">Ends at</div>
-                        <div class="font-semibold" id="ends-in-clock">Loading...</div>
-                        <div class="font-bold {{ $this->statusTextColor }}">
-                            Status: {{ $room->status }}
+                        <div 
+                            wire:ignore
+                            class="font-semibold"
+                            x-data="{
+                                expires: new Date('{{ $room->end_time }}'),
+                                now: new Date(),
+                                remaining() {
+                                    let diff = Math.max(this.expires - this.now, 0) / 1000; // seconds
+                                    let days = Math.floor(diff / 86400);
+                                    diff %= 86400;
+                                    let hours = Math.floor(diff / 3600);
+                                    diff %= 3600;
+                                    let minutes = Math.floor(diff / 60);
+                                    let seconds = Math.floor(diff % 60);
+                                    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            }"
+                            x-init="setInterval(() => { now = new Date(); }, 1000)"
+                            x-text="remaining()">
+                            Loading...
                         </div>
                     </div>
             
@@ -164,7 +181,28 @@
 
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
                 <div class="text-sm text-gray-500 dark:text-gray-400">Start Time</div>
-                <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">Loading...</div>
+                {{-- <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">Loading...</div> --}}
+                <div 
+                            wire:ignore
+                            class="text-xl font-bold text-maroon-700 dark:text-white"
+                            x-data="{
+                                expires: new Date('{{ $room->start_time }}'),
+                                now: new Date(),
+                                remaining() {
+                                    let diff = Math.max(this.expires - this.now, 0) / 1000; // seconds
+                                    let days = Math.floor(diff / 86400);
+                                    diff %= 86400;
+                                    let hours = Math.floor(diff / 3600);
+                                    diff %= 3600;
+                                    let minutes = Math.floor(diff / 60);
+                                    let seconds = Math.floor(diff % 60);
+                                    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            }"
+                            x-init="setInterval(() => { now = new Date(); }, 1000)"
+                            x-text="remaining()">
+                            Loading...
+                        </div>
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
