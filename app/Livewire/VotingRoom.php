@@ -10,6 +10,7 @@ use App\Models\Position;
 use App\Models\Candidate;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use App\Events\VotedCandidate;
 use Masmerise\Toaster\Toaster;
 use Illuminate\Validation\Rule;
@@ -18,8 +19,10 @@ use App\Models\VotingRoom as VotingRoomModel;
 
 class VotingRoom extends Component
 {
-
+    use WithFileUploads;
     use WithPagination;
+
+    
 
     public $room;
     public $positions = [];
@@ -38,8 +41,10 @@ class VotingRoom extends Component
         'name' => '',
         'short_name' => '',
         'bio' => '',
-        'photo_url' => '',
+
     ];
+
+    public $candidate_image;
 
     // Mount component
     public function mount($id)
@@ -109,15 +114,15 @@ public $voters = [];
     {
         $roomId = $id ?? $this->room->id;
 
-      
-
-
         $this->room = VotingRoomModel::with([
             'positions' => fn($query) => $query->orderBy('order_index'),
             'positions.candidates.votes'
         ])->findOrFail($roomId);
 
+     
+
         $this->updateStatusIfNeeded();
+            
 
         $this->positions = $this->room->positions;
 
@@ -127,9 +132,15 @@ public $voters = [];
                 $candidate->vote_count = $candidate->votes->count();
             }
         }
+        
     }
 
-    public $perPage = 5;
+    public function deleteRoom($id)
+    {
+        VotingRoomModel::findOrFail($id)->delete();
+        $this->modal('delete-room')->close();
+        return redirect()->route('voting');
+    }
 
     public function voters()
     {
@@ -224,13 +235,25 @@ public $voters = [];
             ],
             'newCandidate.short_name'  => 'nullable|string|max:50',
             'newCandidate.bio'         => 'nullable|string',
-            'newCandidate.photo_url'   => 'nullable|url|max:255',
+            'candidate_image'          => 'nullable|image|max:2048',
 
         ]);
 
-        Candidate::create($this->newCandidate);
+        $photoPath = null;
+        if ($this->candidate_image) {
+            // store in storage/app/public/candidates
+            $photoPath = $this->candidate_image->store('candidates', 'public');
+        }
 
-        $this->reset('newCandidate');
+        Candidate::create([
+            'position_id' => $this->newCandidate['position_id'],
+            'name'        => $this->newCandidate['name'],
+            'short_name'  => $this->newCandidate['short_name'],
+            'bio'         => $this->newCandidate['bio'],
+            'photo_url'   => $photoPath, // save relative path
+        ]);
+
+        $this->reset(['newCandidate', 'candidate_image']);
         $this->modal('room-option')->close();
         $this->modal('add-positionOrcandidate')->close();
         Toaster::success('Candidate added successfully.');

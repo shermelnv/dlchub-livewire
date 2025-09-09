@@ -15,6 +15,7 @@ return new class extends Migration
              $table->id();
             $table->foreignId('org_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('status')->default('pending');
             $table->timestamps();
 
             $table->unique(['org_id', 'user_id']); // avoid duplicates

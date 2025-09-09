@@ -2,31 +2,38 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
-use App\Models\Org;
-use Illuminate\Support\Facades\Auth;
 
 class FollowOrg extends Component
 {
     public $org;
-    public $isFollowing;
+    public string $followStatus = ''; // 'none', 'pending', 'accepted'
 
-    public function mount(Org $org)
+    public function mount(User $org)
     {
         $this->org = $org;
-        $this->isFollowing = Auth::user()->followingOrgs->contains($org->id);
+
+        $pivot = auth()->user()->followingOrgs()->where('org_id', $org->id)->first();
+        $this->followStatus = $pivot?->pivot->status ?? 'none';
     }
 
     public function toggleFollow()
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        if ($this->isFollowing) {
+        if ($this->followStatus === 'accepted') {
+            // Unfollow
             $user->followingOrgs()->detach($this->org->id);
-            $this->isFollowing = false;
+            $this->followStatus = 'none';
+        } elseif ($this->followStatus === 'pending') {
+            // Cancel pending request
+            $user->followingOrgs()->detach($this->org->id);
+            $this->followStatus = 'none';
         } else {
-            $user->followingOrgs()->attach($this->org->id);
-            $this->isFollowing = true;
+            // Send follow request
+            $user->followingOrgs()->attach($this->org->id, ['status' => 'pending']);
+            $this->followStatus = 'pending';
         }
     }
 

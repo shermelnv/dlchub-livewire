@@ -23,8 +23,6 @@ new class extends Component {
         $this->name = $user->name;
         $this->email = $user->email;
         $this->username = $user->username ?? 'NATOY';
-        $this->mobile_number = $user->mobile_number ?? '123456789';
-        $this->academic_program = $user->academic_program ?? 'HALO HALONG COURSE';
         $this->role = $user->role ?? 'STUDENT BA?';
     }
 
@@ -78,9 +76,16 @@ new class extends Component {
 
             
         <form wire:submit="updateProfileInformation" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Username --}}
-                <flux:input wire:model.defer="username" :label="__('Username')" type="text" readonly />
+            <div class="grid grid-cols-1  gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-2">
+                        {{-- Username --}}
+                        <flux:input wire:model.defer="username" :label="__('Username')" type="text" readonly />
+
+                        {{-- Group --}}
+                        <flux:input wire:model.defer="role" :label="__('Role')" type="text" readonly />
+                </div>
+
+
 
                 {{-- Complete Name --}}
                 <flux:input wire:model.defer="name" :label="__('Complete Name')" type="text" readonly />
@@ -88,14 +93,9 @@ new class extends Component {
                 {{-- Email --}}
                 <flux:input wire:model.defer="email" :label="__('Email')" type="email" readonly />
 
-                {{-- Mobile Number --}}
-                <flux:input wire:model.defer="mobile_number" :label="__('Mobile Number')" type="text" readonly />
 
-                {{-- Academic Program --}}
-                <flux:input wire:model.defer="academic_program" :label="__('Academic Program')" type="text" readonly />
 
-                {{-- Group --}}
-                <flux:input wire:model.defer="role" :label="__('Role')" type="text" readonly />
+                
             </div>
 
             <div class="flex items-center gap-4">

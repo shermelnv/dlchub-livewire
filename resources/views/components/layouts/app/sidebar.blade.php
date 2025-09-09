@@ -46,7 +46,7 @@
                             {{ __('Org Profile') }}
                         </flux:navlist.item> --}}
 
-                         <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
                             {{ __('Manage Chat') }}
                         </flux:navlist.item>
 
@@ -60,6 +60,10 @@
 
                         <flux:navlist.item icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>
                             {{ __('Manage Advertisement') }}
+                        </flux:navlist.item>
+
+                        <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
+                            {{ __('Follow Request') }}
                         </flux:navlist.item>
                     </flux:navlist.group>
                 @endif
@@ -239,10 +243,13 @@
                 </flux:menu>
             </flux:dropdown>
             
-            
-            <flux:modal.trigger name="mobile-right-sidebar">
-                <flux:button icon="bars-3-bottom-left" variant="ghost"/>
-            </flux:modal.trigger>
+        
+            @if (request()->routeIs('user.chat.*', 'inbox', 'feed', 'advertisement', 'voting', 'admin.chat.manage-chat'))
+                <flux:modal.trigger name="mobile-right-sidebar">
+                    <flux:button icon="bars-3-bottom-left" variant="ghost"/>
+                </flux:modal.trigger>
+            @endif
+
    
         </flux:header>
 

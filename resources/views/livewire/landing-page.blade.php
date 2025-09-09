@@ -205,7 +205,7 @@
             {{-- Content grows --}}
             <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 ">
                 @forelse($organizations as $org)
-                <a href="{{ route('org.profile', ['org' => $org->id]) }}">
+                <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
                     <div class="flex items-center gap-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
                         @if($org->logo_path)
                             <img src="{{ Storage::url($org->logo_path) }}"
@@ -241,14 +241,14 @@
         </div>
     </section>
 
-    <flux:modal name="viewAllOrgs" >
+    <flux:modal name="viewAllOrgs" class="w-sm lg:w-lg">
         
         <h2 class="text-2xl font-bold mb-4 ">All Organizations</h2>
             
-        <div class="max-w-3xl max-h-[80vh] overflow-y-auto ">
+        <div class="max-w-3xl max-h-[80vh] overflow-y-auto scrollbar-hover">
             <div class="grid gap-6">
                 @forelse($allOrganizations as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}">
+                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
                         <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
                             @if($org->logo_path)
                                 <img src="{{ Storage::url($org->logo_path) }}"

@@ -9,18 +9,37 @@ use Livewire\Attributes\On;
 class Inbox extends Component
 {
     public $notifications = [];
+    public $search = '';
 
     public function mount()
     {
         $this->fetchNotifications();
     }
 
+        public function updatedSearch()
+    {
+        // whenever search changes, reload notifications
+        $this->fetchNotifications();
+    }
+
     public function fetchNotifications()
     {
         $this->notifications = auth()->user()
-            ->unreadNotifications()
+            ->notifications()
             ->latest()
             ->get();
+
+         $query = auth()->user()->notifications()->latest();
+
+        if ($this->search) {
+            $search = $this->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('data->message', 'like', "%{$search}%")
+                  ->orWhere('data->type', 'like', "%{$search}%");
+            });
+        }
+
+        $this->notifications = $query->get();
 
         $this->dispatch('notificationUpdated');
     }

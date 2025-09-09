@@ -36,6 +36,7 @@ use App\Events\RecentActivities;
 use App\Events\GroupUserApproved;
 use App\Models\Feed as FeedModel;
 use App\Models\User as  UserModel;
+use App\Livewire\OrgFollowRequests;
 use App\Livewire\User\Advertisement;
 use Illuminate\Support\Facades\Mail;
 use App\Livewire\Admin\Org\ManageOrg;
@@ -144,7 +145,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // ALL
     Route::get('/voting-room/{id}', VotingRoom::class)->name('voting.room');
     Route::get('/voters-list', VotersList::class)->name('voters.list');
-    Route::get('org-profile/{org}', OrgProfile::class)->name('org.profile');
+    Route::get('org-profile/{orgId}', OrgProfile::class)->name('org.profile');
+    Route::get('org/follow-request', OrgFollowRequests::class)->name('org.follow-request');
     // Route::get('org-profile', OrgProfile::class)->name('org.profile');
 
     Route::view('/registered-success', 'registered-successfully')->name('registered-success');
@@ -198,7 +200,7 @@ return 'sent';
     });
 
 Route::get('expire', function(){
-    $user = User::find(5);
+    $user = User::find(2);
 
               Notification::send($user, new UniversalNotification(
                 'Group Chat',

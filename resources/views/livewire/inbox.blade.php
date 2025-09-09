@@ -7,117 +7,86 @@
                 Livewire.dispatch('notificationReceived', { notification });
             }); --}}
     "
-    class="space-y-4"
+    class="grid lg:grid-cols-3"
 >
 
-    <div class="flex justify-between items-center p-4 sticky top-0 
+<div class="col-span-2 space-y-4">
+    <div class=" p-4 sticky top-14 lg:top-0
            bg-white/60 dark:bg-black/30
            backdrop-blur-md 
-           z-50 shadow-sm">
-        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4">
-            <flux:icon.bell class="text-blue-300"/>
-            Notifications
-        </h2>
-        @if($notifications->count())
-                <flux:button 
-                    wire:click="markAllAsRead"
-                    variant="filled"
-                    size="sm"
-                >
-                    Mark all as read
-                </flux:button>
+           z-1 shadow-sm space-y-4" >
+        <div class="flex justify-between items-center">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-4">
+                {{-- <flux:icon.bell class="text-blue-300"/> --}}
+                Notifications
+            </h2>
+            @if($notifications->count())
+                    <flux:button 
+                        wire:click="markAllAsRead"
+                        variant="filled"
+                        size="sm"
+                    >
+                        Mark all as read
+                    </flux:button>
             @endif
+        </div>
+        <div class="max-w-sm">
+            <flux:input icon="magnifying-glass" placeholder="Search Notification" wire:model.live="search"/>
+        </div>
     </div>
     <div class="space-y-3 px-10">
         @forelse($notifications as $notif)
-
-            @if($notif->data['user_id'] == null)
-                <div class="flex items-center justify-between p-3 rounded-xl shadow-sm
-                            bg-white dark:bg-gray-800 
-                            text-gray-800 dark:text-gray-200
-                            hover:shadow-md transition">
-                    
-                    {{-- Icon + Content --}}
-                    <div class="flex items-start space-x-3">
-                        <flux:avatar
-                            icon="user-group"
-                            circle
-                        />
-
-                        <div>
-                            <p class="text-sm font-medium">
-                                {{ ucfirst($notif->data['type']) }}
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $notif->data['message'] }}
-                            </p>
-                        </div>
-                    </div>
-
-                    {{-- Action --}}
-                    <button 
-                        wire:click="markAsRead('{{ $notif->id }}')" 
-                        class="text-xs font-medium px-3 py-1 rounded-lg
-                            bg-blue-100 text-blue-600 hover:bg-blue-200
-                            dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 
-                            transition"
-                    >
-                        Mark as read
-                    </button>
-                </div>
-            @else 
-                @php
+            @php
+                $isRead = !is_null($notif->read_at);
                 $user = isset($notif->data['user_id']) ? \App\Models\User::find($notif->data['user_id']) : null;
             @endphp
-                <div class="flex items-center justify-between p-3 rounded-xl shadow-sm
-                            bg-white dark:bg-gray-800 
-                            text-gray-800 dark:text-gray-200
-                            hover:shadow-md transition">
+
+            <div class="grid grid-cols-[auto_1fr] p-3 rounded-xl shadow-sm
+                        {{ $isRead ? 'bg-gray-50 dark:bg-gray-900 opacity-60' : 'bg-white dark:bg-gray-800' }}
+                        text-gray-800 dark:text-gray-200 hover:shadow-md transition">
+                
+                {{-- Icon + Content --}}
+                <div class="flex items-center space-x-3">
                     
-                    {{-- Icon + Content --}}
-                    <div class="flex items-start space-x-3">
+                    @if ($user)
                         @if ($user->profile_image)
-                                    <flux:avatar
-                                        circle
-                                        src="{{ asset('storage/' . $user->profile_image) }}"
-                                        
-                                    />
-                                @else
-                                    <flux:avatar
-                                        circle
-                                        :initials="$user->initials()"
-                                        
-                                    />
-                                @endif
+                            <flux:avatar circle src="{{ asset('storage/' . $user->profile_image) }}" />
+                        @else
+                            <flux:avatar circle :initials="$user->initials()" />
+                        @endif
+                    @else
+                        <flux:avatar icon="user-group" circle />
+                    @endif
 
-                        <div>
-                            <p class="text-sm font-medium">
-                                {{ ucfirst($notif->data['type']) }}
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $notif->data['message'] }}
-                            </p>
-                        </div>
+                    <div >
+                        <p class="text-sm font-medium">
+                            {{ ucfirst($notif->data['type']) }}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $notif->data['message'] }}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $notif->created_at->diffForHumans() }}
+
+                        </p>
                     </div>
-
-                    {{-- Action --}}
-                    <button 
-                        wire:click="markAsRead('{{ $notif->id }}')" 
-                        class="text-xs font-medium px-3 py-1 rounded-lg
-                            bg-blue-100 text-blue-600 hover:bg-blue-200
-                            dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 
-                            transition"
-                    >
-                        Mark as read
-                    </button>
                 </div>
-            @endif
-            
+
+                {{-- Only show button if unread --}}
+                @unless($isRead)
+                    <div class="flex justify-end items-center">
+                        <flux:button size="xs" variant="primary" color="blue" wire:click="markAsRead('{{ $notif->id }}')" >Mark as Read</flux:button>
+                    </div>
+                @endunless
+            </div>
         @empty
             <div class="p-4 text-center text-gray-500 dark:text-gray-400 
                         bg-gray-50 dark:bg-gray-900 rounded-xl">
                 No new notifications ✨
             </div>
         @endforelse
+
     </div>
+</div>
+<livewire:right-sidebar />
 </div>

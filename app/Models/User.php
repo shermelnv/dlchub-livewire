@@ -107,13 +107,49 @@ public function hasAnyRole(...$roles)
 
 public function followingOrgs()
 {
-    return $this->belongsToMany(Org::class, 'org_user')->withTimestamps();
+    return $this->belongsToMany(User::class, 'org_user', 'user_id', 'org_id')
+                ->where('role', 'org')
+                ->withPivot('status') // <-- add this
+                ->withTimestamps();
+}
+
+
+public function followers()
+{
+    return $this->belongsToMany(User::class, 'org_user', 'org_id', 'user_id')
+                ->withPivot('status')
+                ->withTimestamps()
+                ->wherePivot('status', 'accepted'); // only accepted followers
+}
+
+public function pendingFollowers()
+{
+    return $this->belongsToMany(User::class, 'org_user', 'org_id', 'user_id')
+                ->withPivot('status')
+                ->wherePivot('status', 'pending');
+}
+
+
+public function isFollowingOrg(User $org)
+{
+    $pivot = $this->followingOrgs()->where('org_id', $org->id)->first();
+    return $pivot?->pivot->status === 'accepted';
+}
+
+public function hasPendingRequest(User $org)
+{
+    $pivot = $this->followingOrgs()->where('org_id', $org->id)->first();
+    return $pivot?->pivot->status === 'pending';
 }
 
 public function org()
 {
-    return $this->belongsTo(Org::class, 'org_id');
+    return $this->belongsTo(User::class, 'organization_joined');
 }
+
+
+
+
 
 
 }

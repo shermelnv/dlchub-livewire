@@ -24,10 +24,10 @@ class LandingPage extends Component
     {
         $this->userCount = User::where('role', 'user')->count();
         $this->ongoingVotingRooms = VotingRoom::where('status', 'Ongoing')->count();
-        $this->orgCount = Org::count();
+        $this->orgCount = User::where('role', 'org')->count();
 
-        $this->organizations = Org::take(6)->get();
-        $this->allOrganizations = Org::all();
+        $this->organizations = User::where('role', 'org')->take(6)->get();
+        $this->allOrganizations = User::where('role', 'org')->get();
 
         $this->latestFeeds = Feed::latest()->take(3)->get();
         $this->latestAds = Advertisement::with('photos')->latest()->take(4)->get();

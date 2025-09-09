@@ -1,8 +1,8 @@
-<div class="p-10">
+<div class="grid grid-cols-3 gap-4">
 
 
     {{-- Voting Room List --}}
-    <div class="mt-10">
+    <div class="p-10 col-span-2">
         <flux:heading size="lg" class="mb-4">Existing Chat Rooms</flux:heading>
 
         @forelse ($rooms as $room)
@@ -49,4 +49,7 @@
                 <p class="text-gray-500 dark:text-gray-400">No room selected.</p>
             @endif
         </flux:modal>
+    </div>
+
+    <livewire:right-sidebar />
 </div>

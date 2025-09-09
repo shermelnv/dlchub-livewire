@@ -1,5 +1,5 @@
 {{-- Group Settings Modal (Large Devices) --}}
-<flux:modal name="group-settings" variant="flyout" class="min-w-sm h-screen">
+<flux:modal name="group-settings" variant="flyout" class="min-w-xs h-screen">
     <div class="h-full grid grid-rows-[1fr_auto] gap-4">
         <div class=" grid grid-rows-[auto_1fr_1fr] overflow-hidden">
 
@@ -53,8 +53,8 @@
                             <div>{{ $member->name }}</div>
                         </div>
                         @if(auth()->user()->id !== $member->id && auth()->user()->id === $selectedGroup->group_owner_id)
-                            {{-- <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button> --}}
-                            <flux:dropdown  position="bottom">
+                            <flux:button size="xs" variant="danger" wire:click="removeMember({{ $member->id }})">Remove</flux:button>
+                            {{-- <flux:dropdown  position="bottom">
                                 <flux:button icon="ellipsis-vertical" size="xs" variant="ghost"/>
 
                                 <flux:menu>
@@ -70,7 +70,7 @@
                                         Remove
                                     </flux:menu.item>
                                 </flux:menu>
-                            </flux:dropdown>
+                            </flux:dropdown> --}}
                         
                         @endif
                         @if ($member->id === $selectedGroup->group_owner_id)

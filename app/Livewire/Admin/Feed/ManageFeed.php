@@ -102,12 +102,13 @@ public function getFilteredFeedsProperty()
 
 public function createPost()
 {
+
     $validated = $this->validate([
         'title'   => 'required|string|max:255',
         'content' => 'required|string|max:2000',
         'type'    => 'nullable|string|max:100',
         'photo'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
- 
+        
     ]);
 
     $photoPath = $this->photo?->store('feeds', 'public');
@@ -121,7 +122,7 @@ public function createPost()
         'content' => $validated['content'],
         'type'    => $validated['type'],
         'photo_url' => $photoPath,
-        'privacy' => $validated['privacy'] ?? 'public',
+        'privacy' => $this->privacy ? $this->privacy : 'public',
     ]);
 
     if ($this->type && !Type::where('type_name', $this->type)->exists()) {
@@ -140,13 +141,16 @@ public function createPost()
         ]);
 
             // Get all users whose ID is not equal to the authenticated user's ID
-            $otherUsers = User::where('id', '!=', $user)->get();
+            $otherUsers = User::where('id', '!=', $user->id)->get();
+
+            
 
             Notification::send($otherUsers, new UniversalNotification(
                  'feed',
                  "$user->name posted a feed \"$post->title\"",
                 $user->id,
             ));
+
 
     event(new RecentActivities());
     broadcast(new BroadcastFeed($post));

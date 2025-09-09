@@ -33,6 +33,8 @@
             Back to Rooms
         </a>
         @if($room->status != 'Closed')
+
+
         <flux:modal.trigger name="room-option">
             <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer hover:text-white" />
         </flux:modal.trigger>
@@ -49,31 +51,11 @@
                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $room->description }}</p>
             </div>
               
-
-                    <div class="text-sm text-right space-y-1">
-                        <div class="text-gray-500 dark:text-gray-400">Ends at</div>
-                        <div 
-                            wire:ignore
-                            class="font-semibold"
-                            x-data="{
-                                expires: new Date('{{ $room->end_time }}'),
-                                now: new Date(),
-                                remaining() {
-                                    let diff = Math.max(this.expires - this.now, 0) / 1000; // seconds
-                                    let days = Math.floor(diff / 86400);
-                                    diff %= 86400;
-                                    let hours = Math.floor(diff / 3600);
-                                    diff %= 3600;
-                                    let minutes = Math.floor(diff / 60);
-                                    let seconds = Math.floor(diff % 60);
-                                    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                                }
-                            }"
-                            x-init="setInterval(() => { now = new Date(); }, 1000)"
-                            x-text="remaining()">
-                            Loading...
-                        </div>
-                    </div>
+                    <div>
+            Status: 
+            <span class="text-xl font-semibold text-green-600 dark:text-green-400">{{ $room->status }}</span>
+        </div>
+                    
             
         </div>
 
@@ -156,7 +138,7 @@
 
         
         {{-- Voting Stats --}}
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
                 <div class="text-sm text-gray-500 dark:text-gray-400">Total Votes</div>
                 <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $totalVotes . " / " . $totalStudents }}</div>
@@ -175,18 +157,60 @@
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Active Races</div>
-                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ count($positions) }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Start Time</div>
+                {{-- <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">Loading...</div> --}}
+                <div 
+                    wire:ignore
+                    class="text-xl font-bold text-maroon-700 dark:text-white"
+                    x-data="{
+                        startTime: new Date('{{ $room->start_time }}'),
+                        now: new Date(),
+                        remainingText() {
+                            let diff = (this.startTime - this.now) / 1000; // seconds
+                            if (diff <= 0) return 'Started';
+
+                            let days = Math.floor(diff / 86400);
+                            diff %= 86400;
+                            let hours = Math.floor(diff / 3600);
+                            diff %= 3600;
+                            let minutes = Math.floor(diff / 60);
+                            let seconds = Math.floor(diff % 60);
+
+                            return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                        }
+                    }"
+                    x-init="setInterval(() => { now = new Date(); }, 1000)"
+                    x-text="remainingText()"
+                >
+                    Loading...
+                </div>
+
+                <div 
+                    wire:ignore
+                    class="text-sm text-gray-500 dark:text-gray-400"
+                    x-data="{
+                        expires: new Date('{{ $room->start_time }}'),
+                        formatted() {
+                            return this.expires.toLocaleString('en-US', {
+                                weekday: 'long',    // Saturday
+                                hour: 'numeric',    // 12
+                                minute: '2-digit',  // 30
+                                hour12: true        // PM/AM
+                            });
+                        }
+                    }"
+                    x-text="formatted()">
+                </div>
+
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Start Time</div>
-                {{-- <div class="text-xl font-bold text-maroon-700 dark:text-white" id="starts-in-clock">Loading...</div> --}}
+                <div class="text-sm text-gray-500 dark:text-gray-400">End time</div>
                 <div 
                             wire:ignore
                             class="text-xl font-bold text-maroon-700 dark:text-white"
                             x-data="{
-                                expires: new Date('{{ $room->start_time }}'),
+                                expires: new Date('{{ $room->end_time    }}'),
                                 now: new Date(),
                                 remaining() {
                                     let diff = Math.max(this.expires - this.now, 0) / 1000; // seconds
@@ -202,12 +226,23 @@
                             x-init="setInterval(() => { now = new Date(); }, 1000)"
                             x-text="remaining()">
                             Loading...
-                        </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Status</div>
-                <div class="text-xl font-semibold text-green-600 dark:text-green-400">{{ $room->status }}</div>
+                </div>
+                 <div 
+                    wire:ignore
+                    class="text-sm text-gray-500 dark:text-gray-400"
+                    x-data="{
+                        expires: new Date('{{ $room->end_time }}'),
+                        formatted() {
+                            return this.expires.toLocaleString('en-US', {
+                                weekday: 'long',    // Saturday
+                                hour: 'numeric',    // 12
+                                minute: '2-digit',  // 30
+                                hour12: true        // PM/AM
+                            });
+                        }
+                    }"
+                    x-text="formatted()">
+                </div>
             </div>
         </div>
 
@@ -227,12 +262,12 @@
                                     $percent = round(($candidate->vote_count / $total) * 100);
                                     $color = '#' . substr(md5($candidate->id), 0, 6);
                                 @endphp
-                                <div class="relative w-full h-6 md:h-12 overflow-hidden rounded-xs md:rounded-md mb-2 border border-gray-500">
+                                <div class="relative w-full h-8 md:h-12 overflow-hidden rounded-xs md:rounded-md mb-2 border border-gray-500">
                                     <div class="absolute top-0 left-0 h-full bg-sky-600 transition-all duration-500 ease-in-out" style="width: {{ $percent }}%"></div>
                                     <div class="relative z-10 flex justify-between items-center h-full pr-4 text-white">
                                         <div class="flex items-center gap-3">
                                             <div class="flex items-center gap-2">
-                                                <span class="size-6 md:size-12 text-lg bg-red-900 rounded-xs md:rounded-md flex items-center justify-center font-bold">{{ $loop->iteration }}</span>
+                                                <span class="size-8 md:size-12 text-lg bg-red-900 rounded-xs md:rounded-md flex items-center justify-center font-bold">{{ $loop->iteration }}</span>
                                                 {{ $candidate->name }}
                                             </div>
                                         </div>
@@ -273,14 +308,30 @@
                 <flux:text class="mb-4 text-xs lg:text-base">Choose your {{ $position->name }} candidate</flux:text>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @forelse ($position->candidates as $candidate)
+                    <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})">
                         <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
-                            <img 
-                                src="https://i.pravatar.cc/400?u={{ $candidate->id }}"
-                                alt="{{ $candidate->name }}"
-                                class="h-20 md:h-40 w-full object-cover rounded-md mb-4"
-                            >
+                            @if ($candidate->photo_url)
+                                {{-- Show uploaded candidate image --}}
+                                <img 
+                                    src="{{ asset('storage/' . $candidate->photo_url) }}"
+                                    alt="{{ $candidate->name }}"
+                                    class="h-20 md:h-60 w-full object-cover rounded-md mb-4"
+                                >
+                                @else
+                                    {{-- "no image" placeholder --}}
+
+                                    <div class="h-20 md:h-60 w-full flex items-center justify-center bg-gray-200 rounded-md mb-4 text-gray-500">
+                                        No image
+                                    </div>
+                                @endif
+
                             <h4 class="font-bold text-sm md:text-lg">{{ $candidate->name }}</h4>
-                            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">{{ $candidate->bio ?? 'No bio available.' }}</p>
+                            <div class="h-[3.5rem]">
+                                <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 break-words line-clamp-3">
+                                    {{ $candidate->bio ?? 'No bio available.' }}
+                                </p>
+                            </div>
+
                             <div class="relative group my-4">
                                 <button
                                     wire:click.prevent="voteCandidate({{ $candidate->id }})"
@@ -301,6 +352,7 @@
                                 @endif
                             </div>
                         </div>
+                    </flux:modal.trigger>
                     @empty
                         <flux:text class="col-span-2 md:col-span-3 text-center text-xs md:text-lg">NO CANDIDATE AT THE MOMENT</flux:text>
                     @endforelse

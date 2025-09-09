@@ -2,8 +2,21 @@
         <!-- Left: Org Info -->
         <section class="flex gap-4 sm:gap-6 col-span-1 md:col-span-4 flex-wrap md:flex-nowrap">
             <div class="flex items-center justify-center flex-shrink-0">
-                <flux:avatar class="size-16 sm:size-20 md:size-24" circle
-                    src="{{ $org->profile ?? 'https://i.pravatar.cc/100?u=' . $this->org->id }}" />
+
+                @if ($org->profile_image)
+                                <flux:avatar
+                                    circle
+                                    src="{{ asset('storage/' . $org->profile_image) }}"
+                                    class="size-16 lg:size-24"
+                                    
+                                />
+                            @else
+                                <flux:avatar
+                                    circle
+                                    :initials="$org->initials()"
+                                    class="size-16 lg:size-24 text-lg lg:text-2xl "
+                                />
+                            @endif
             </div>
             <div class="flex flex-col justify-center space-y-1 min-w-0">
                 <strong class="text-lg sm:text-xl md:text-2xl text-gray-900 dark:text-white truncate">
@@ -23,10 +36,24 @@
         <section class="flex justify-start md:justify-end gap-4 items-center w-full md:w-auto mt-2 md:mt-0">
 
             @if(auth()->user()->role === 'user')
-                <flux:button class="w-full sm:w-auto" variant="primary" color="{{$isFollowing ? 'red' : ''}}" wire:click="toggleFollow" 
-                    icon="{{ $isFollowing ? 'check-circle' : 'user-plus' }}" >
-                    {{ $isFollowing ? 'Following' : 'Follow' }}
-                </flux:button>
+             <flux:button 
+    class="w-full sm:w-auto" 
+    variant="primary" 
+    color="{{ $followStatus === 'accepted' ? 'red' : ($followStatus === 'pending' ? 'yellow' : '') }}" 
+    wire:click="toggleFollow" 
+    icon="{{ $followStatus === 'accepted' ? 'check-circle' : 'user-plus' }}"
+>
+    @if($followStatus === 'accepted')
+        Following
+    @elseif($followStatus === 'pending')
+        Pending
+    @else
+        Follow
+    @endif
+</flux:button>
+
+
+
             @endif
 
             <!-- Only visible below md -->

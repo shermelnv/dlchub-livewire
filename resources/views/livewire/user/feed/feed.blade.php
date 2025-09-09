@@ -162,7 +162,7 @@ x-data
                 </h2>
                 <div class="max-h-[30vh] overflow-y-auto">
                 @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
+                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" >
                         <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                             <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
                             <span class="truncate">{{ $org->name }}</span>
@@ -203,7 +203,7 @@ x-data
                                 </h2>
                                 <div class="max-h-[30vh] overflow-y-auto">
                                     @forelse ($orgs as $org)
-                                        <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
+                                        <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" >
                                             <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                                                 <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
                                                 <span class="truncate">{{ $org->name }}</span>

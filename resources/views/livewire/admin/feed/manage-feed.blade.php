@@ -155,172 +155,168 @@
                                 </div>
                             @endif
 
-                            <!-- Footer -->
                             
-<!-- Footer -->
-<div class="flex flex-col gap-2  text-gray-500 dark:text-gray-400 text-sm">
-    <div class="flex items-center gap-6">
-        <!-- Heart -->
-        <div class="flex items-center gap-1 cursor-pointer" wire:click="toggleHeart({{ $feed->id }})">
-            @php
-                $userReacted = $feed->reactions->where('user_id', auth()->id())->where('type', 'heart')->count() > 0;
-                $count = $feed->reactions->where('type', 'heart')->count();
-            @endphp
+                            
+                        <!-- Footer -->
+                        <div class="flex flex-col gap-2  text-gray-500 dark:text-gray-400 text-sm">
+                            <div class="flex items-center gap-6">
+                                <!-- Heart -->
+                                <div class="flex items-center gap-1 cursor-pointer" wire:click="toggleHeart({{ $feed->id }})">
+                                    @php
+                                        $userReacted = $feed->reactions->where('user_id', auth()->id())->where('type', 'heart')->count() > 0;
+                                        $count = $feed->reactions->where('type', 'heart')->count();
+                                    @endphp
 
-            @if($userReacted)
-                <flux:icon.heart variant="solid" color="red"/>
-            @else
-                <flux:icon.heart/>
-            @endif
+                                    @if($userReacted)
+                                        <flux:icon.heart variant="solid" color="red"/>
+                                    @else
+                                        <flux:icon.heart/>
+                                    @endif
 
-            <span>{{ $count }}</span>
-        </div>
+                                    <span>{{ $count }}</span>
+                                </div>
 
-        <!-- Comment count -->
-        <div class="flex items-center gap-1 cursor-pointer">
-            <flux:icon.chat-bubble-oval-left-ellipsis  />
-            <span>{{ $feed->comments->count() }}</span>
-        </div>
-    </div>
+                                <!-- Comment count -->
+                                <div class="flex items-center gap-1 cursor-pointer">
+                                    <flux:icon.chat-bubble-oval-left-ellipsis  />
+                                    <span>{{ $feed->comments->count() }}</span>
+                                </div>
+                            </div>
 
-<!-- Comment box -->
-@if($feed->comments->count() >= 10)
-    <div class="text-xs text-red-500">Comment limit reached.</div>
-@endif
-<form wire:submit.prevent="addComment({{ $feed->id }})" 
-      class="gap-2 mt-1 {{ $feed->comments->count() >= 10 ? 'hidden' : 'flex' }}">
-    <flux:input.group>
-        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." />
-        <flux:button icon="paper-airplane" type="submit" />
-    </flux:input.group>
-</form>
+                                <!-- Comment box -->
+                                @if($feed->comments->count() >= 10)
+                                    <div class="text-xs text-red-500">Comment limit reached.</div>
+                                @endif
+                                <form wire:submit.prevent="addComment({{ $feed->id }})" 
+                                    class="gap-2 mt-1 {{ $feed->comments->count() >= 10 ? 'hidden' : 'flex' }}">
+                                    <flux:input.group>
+                                        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." />
+                                        <flux:button icon="paper-airplane" type="submit" />
+                                    </flux:input.group>
+                                </form>
 
-<!-- Comments Section -->
-<div x-data="{ open: false }" class="mt-2 text-sm text-gray-700 dark:text-gray-300">
-    @php
-        $sortedComments = $feed->comments->sortByDesc('created_at');
-    @endphp
+                                <!-- Comments Section -->
+                                <div x-data="{ open: false }" class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                    @php
+                                        $sortedComments = $feed->comments->sortByDesc('created_at');
+                                    @endphp
 
-    @if($sortedComments->count() > 1)
-        <!-- Toggle button -->
-        <flux:button variant="ghost" @click="open = !open" 
-                class="w-full flex items-center justify-center gap-1 text-xs text-blue-500 m-1">
-            <span x-text="open ? 'Hide comments' : 'View all comments'"></span>
+                                    @if($sortedComments->count() > 1)
+                                        <!-- Toggle button -->
+                                        <flux:button variant="ghost" @click="open = !open" 
+                                                class="w-full flex items-center justify-center gap-1 text-xs text-blue-500 m-1">
+                                            <span x-text="open ? 'Hide comments' : 'View all comments'"></span>
 
-            <flux:icon.chevron-down x-bind:class="open ? 'rotate-180' : ''" 
-                 class="w-4 h-4 transition-transform duration-200" />
-        </flux:button>
-    @endif
+                                            <flux:icon.chevron-down x-bind:class="open ? 'rotate-180' : ''" 
+                                                class="w-4 h-4 transition-transform duration-200" />
+                                        </flux:button>
+                                    @endif
 
-    @if($sortedComments->count() <= 1)
-        <!-- Just show all comments if 3 or fewer -->
-        <div class="space-y-1">
-            @foreach($sortedComments as $comment)
-                <div class="flex items-start gap-2">
-                    @if ($comment->user->profile_image)
-                <flux:profile
-                circle
+                                    @if($sortedComments->count() <= 1)
+                                        <!-- Just show all comments if 3 or fewer -->
+                                        <div class="space-y-1">
+                                            @foreach($sortedComments as $comment)
+                                                <div class="flex items-start gap-2">
+                                                    @if ($comment->user->profile_image)
+                                                <flux:profile
+                                                circle
 
-                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
-                    icon:trailing="chevrons-up-down"
-                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
-                />
-                @else
-                    <flux:profile
-                    circle
-                        
-                        :initials="$comment->user->initials()"
-                        icon:trailing="chevrons-up-down"
-                        class="w-8 h-8 rounded-full"
-                    />
-                @endif
-                    <div>
-                        <div class="bg-gray-700 rounded-lg p-2">
-                            <div class="font-semibold">{{ $comment->user->name }}:</div>
-                            <div class="max-w-xl break-words">{{ $comment->comment }}</div>
+                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    icon:trailing="chevrons-up-down"
+                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                />
+                                                @else
+                                                    <flux:profile
+                                                    circle
+                                                        
+                                                        :initials="$comment->user->initials()"
+                                                        icon:trailing="chevrons-up-down"
+                                                        class="w-8 h-8 rounded-full"
+                                                    />
+                                                @endif
+                                                    <div>
+                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="max-w-xl break-words">{{ $comment->comment }}</div>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <!-- Show latest 3 by default -->
+                                        <div class="space-y-1">
+                                            @foreach($sortedComments->take(1) as $comment)
+                                                <div class="flex items-start gap-2">
+                                                    @if ($comment->user->profile_image)
+                                                <flux:profile
+                                                circle
+
+                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    icon:trailing="chevrons-up-down"
+                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                />
+                                                @else
+                                                    <flux:profile
+                                                    circle
+                                                        
+                                                        :initials="$comment->user->initials()"
+                                                        icon:trailing="chevrons-up-down"
+                                                        class="w-8 h-8 rounded-full"
+                                                    />
+                                                @endif
+                                                    <div>
+                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="max-w-xl break-words">{{ $comment->comment }}</div>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <!-- Hidden comments -->
+                                        <div class="space-y-1 mt-2" x-show="open" x-collapse>
+                                            @foreach($sortedComments->skip(1) as $comment)
+                                                <div class="flex items-start gap-2">
+                                                    @if ($comment->user->profile_image)
+                                                <flux:profile
+                                                circle
+
+                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    icon:trailing="chevrons-up-down"
+                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                />
+                                                @else
+                                                    <flux:profile
+                                                    circle
+                                                        
+                                                        :initials="$comment->user->initials()"
+                                                        icon:trailing="chevrons-up-down"
+                                                        class="w-8 h-8 rounded-full"
+                                                    />
+                                                @endif
+                                                    <div>
+                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="max-w-lg break-words">{{ $comment->comment }}</div>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <!-- Show latest 3 by default -->
-        <div class="space-y-1">
-            @foreach($sortedComments->take(1) as $comment)
-                <div class="flex items-start gap-2">
-                    @if ($comment->user->profile_image)
-                <flux:profile
-                circle
-
-                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
-                    icon:trailing="chevrons-up-down"
-                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
-                />
-                @else
-                    <flux:profile
-                    circle
-                        
-                        :initials="$comment->user->initials()"
-                        icon:trailing="chevrons-up-down"
-                        class="w-8 h-8 rounded-full"
-                    />
-                @endif
-                    <div>
-                        <div class="bg-gray-700 rounded-lg p-2">
-                            <div class="font-semibold">{{ $comment->user->name }}:</div>
-                            <div class="max-w-xl break-words">{{ $comment->comment }}</div>
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-
-
-        <!-- Hidden comments -->
-        <div class="space-y-1 mt-2" x-show="open" x-collapse>
-            @foreach($sortedComments->skip(1) as $comment)
-                <div class="flex items-start gap-2">
-                    @if ($comment->user->profile_image)
-                <flux:profile
-                circle
-
-                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
-                    icon:trailing="chevrons-up-down"
-                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
-                />
-                @else
-                    <flux:profile
-                    circle
-                        
-                        :initials="$comment->user->initials()"
-                        icon:trailing="chevrons-up-down"
-                        class="w-8 h-8 rounded-full"
-                    />
-                @endif
-                    <div>
-                        <div class="bg-gray-700 rounded-lg p-2">
-                            <div class="font-semibold">{{ $comment->user->name }}:</div>
-                            <div class="max-w-lg break-words">{{ $comment->comment }}</div>
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
-</div>
-
-
-</div>
 
 
                         </div>
@@ -332,126 +328,11 @@
         </div>
 
         <!-- ========== RIGHT SIDEBAR ========== -->
-        {{-- <div class="hidden md:flex flex-col xs:hidden h-[100vh] sticky top-0 shadow overflow-y-auto py-5 gap-6 scrollbar-hover">
-            
-            
 
-            <div class="space-y-4  w-full rounded-lg p-2">
-                <flux:heading size="lg">Trending</flux:heading>
-                <div class="grid h-auto gap-4">
-                    <div class="grid items-center">No trending at the moment</div>
-                </div>
-                
-            </div>
-
-
-            @if(auth()->user()->role === 'user')
-                <livewire:sidebar-group-chats/>
-            @endif
-            
-            <livewire:active-voting />
-
-           
-
-                      
-            <div class="w-full p-2 rounded-lg   ">
-                <div class="flex justify-between">
-                    <h2 class="font-semibold mb-3 flex gap-2">
-                         Organizations
-                    </h2>
-                       
-                </div>
-                
-                <div class="h-auto">
-                @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
-                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                             @if ($org->profile_image)
-                                <flux:avatar
-                                    circle
-                                    src="{{ asset('storage/' . $org->profile_image) }}"
-                                    
-                                />
-                            @else
-                                <flux:avatar
-                                    circle
-                                    :initials="$org->initials()"
-                                    
-                                />
-                            @endif
-
-
-                            <span class="truncate">{{ $org->name }}</span>
-                        </div>
-                    </a>
-                @empty
-                    <p class="text-sm text-gray-400">No data available.</p>
-                @endforelse
-                </div>
-            </div>
-            
-        </div> --}}
 
       <livewire:right-sidebar />
  
     </div>
-{{-- 
-    <flux:modal name="mobile-right-sidebar" class="md:hidden" variant="flyout">
-        <div class="flex flex-col col-span-2 gap-6  h-[100vh] sticky top-0 shadow overflow-y-auto my-5 scrollbar-hover">
-        <div class="space-y-4">
-                <flux:heading size="lg">Advertisement</flux:heading>
-                <div class="grid grid-cols-2 h-auto gap-4">
-                    <div class="h-20 w-full bg-white"></div>
-                    <div class="grid items-center">Lorem ipsum dolor sit amet!</div>
-                </div>
-            </div>
-
-
-            
-            <div class="border w-full p-4 rounded-lg bg-white dark:bg-gray-800 shadow">
-                <h2 class="font-semibold mb-3">💬 Help & Support</h2>
-                <ul class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                    <li><a href="#" class="hover:underline">📘 How to post an advertisement</a></li>
-                    <li><a href="#" class="hover:underline">📩 Contact administrator</a></li>
-                    <li><a href="#" class="hover:underline">⚙️ Manage your organization</a></li>
-                </ul>
-            </div>
-
-            <div class="border w-full p-2 rounded-lg bg-white dark:bg-gray-800 shadow">
-                <div class="flex justify-between">
-                    <h2 class="font-semibold mb-3 flex gap-2">
-                        <flux:icon.building-library /> Organizations
-                    </h2>
-                        <flux:icon.magnifying-glass/>
-                </div>
-                
-                <div class="h-auto">
-                @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['org' => $org->id]) }}" >
-                        <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                             @if ($org->profile_image)
-                                <flux:avatar
-                                    circle
-                                    src="{{ asset('storage/' . $org->profile_image) }}"
-                                    
-                                />
-                            @else
-                                <flux:avatar
-                                    circle
-                                    :initials="$org->initials()"
-                                    
-                                />
-                            @endif
-                            <span class="truncate">{{ $org->name }}</span>
-                        </div>
-                    </a>
-                @empty
-                    <p class="text-sm text-gray-400">No data available.</p>
-                @endforelse
-                </div>
-            </div>
-    </div>
-</flux:modal> --}}
     <!-- ====== DELETE POST MODAL ====== -->
     @include('livewire.admin.feed.partials.delete-modal')
 

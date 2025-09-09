@@ -153,9 +153,9 @@
 
                             @if ($msg->user_id === null)
                                 <div class="text-center text-sm text-gray-400 dark:text-gray-500 my-2 ">
-                                        <div class="text-xs">
+                                        {{-- <div class="text-xs">
                                             {{ $currentTimestamp->format('g:i A') }}
-                                        </div>
+                                        </div> --}}
                                         {{ $msg->message }}
                                         
                
