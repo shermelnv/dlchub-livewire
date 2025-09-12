@@ -3,7 +3,7 @@
             <div>
                 <flux:heading size="lg">Ban User?</flux:heading>
                 <flux:text class="mt-2">
-                    <p>Lorem ipsum dolor sit amet consectetur.</p>
+                    <p>Are you sure you want to ban this user?</p>
                 </flux:text>
             </div>
             <div class="flex gap-2">

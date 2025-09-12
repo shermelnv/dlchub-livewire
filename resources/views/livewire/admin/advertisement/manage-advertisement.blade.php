@@ -13,7 +13,7 @@
             "
 class="px-5">
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 h-full">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
         <div class="w-full space-y-4 col-span-2 py-5">
             @if(auth()->user()->role !== 'user')
             <section class="flex bg-gray-900 rounded-lg gap-4 p-4">

@@ -22,9 +22,7 @@
                 <strong class="text-lg sm:text-xl md:text-2xl text-gray-900 dark:text-white truncate">
                     {{ $this->org->name }}
                 </strong>
-                <span class="text-gray-600 dark:text-gray-300 text-sm break-words">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, recusandae.
-                </span>
+
                 <div class="flex items-center gap-2 text-gray-500 dark:text-gray-200 text-sm mt-1">
                     <flux:icon.users class="size-4" />
                     <span>{{ $org->followers()->count() }} Followers</span>
