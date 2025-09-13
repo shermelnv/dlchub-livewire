@@ -66,7 +66,8 @@ class="px-5">
 
             {{-- ADVERTISEMENTS --}}
             @include('livewire.admin.advertisement.partials.advertisement-feed') 
-
+            @include('livewire.admin.advertisement.partials.photos-modal') 
+            
 
 
            

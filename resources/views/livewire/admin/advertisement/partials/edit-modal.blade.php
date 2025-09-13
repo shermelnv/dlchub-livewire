@@ -14,12 +14,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {{-- Organization Select --}}
-                <flux:select label="Organization" wire:model.defer="showAd.organization">
-                    <flux:select.option value="">All</flux:select.option>
-                    @foreach ($orgs as $org)
-                        <flux:select.option value="{{ $org->name }}">{{ $org->name }}</flux:select.option>
-                    @endforeach
-                </flux:select>
+          
 
                 {{-- Image Upload --}}
                 {{-- Image Upload --}}
@@ -75,7 +70,11 @@
 
             {{-- Save Button --}}
             <div class="flex justify-end pt-4">
-                <flux:button type="submit" variant="primary">
+                <flux:button 
+                type="submit" 
+                variant="primary"
+                 wire:loading.attr="disabled" 
+                wire:target="photos">
                     Save Changes
                 </flux:button>
             </div>

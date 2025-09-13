@@ -52,6 +52,18 @@ public $org_id;
 
     // ───── Stats ─────
 
+    public $selectedPhotos = [];
+
+public function viewPhotos($id)
+{
+    $ad = Advertisement::with('photos')->findOrFail($id);
+    $this->selectedPhotos = $ad->photos->pluck('photo_path')->toArray();
+    $this->modal('photos-modal')->show();
+
+    // dd($id);
+}
+
+
     #[On('newAdPosted')]
     public function newAdPosted()
     {

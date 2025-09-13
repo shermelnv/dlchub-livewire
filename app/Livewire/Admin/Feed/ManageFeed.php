@@ -100,6 +100,14 @@ public function getFilteredFeedsProperty()
         $this->typeFilter = null;
     }
 
+public $selectedPost = null;
+ public function viewPostInfo($id)
+    {
+        $this->selectedPost = FeedModel::findOrFail($id); // get post
+        $this->modal('post-info')->show(); // show modal
+    }
+
+
 public function createPost()
 {
 

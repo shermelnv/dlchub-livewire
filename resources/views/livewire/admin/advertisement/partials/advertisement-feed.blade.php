@@ -13,20 +13,22 @@
                     @if ($photoCount === 1)
                         {{-- Style 1: Single full image --}}
                         <img src="{{ Storage::url($photos[0]->photo_path) }}"
-                             class="w-full h-64 object-cover rounded"
-                             alt="Ad Image">
+                             class="w-full h-64 object-cover rounded cursor-pointer"
+                             alt="Ad Image"
+                             wire:click="viewPhotos({{ $ad->id }})"
+                             >
                     @elseif ($photoCount === 2)
                         {{-- Style 2: 2 horizontal side-by-side --}}
-                        <div class="grid grid-cols-2 gap-1">
+                        <div class="grid grid-cols-2 gap-1 cursor-pointer" wire:click="viewPhotos({{ $ad->id }})">
                             @foreach ($photos as $photo)
                                 <img src="{{ Storage::url($photo->photo_path) }}"
-                                     class="w-full h-64 object-cover rounded"
+                                     class="w-full h-64 object-cover rounded "
                                      alt="Ad Image">
                             @endforeach
                         </div>
                     @elseif ($photoCount === 3)
                     {{-- Style 6: 1 tall image left, 2 stacked images right --}}
-                    <div class="grid grid-cols-2 gap-1 h-64">
+                    <div class="grid grid-cols-2 gap-1 h-64 cursor-pointer" wire:click="viewPhotos({{ $ad->id }})">
                         {{-- Left: tall image --}}
                         <div class="h-64">
                             <img src="{{ Storage::url($photos[0]->photo_path) }}"
@@ -35,7 +37,7 @@
                         </div>
 
                         {{-- Right: 2 stacked images --}}
-                        <div class="grid grid-rows-2 gap-1 h-64">
+                        <div class="grid grid-rows-2 gap-1 h-64 cursor-pointer" wire:click="viewPhotos({{ $ad->id }})">
                             <div class="h-full">
                                 <img src="{{ Storage::url($photos[1]->photo_path) }}"
                                     class="w-full h-full object-cover rounded"
@@ -50,7 +52,7 @@
                     </div>
                     @elseif ($photoCount >= 4)
                         {{-- Style 8 or 10: 2x2 grid with overlay if > 4 --}}
-                        <div class="grid grid-cols-2 gap-1">
+                        <div class="grid grid-cols-2 gap-1 cursor-pointer" wire:click="viewPhotos({{ $ad->id }})">
                             @foreach ($photos as $index => $photo)
                                 <div class="relative">
                                     <img src="{{ Storage::url($photo->photo_path) }}"
@@ -127,4 +129,5 @@
             No advertisements posted yet.
         </div>
     @endforelse
+
 </div>

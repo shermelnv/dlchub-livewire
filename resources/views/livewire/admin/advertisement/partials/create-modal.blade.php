@@ -34,7 +34,11 @@
                             </flux:modal.trigger>
                         @endif
 
-                        <flux:modal name="preview-temp-photos" class="md:w-[30rem]">
+                       
+
+                    </div>
+                    @if ($photos)
+                   <flux:modal name="preview-temp-photos" class="md:w-[30rem]">
                             <div class="space-y-4">
                                 <flux:heading>Preview Selected Images</flux:heading>
 
@@ -45,9 +49,7 @@
                                 </div>
                             </div>
                         </flux:modal>
-
-                    </div>
-                  
+                        @endif
                 <input
                     type="file"
                     wire:model="photos"
@@ -80,7 +82,12 @@
 
             {{-- Submit Button --}}
             <div class="flex justify-end pt-4">
-                <flux:button type="submit" variant="primary">
+                <flux:button 
+                type="submit" 
+                variant="primary"
+                wire:loading.attr="disabled" 
+                wire:target="photos"
+                >
                     Publish
                 </flux:button>
             </div>
