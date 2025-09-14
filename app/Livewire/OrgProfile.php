@@ -20,12 +20,14 @@ class OrgProfile extends Component
     public $ads;      // optional: the org's advertisements
 
 
+
     public $comments = [];
     
     public function mount($orgId)
     {
 
-       $this->org = User::where('id', $orgId)
+       $this->org = User::with('organizationInfo')
+                     ->where('id', $orgId)
                      ->where('role', 'org')
                      ->firstOrFail();
 
@@ -42,7 +44,42 @@ class OrgProfile extends Component
             ->latest()
             ->get();
 
+                // prefill orgInfo fields from DB
+        $this->orgInfo = [
+            'about'    => $this->org->organizationInfo->about    ?? '',
+            'email'    => $this->org->organizationInfo->email    ?? '',
+            'facebook' => $this->org->organizationInfo->facebook ?? '',
+        ];
+
     }
+
+    public $orgInfo = [
+        'about'    => '',
+        'email'    => '',
+        'facebook' => '',
+    ];
+
+
+
+    public function saveAbout()
+    {
+        $this->validate([
+            'orgInfo.about'    => 'nullable|string|max:5000',
+            'orgInfo.email'    => 'nullable|email',
+            'orgInfo.facebook' => 'nullable|url',
+        ]);
+
+        $this->org->organizationInfo()->updateOrCreate(
+            ['user_id' => $this->org->id],
+            $this->orgInfo
+        );
+
+        $this->org->load('organizationInfo');
+
+        // close modal after saving
+       $this->modal('edit-about')->close();
+    }
+
 
     public function addComment($feedId)
     {

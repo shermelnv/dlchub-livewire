@@ -147,7 +147,10 @@ public function org()
     return $this->belongsTo(User::class, 'organization_joined');
 }
 
-
+public function organizationInfo()
+{
+    return $this->hasOne(OrganizationInfo::class);
+}
 
 
 

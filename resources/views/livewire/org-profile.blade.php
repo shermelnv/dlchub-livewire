@@ -7,25 +7,24 @@
         <!-- About Section (hidden below md) -->
         <section
             class="hidden md:block col-span-1 lg:col-span-2 border p-4 rounded-xl bg-white dark:bg-gray-800 h-fit lg:sticky self-start top-6 shadow">
-            <h2 class="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-900 dark:text-white">
-                <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" /> About
-            </h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-900 dark:text-white">
+                    <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" /> About
+                </h2>
+
+                <flux:modal.trigger name="edit-about">
+                    <flux:button size="sm">
+                        Edit About
+                    </flux:button>
+                </flux:modal.trigger>
+            </div>
+            
 
             <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur natus aut cumque Lorem ipsum dolor sit,
-                amet consectetur adipisicing elit. Vel, vero.
+                {{$org->organizationInfo->about ?? 'No about details'}}
             </p>
 
             <div class="lg:space-y-4 grid grid-cols-2 gap-4 lg:grid-cols-1">
-                <div class="flex items-center gap-4">
-                    <flux:badge size="lg" color="red">
-                        <flux:icon.calendar />
-                    </flux:badge>
-                    <div>
-                        <div class="text-sm text-gray-600 dark:text-gray-300">Founded</div>
-                        <div class="font-semibold text-gray-900 dark:text-white">2020</div>
-                    </div>
-                </div>
 
                 <div class="flex items-center gap-4">
                     <flux:badge size="lg" color="red">
@@ -34,7 +33,7 @@
                     <div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
                         <a href="mailto:egames@university.edu"
-                            class="text-black dark:text-white underline break-all">egames@university.edu</a>
+                            class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->email ?? 'No Email' }}</a>
                     </div>
                 </div>
 
@@ -43,9 +42,9 @@
                         <flux:icon.globe-alt />
                     </flux:badge>
                     <div>
-                        <div class="text-sm text-gray-600 dark:text-gray-300">Website</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">Facebook</div>
                         <a href="https://www.egames-org.com" target="_blank"
-                            class="text-black dark:text-white underline break-all">www.egames-org.com</a>
+                            class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->facebook ?? 'No Facebook' }}</a>
                     </div>
                 </div>
 
@@ -55,7 +54,7 @@
                     </flux:badge>
                     <div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">Members</div>
-                        <div class="font-semibold text-black dark:text-white">12,312 Active Members</div>
+                        <div class="font-semibold text-black dark:text-white">{{ $org->followers()->count() }}</div>
                     </div>
                 </div>
             </div>
@@ -464,25 +463,23 @@
         </section>
     </div>
     <flux:modal name="about" variant="flyout" position="bottom">
+                    <div class="flex justify-between items-center mt-6">
                         <h2 class="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-900 dark:text-white">
                             <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" />
                             About
                         </h2>
-
+                        <flux:modal.trigger name="edit-about">
+                            <flux:button size="sm">
+                                Edit About
+                            </flux:button>
+                        </flux:modal.trigger>
+                    </div>
                         <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed break-words">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur natus aut cumque Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vel, vero.
+                            {{$org->organizationInfo->about ?? 'No about details'}}
                         </p>
 
                         <div class="lg:space-y-4 grid grid-cols-2 gap-4 lg:grid-cols-1">
-                            <div class="flex items-center gap-4">
-                                <flux:badge size="lg" color="red">
-                                    <flux:icon.calendar/>
-                                </flux:badge>
-                                <div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">Founded</div>
-                                    <div class="font-semibold text-gray-900 dark:text-white">2020</div>
-                                </div>
-                            </div>
+
 
                             <div class="flex items-center gap-4">
                                 <flux:badge size="lg" color="red">
@@ -491,7 +488,7 @@
                                 <div >
                                     <div class="text-sm text-gray-600 dark:text-gray-300">Email</div>
                                     <a href="mailto:egames@university.edu" class="text-black dark:text-white underline break-all">
-                                        egames@university.edu
+                                        {{$org->organizationInfo->email ?? 'No email'}}
                                     </a>
                                 </div>
                             </div>
@@ -503,7 +500,7 @@
                                 <div>
                                     <div class="text-sm text-gray-600 dark:text-gray-300">Website</div>
                                     <a href="https://www.egames-org.com" target="_blank" class="text-black dark:text-white underline break-all">
-                                        www.egames-org.com
+                                        {{$org->organizationInfo->facebook ?? 'No Facebook'}}
                                     </a>
                                 </div>
                             </div>
@@ -514,11 +511,31 @@
                                 </flux:badge>
                                 <div>
                                     <div class="text-sm text-gray-600 dark:text-gray-300">Members</div>
-                                    <div class="font-semibold text-black dark:text-white">12,312 Active Members</div>
+                                    <div class="font-semibold text-black dark:text-white">{{ $org->followers()->count() }}</div>
                                 </div>
                             </div>
                         </div>
     </flux:modal>
+<flux:modal name="edit-about" class="min-w-xs lg:w-xl">
+    <form wire:submit.prevent="saveAbout" class="space-y-4 ">
+        <h2>Edit About</h2>
+
+    <flux:textarea wire:model.defer="orgInfo.about" rows="4" label="About" />
+    <flux:input type="email" wire:model.defer="orgInfo.email" label="Email" placeholder="Email" />
+    <flux:input type="url" wire:model.defer="orgInfo.facebook" label="Facebook" placeholder="Facebook URL" />
+
+        <div class="flex justify-end space-x-2">
+            <flux:modal.close>
+                <flux:button variant="ghost">
+                    Cancel
+                </flux:button>
+            </flux:modal.close>
+            <flux:button type="submit" class="bg-blue-600 text-white">
+                Save
+            </flux:button>
+        </div>
+    </form>
+</flux:modal>
 </div>
 
                 

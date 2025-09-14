@@ -38,7 +38,20 @@
                     </flux:navlist.group>
                 @endif
 
-                
+                @if (auth()->user()->isOrg())
+
+                   <flux:navlist.item icon="users" 
+                        :href=" route('org.profile', ['orgId' => auth()->id()]) " 
+                        :current="request()->routeIs('org.profile') && request()->route('orgId') == auth()->id()"
+                        wire:navigate
+                        >
+                        {{ __('Profile') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
+                        {{ __('Follow Request') }}
+                    </flux:navlist.item>
+                @endif
 
                 @if (in_array(auth()->user()->role, ['org', 'admin', 'superadmin']))
                     <flux:navlist.group :heading="__('Org')" class="grid">
