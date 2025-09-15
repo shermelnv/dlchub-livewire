@@ -20,7 +20,7 @@ class TestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'HI GANDA',
+            subject: 'CHECK',
         );
     }
 

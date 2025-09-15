@@ -9,13 +9,13 @@
 
 
 
-            <a href="{{ route('landing-page') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+            <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
           
             <flux:navlist variant="outline">
 
-                <flux:navlist.item icon="home" :href="route('landing-page')" :current="request()->routeIs('landing-page')" >
+                <flux:navlist.item icon="home" :href="route('home')" :current="request()->routeIs('home')" >
                             {{ __('Home') }}
                         </flux:navlist.item>
                 

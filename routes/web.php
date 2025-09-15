@@ -35,6 +35,7 @@ use App\Events\ChatJoinRequest;
 use App\Events\RecentActivities;
 use App\Events\GroupUserApproved;
 use App\Models\Feed as FeedModel;
+use App\Livewire\GuestLandingPage;
 use App\Models\User as  UserModel;
 use App\Livewire\OrgFollowRequests;
 use App\Livewire\User\Advertisement;
@@ -56,10 +57,13 @@ use App\Livewire\Admin\Advertisement\ManageAdvertisement;
 use App\Events\ManageAdvertisement as BroadcastAdvertisement;
 
 Route::get('/test-email', function () {
-    Mail::to('carreon.carll@gmail.com')->send(new TestMail());
-    return 'Email sent!';
-});
+    Mail::raw('This is a raw test email from Laravel.', function ($message) {
+        $message->to('carreon.carll@gmail.com')
+                ->subject('Laravel Test Email');
+    });
 
+    return 'Test email sent!';
+});
 
 
 
@@ -85,14 +89,19 @@ Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('redirectToPage');
     } else {
-        return redirect()->route('login');
+        return redirect()->route('guest.home');
     }
+    
+
+
 })->name('home');
 
 
+Route::get('/guest', GuestLandingPage::class)->name('guest.home');
+
 Route::middleware(['auth', 'approved'])->group(function () {
 
-    Route::get('home', LandingPage::class)->name('landing-page');
+    Route::get('/home', LandingPage::class)->name('landing-page');
 
 
 
@@ -162,6 +171,9 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
 
 });
+
+// Route::get('/', GuestLandingPage::class)->name('guest-landing-page');
+
 Route::get('/test-broadcast', function() {
     broadcast(new GroupUserApproved(6));
     return 'event sent';

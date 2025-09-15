@@ -4,7 +4,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "dev:all": "concurrently \"php artisan serve --host=192.168.100.6\" \"npm run dev\" \"php artisan schedule:work\"  \"php artisan reverb:start --debug\" "
+        "dev:all": "concurrently \"php artisan serve \" \"npm run dev\" \"php artisan schedule:work\"  \"php artisan reverb:start --debug\" "
       
     },
     "dependencies": {
