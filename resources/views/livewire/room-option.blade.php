@@ -94,9 +94,7 @@
             </flux:modal>
 
     <flux:modal name="add-positionOrcandidate" class="w-xs lg:w-full" :closable="false">
-<div data="{
-        tab: 'newPosition'
-    }" class="w-full min-h-30 grid gap-6">
+<div x-data="{ tab: 'newPosition' }" class="w-full min-h-30 grid gap-6">
 
     <!-- Tab Buttons -->
     <div class="grid grid-cols-2 gap-2">
@@ -117,7 +115,7 @@
     </div>
 
     <!-- Create Candidate Form -->
-    <div show="tab === 'newCandidate'" >
+    <div x-show="tab === 'newCandidate'" >
         <form wire:submit.prevent="createCandidate">
             <div class="space-y-6">
                 <!-- Position Selector -->
@@ -200,9 +198,9 @@
 
     
    <!-- Create Position Form -->
-<div show="tab === 'newPosition'" >
+<div x-show="tab === 'newPosition'" >
     <form wire:submit.prevent="createPosition" class="space-y-6">
-        <div data="{
+        <div x-data="{
                 query: @entangle('newPosition.name'),
                 options: ['President','Vice President','Secretary','Treasurer'],
                 open: false,
@@ -211,9 +209,9 @@
                     return this.options.filter(o => o.toLowerCase().includes(this.query.toLowerCase()));
                 }
             }"
-            init="$watch('query', () => highlightedIndex = -1); $watch('tab', () => open = false)"
+            x-init="$watch('query', () => highlightedIndex = -1); $watch('tab', () => open = false)"
             @keydown.arrow-down.prevent="if (highlightedIndex < filteredOptions().length -1) highlightedIndex++"
-            @keydown.arrow-up.prevent="if (highlightedIndex > 0) highlightedInde-"
+            @keydown.arrow-up.prevent="if (highlightedIndex > 0) highlightedIndexe-"
             @keydown.enter.prevent="if (highlightedIndex > -1) { query = filteredOptions()[highlightedIndex]; open = false; highlightedIndex = -1 }"
             @click.outside="open = false"
             class="relative"
@@ -221,7 +219,7 @@
             <!-- Input -->
             <input 
                 type="text" 
-                model="query" 
+                x-model="query" 
                 @focus="open = true" 
                 placeholder="Choose or type position" 
                 class="border rounded p-2 w-full h-10
@@ -237,16 +235,16 @@
             
 
             <!-- Dropdown in flow -->
-            <div show="open && filteredOptions().length"  class="mt-1">
+            <div x-show="open && filteredOptions().length"  class="mt-1">
                 <ul class="w-full mah-40 min-h-[40px] overflow-auto 
                            bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
                            rounded shadow">
-                    <template for="(option, index) in filteredOptions()" :key="option">
+                    <template x-for="(option, index) in filteredOptions()" :key="option">
                         <li 
                             @mousedown.prevent="query = option; open = false; highlightedIndex = -1" 
                             :class="index === highlightedIndex ? 'bg-indigo-100 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'"
                             class="p-2 cursor-pointer"
-                            text="option"
+                            x-text="option"
                         ></li>
                     </template>
                 </ul>
@@ -277,12 +275,12 @@
                                 <img 
                                     src="{{ asset('storage/' . $selectedCandidate->photo_url) }}"
                                     alt="{{ $selectedCandidate->name }}"
-                                    class="h-20 md:h-60 w-full object-cover rounded-md mb-4"
+                                    class="h-40 lg:h-60 w-full object-cover rounded-md mb-4"
                                 >
                                 @else
                                     {{-- "no image" placeholder --}}
 
-                                    <div class="h-20 md:h-60 w-full flex items-center justify-center bg-gray-200 rounded-md mb-4 text-gray-500">
+                                    <div class="h-40 lg:h-60 w-full flex items-center justify-center bg-gray-200 rounded-md mb-4 text-gray-500">
                                         No image
                                     </div>
                                 @endif
