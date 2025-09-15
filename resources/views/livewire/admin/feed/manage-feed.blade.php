@@ -14,7 +14,7 @@
 
             <!-- ====== CREATE POST SECTION ====== -->
             @if(auth()->user()->role !== 'user')
-            <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
+            <section class="flex bg-zinc-100 dark:bg-zinc-800 text-black dark:text-white rounded-lg gap-4 p-4">
                 @if(auth()->user()->profile_image)
                     <flux:avatar 
                         circle 
@@ -25,7 +25,7 @@
                         circle
                         :initials="auth()->user()->initials()"   
                         />
-                            @endif
+                @endif
    
                                 
                             
@@ -194,8 +194,10 @@
                                 <form wire:submit.prevent="addComment({{ $feed->id }})" 
                                     class="gap-2 mt-1 {{ $feed->comments->count() >= 10 ? 'hidden' : 'flex' }}">
                                     <flux:input.group>
-                                        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." />
-                                        <flux:button icon="paper-airplane" type="submit" />
+                                        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." style="outline: none; box-shadow: none;"/>
+                                        <flux:button type="submit" >
+                                            <flux:icon.paper-airplane variant="solid" class="text-blue-500 dark:text-blue-300"/>
+                                        </flux:button>
                                     </flux:input.group>
                                 </form>
 

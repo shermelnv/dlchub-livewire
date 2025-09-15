@@ -17,12 +17,6 @@
      
                     <flux:icon.eye class="w-5 h-5 text-green-500 hover:text-green-700 text-sm" wire:click="viewRoom({{$room->id}})"/>
      
-                    <button wire:click="editRoom({{ $room->id }})" class="text-blue-500 hover:text-blue-700 text-sm">
-                        <flux:icon.pencil class="w-5 h-5" />
-                    </button>
-                    <button wire:click="deleteRoom({{ $room->id }})" class="text-red-500 hover:text-red-700 text-sm">
-                        <flux:icon.trash class="w-5 h-5" />
-                    </button>
                 </div>
             </div>
         @empty

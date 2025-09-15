@@ -16,13 +16,18 @@ class="px-5">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
         <div class="w-full space-y-4 col-span-2 py-5">
             @if(auth()->user()->role !== 'user')
-            <section class="flex bg-gray-900 rounded-lg gap-4 p-4">
-            <flux:avatar 
-                circle 
-                src="{{ auth()->user()->profile_image 
-                    ? asset('storage/' . auth()->user()->profile_image) 
-                    : 'https://unavatar.io/x/calebporzio' }}" 
-            />
+            <section class="flex bg-zinc-100 dark:bg-zinc-800 text-black dark:text-white rounded-lg gap-4 p-4">
+            @if(auth()->user()->profile_image)
+                    <flux:avatar 
+                        circle 
+                        src="{{ asset('storage/' . auth()->user()->profile_image) }}" 
+                        />
+                @else
+                    <flux:avatar
+                        circle
+                        :initials="auth()->user()->initials()"   
+                        />
+                @endif
 
 
                 <flux:modal.trigger name="add-advertisement">
