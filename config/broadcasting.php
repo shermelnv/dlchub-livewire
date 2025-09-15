@@ -48,14 +48,14 @@ return [
 
         'pusher' => [
             'driver' => 'pusher',
-            'key' => '20e244587fcb3abb6850',
-            'secret' => '4e13a31949c75671b2a7',
-            'app_id' => '2050116',
+            'key' => env('PUSHER_APP_KEY'),
+            'secret' => env('PUSHER_APP_SECRET'),
+            'app_id' => env('PUSHER_APP_ID'),
             'options' => [
-                'cluster' => 'ap1',
+                'cluster' => env('PUSHER_APP_CLUSTER'),
                 'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-                'port' => '443',
-                'scheme' => 'https',
+                'port' => env('PUSHER_PORT', 443),
+                'scheme' => env('PUSHER_SCHEME', 'https'),
                 'encrypted' => true,
                 'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
             ],
