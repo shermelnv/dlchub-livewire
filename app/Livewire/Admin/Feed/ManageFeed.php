@@ -119,7 +119,13 @@ public function createPost()
         
     ]);
 
-    $photoPath = $this->photo?->store('feeds', 'public');
+  
+       $photoPath = $this->photo?->storePublicly('feeds', 'digitalocean');
+
+  
+    
+
+    
 
     $user = Auth::user();
 

@@ -29,7 +29,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx.conf /etc/nginx/sites-enabled/default
 
 # Expose internal ports
-EXPOSE 8080 6001
+EXPOSE 8000 
 
 # Start Supervisor (Laravel + Reverb + Scheduler)
 CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
