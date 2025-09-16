@@ -1,17 +1,13 @@
 
 <div class="flex flex-col  overflow-x-hidden min-h-screen w-full">
-    <flux:header container class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 fixed top-0 left-0 w-full">
+    <flux:header container class=" bg-white/60 dark:bg-black/60 backdrop-blur-md fixed top-0 left-0 w-full">
 
-        <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+        <a href="{{ route('guest.home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
         
-        <flux:navbar class="-mb-px max-lg:hidden">
-            <flux:navbar.item icon="home" :href="route('home')" :current="route('guest.home')">Home</flux:navbar.item>
-            <flux:navbar.item icon="calendar" href="#">Organizations</flux:navbar.item>
-            <flux:separator vertical variant="subtle" class="my-2"/>
-        </flux:navbar>
         <flux:spacer />
+        
         <flux:navbar >
             <flux:navbar.item :href="route('login')" label="Search" >Login</flux:navbar.item>
             <flux:navbar.item :href="route('register')" label="Settings" >Sign Up</flux:navbar.item>
