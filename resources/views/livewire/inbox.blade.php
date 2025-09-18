@@ -39,6 +39,7 @@
             @php
                 $isRead = !is_null($notif->read_at);
                 $user = isset($notif->data['user_id']) ? \App\Models\User::find($notif->data['user_id']) : null;
+                
             @endphp
 
             <div class="grid grid-cols-[auto_1fr] p-3 rounded-xl shadow-sm
@@ -49,7 +50,7 @@
                 <div class="flex items-center space-x-3">
                     
                     @if ($user)
-                        @if ($user->profile_image)
+                        @if (!empty($user->profile_image))
                             <flux:avatar 
                             circle 
                             {{-- src="{{ asset('storage/' . $user->profile_image) }}"  --}}
@@ -59,6 +60,7 @@
                         @else
                             <flux:avatar circle :initials="$user->initials()" />
                         @endif
+
                     @else
                         <flux:avatar icon="user-group" circle />
                     @endif
