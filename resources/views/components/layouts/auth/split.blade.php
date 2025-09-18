@@ -13,7 +13,7 @@
                         <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60"></div>
                 </div>
 
-                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
+                <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" >
                     <span class="flex h-10 w-10 items-center justify-center rounded-md">
                         <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
                     </span>
