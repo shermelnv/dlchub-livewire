@@ -6,7 +6,8 @@
                 @if ($org->profile_image)
                                 <flux:avatar
                                     circle
-                                    src="{{ asset('storage/' . $org->profile_image) }}"
+                                    {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
+                                    src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     class="size-16 lg:size-24"
                                     
                                 />

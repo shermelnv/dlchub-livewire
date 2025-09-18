@@ -26,12 +26,12 @@ new class extends Component {
         ]);
 
         // Delete old avatar if it exists
-        if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
-            Storage::disk('public')->delete($user->profile_image);
+        if ($user->profile_image && Storage::disk('digitalocean')->exists($user->profile_image)) {
+            Storage::disk('digitalocean')->delete($user->profile_image);
         }
 
         // Store new avatar
-        $path = $this->avatar->store('profile-images', 'public');
+        $path = $this->avatar->storePublicly('profile-images', 'digitalocean');
         $user->profile_image = $path;
         $user->save();
 
@@ -54,7 +54,10 @@ new class extends Component {
                 @if ($avatar)
                     <img src="{{ $avatar->temporaryUrl() }}" class="object-cover w-full h-full" />
                 @elseif (auth()->user()->profile_image)
-                    <img src="{{ asset('storage/' . auth()->user()->profile_image) }}" class="object-cover w-full h-full" />
+                    <img 
+                    {{-- src="{{ asset('storage/' . auth()->user()->profile_image) }}" --}}
+                    src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
+                     class="object-cover w-full h-full" />
                 @else
                     <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
                         No avatar

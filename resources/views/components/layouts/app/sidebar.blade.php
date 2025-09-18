@@ -18,14 +18,15 @@
                 <flux:navlist.item icon="home" :href="route('landing-page')" :current="request()->routeIs('landing-page')" >
                             {{ __('Home') }}
                         </flux:navlist.item>
-                
-                {{-- ADMIN / SUPERADMIN --}}
                 @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
-                    <flux:navlist.group :heading="__('Admin / SuperAdmin')" class="grid">
-                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:navlist.item icon="rectangle-group" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                             {{ __('Dashboard') }}
                         </flux:navlist.item>
-
+                @endif
+                {{-- ADMIN / SUPERADMIN --}}
+                @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
+                    <flux:navlist.group :heading="__('Manage')" class="grid">
+                        
                         <flux:navlist.item icon="users" :href="route('admin.user.manage-users')" :current="request()->routeIs('admin.user.manage-users')" wire:navigate>
                             {{ __('Manage Users') }}
                         </flux:navlist.item>
@@ -38,23 +39,10 @@
                     </flux:navlist.group>
                 @endif
 
-                @if (auth()->user()->isOrg())
 
-                   <flux:navlist.item icon="users" 
-                        :href=" route('org.profile', ['orgId' => auth()->id()]) " 
-                        :current="request()->routeIs('org.profile') && request()->route('orgId') == auth()->id()"
-                        wire:navigate
-                        >
-                        {{ __('Profile') }}
-                    </flux:navlist.item>
-
-                    <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
-                        {{ __('Follow Request') }}
-                    </flux:navlist.item>
-                @endif
 
                 @if (in_array(auth()->user()->role, ['org', 'admin', 'superadmin']))
-                    <flux:navlist.group :heading="__('Org')" class="grid">
+                    <flux:navlist.group  class="grid">
                         {{-- <flux:navlist.item icon="identification" :href="route('org.profile')" :current="request()->routeIs('org.profile')" wire:navigate>
                             {{ __('Org Profile') }}
                         </flux:navlist.item> --}}
@@ -84,10 +72,25 @@
                             {{ __('Follow Request') }}
                         </flux:navlist.item>
                 @endif
+
+                @if (auth()->user()->isOrg())
+
+                   <flux:navlist.item icon="users" 
+                        :href=" route('org.profile', ['orgId' => auth()->id()]) " 
+                        :current="request()->routeIs('org.profile') && request()->route('orgId') == auth()->id()"
+                        wire:navigate
+                        >
+                        {{ __('Profile') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
+                        {{ __('Follow Request') }}
+                    </flux:navlist.item>
+                @endif
                
                 @if (auth()->user()->isUser())
                     {{-- USER --}}
-                    <flux:navlist.group :heading="__('User')" class="grid">
+                    <flux:navlist.group  class="grid">
                         <flux:navlist.item icon="megaphone" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>{{ __('News Feed') }}</flux:navlist.item>
                         <flux:navlist.item icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
                         <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item>
@@ -135,7 +138,8 @@
                 <flux:profile
                 circle
                     :name="auth()->user()->name"
-                    avatar="{{ asset('storage/' . auth()->user()->profile_image) }}"
+                    {{-- avatar="{{ asset('storage/' . auth()->user()->profile_image) }}" --}}
+                    avatar="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
                     icon:trailing="chevrons-up-down"
                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                 />
@@ -161,7 +165,9 @@
                                         class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                     >
                                         @if(auth()->user()->profile_image)
-                                        <img src="{{asset('storage/' . auth()->user()->profile_image)}}" alt="">
+                                        {{-- <img src="{{asset('storage/' . auth()->user()->profile_image)}}" alt=""> --}}
+                                        <img src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}" alt="">
+                                        
                                         @else
                                         {{ auth()->user()->initials() }}
                                         @endif
@@ -206,7 +212,8 @@
             <flux:dropdown position="top" align="end">
                 @if(auth()->user()->profile_image)
                 <flux:profile
-                    avatar="{{asset('storage/' . auth()->user()->profile_image)}}"
+                    {{-- avatar="{{asset('storage/' . auth()->user()->profile_image)}}" --}}
+                    avatar="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
                     icon-trailing="chevron-down"
                 />
                 @else
@@ -226,7 +233,8 @@
                                         class="flex h-full w-full items-center justify-center rounded bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                     >
                                         @if(auth()->user()->profile_image)
-                                        <img src="{{asset('storage/' . auth()->user()->profile_image)}}" alt="">
+                                        {{-- <img src="{{asset('storage/' . auth()->user()->profile_image)}}" alt=""> --}}
+                                        <img src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}" alt="">
                                         @else
                                         {{ auth()->user()->initials() }}
                                         @endif

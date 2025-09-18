@@ -11,7 +11,8 @@
                     <flux:avatar
                         circle
                         class="size-40 object-cover"
-                        src="{{ asset('storage/' . $showUser['profile_image']) }}"
+                        {{-- src="{{ asset('storage/' . $showUser['profile_image']) }}" --}}
+                        src="{{ Storage::disk('digitalocean')->url($showUser['profile_image']) }}"
                     />
                     @else
                     <flux:avatar
@@ -58,7 +59,9 @@
 
     @if (!empty($showUser['document']))
         <div class="p-4">
-            <img src="{{ asset('storage/' . $showUser['document']) }}" 
+            <img 
+            {{-- src="{{ asset('storage/' . $showUser['document']) }}"  --}}
+            src="{{ Storage::disk('digitalocean')->url($showUser['document']) }}"
                  alt="User COR or ID" 
                  class="max-w-full h-auto mx-auto rounded-lg border border-gray-300" />
         </div>

@@ -20,7 +20,8 @@ class="px-5">
             @if(auth()->user()->profile_image)
                     <flux:avatar 
                         circle 
-                        src="{{ asset('storage/' . auth()->user()->profile_image) }}" 
+                        {{-- src="{{ asset('storage/' . auth()->user()->profile_image) }}"  --}}
+                        src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
                         />
                 @else
                     <flux:avatar

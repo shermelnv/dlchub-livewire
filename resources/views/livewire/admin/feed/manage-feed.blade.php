@@ -18,7 +18,8 @@
                 @if(auth()->user()->profile_image)
                     <flux:avatar 
                         circle 
-                        src="{{ asset('storage/' . auth()->user()->profile_image) }}" 
+                        {{-- src="{{ asset('storage/' . auth()->user()->profile_image) }}"  --}}
+                        src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
                         />
                 @else
                     <flux:avatar
@@ -107,7 +108,8 @@
                             <div class="flex gap-2 items-center">
                                 @if ($feed->user->profile_image)
                                     <flux:avatar
-                                        avatar="{{ asset('storage/' . $feed->user->profile_image) }}"
+                                        {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}" --}}
+                                        avatar="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
                                         icon:trailing="chevrons-up-down"
                                         class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                     />
@@ -228,7 +230,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />
@@ -242,7 +245,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -262,7 +265,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />
@@ -276,7 +280,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -296,7 +300,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />
@@ -310,7 +315,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-lg break-words">{{ $comment->comment }}</div>
                                                         </div>

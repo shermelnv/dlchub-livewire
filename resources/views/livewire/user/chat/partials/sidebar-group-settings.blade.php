@@ -9,7 +9,8 @@
                     @if ($selectedGroup->group_profile )
                                     <flux:avatar
                                         circle
-                                        src="{{ asset('storage/' . $selectedGroup->group_profile) }}"
+                                        {{-- src="{{ asset('storage/' . $selectedGroup->group_profile) }}" --}}
+                                        src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
                                         class="size-40"
                                     />
                                 @else
@@ -40,7 +41,10 @@
                 <div class="flex items-center justify-between p-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
                     <div class="flex items-center gap-3">
                         @if ($member->profile_image)
-                            <flux:avatar circle src="{{ asset('storage/' . $member->profile_image) }}" />
+                            <flux:avatar circle 
+                            {{-- src="{{ asset('storage/' . $member->profile_image) }}"  --}}
+                            src="{{ Storage::disk('digitalocean')->url($member->profile_image) }}"
+                            />
                         @else
                             <flux:avatar circle :initials="$member->initials()" />
                         @endif

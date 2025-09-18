@@ -313,10 +313,12 @@
                             @if ($candidate->photo_url)
                                 {{-- Show uploaded candidate image --}}
                                 <img 
-                                    src="{{ asset('storage/' . $candidate->photo_url) }}"
+                                  
+                                    src="{{ Storage::disk('digitalocean')->url($candidate->photo_url) }}"
                                     alt="{{ $candidate->name }}"
                                     class="h-20 md:h-60 w-full object-cover rounded-md mb-4"
                                 >
+
                                 @else
                                     {{-- "no image" placeholder --}}
 

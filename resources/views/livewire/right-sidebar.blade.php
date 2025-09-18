@@ -36,7 +36,8 @@
                             @if ($org->profile_image)
                                 <flux:avatar
                                     circle
-                                    src="{{ asset('storage/' . $org->profile_image) }}"
+                                    {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
+                                    src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     
                                 />
                             @else
@@ -61,7 +62,7 @@
 
 
         {{-- MOBILE --}}
-        <flux:modal name="mobile-right-sidebar" class="bg-zinc-900" variant="flyout">
+        <flux:modal name="mobile-right-sidebar" class="bg-white dark:bg-zinc-900 text-black dark:text-white" variant="flyout">
             
             <div class="space-y-4  w-full rounded-lg p-2">
                 <flux:heading size="lg">Trending</flux:heading>
@@ -98,7 +99,8 @@
                              @if ($org->profile_image)
                                 <flux:avatar
                                     circle
-                                    src="{{ asset('storage/' . $org->profile_image) }}"
+                                    {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
+                                    src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     
                                 />
                             @else

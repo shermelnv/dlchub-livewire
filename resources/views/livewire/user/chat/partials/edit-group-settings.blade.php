@@ -7,7 +7,10 @@
             @if ($group_image)
                 <img src="{{ $group_image->temporaryUrl() }}" class="object-cover w-full h-full" />
             @elseif ($selectedGroup->group_profile)
-                <img src="{{ asset('storage/' . $selectedGroup->group_profile) }}" class="object-cover w-full h-full" />
+                <img 
+                {{-- src="{{ asset('storage/' . $selectedGroup->group_profile) }}"  --}}
+                src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
+                class="object-cover w-full h-full" />
             @else
                 <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
                     No avatar

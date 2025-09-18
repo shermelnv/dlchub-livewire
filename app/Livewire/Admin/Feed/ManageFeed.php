@@ -120,7 +120,7 @@ public function createPost()
     ]);
 
   
-       $photoPath = $this->photo?->storePublicly('feeds', 'digitalocean');
+    $photoPath = $this->photo?->storePublicly('feeds', 'digitalocean');
 
   
     

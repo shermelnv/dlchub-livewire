@@ -16,8 +16,8 @@
                 @if ($group->group_profile)
                                 <flux:avatar
                                     circle
-                                    src="{{ asset('storage/' . $group->group_profile) }}"
-                                    
+                      
+                                    src="{{ Storage::disk('digitalocean')->url($group->group_profile) }}"
                                 />
                             @else
                                 <flux:avatar

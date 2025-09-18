@@ -50,7 +50,12 @@
                     
                     @if ($user)
                         @if ($user->profile_image)
-                            <flux:avatar circle src="{{ asset('storage/' . $user->profile_image) }}" />
+                            <flux:avatar 
+                            circle 
+                            {{-- src="{{ asset('storage/' . $user->profile_image) }}"  --}}
+                            src="{{ Storage::disk('digitalocean')->url($user->photo_image) }}"
+                            />
+                            
                         @else
                             <flux:avatar circle :initials="$user->initials()" />
                         @endif

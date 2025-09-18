@@ -64,8 +64,7 @@
                                 @if ($selectedGroup->group_profile)
                                     <flux:avatar
                                         circle
-                                        src="{{ asset('storage/' . $selectedGroup->group_profile) }}"
-                                        
+                                        src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
                                     />
                                 @else
                                     <flux:avatar
@@ -169,7 +168,10 @@
                                     @if ($msg->user_id !== auth()->id())
                                         @if ($isLastInBlock)
                                                 @if ($msg->user && $msg->user->profile_image)
-                                                    <flux:avatar circle src="{{ asset('storage/' . $msg->user->profile_image) }}" />
+                                                    <flux:avatar circle 
+                                                    {{-- src="{{ asset('storage/' . $msg->user->profile_image) }}"  --}}
+                                                    src="{{ Storage::disk('digitalocean')->url($msg->user->profile_image) }}"
+                                                    />
                                                 @else
                                                     <flux:avatar circle :initials="$msg->user?->initials()" />
                                                 @endif
@@ -200,7 +202,10 @@
                                                 @if ($isLastInBlock)
                                                     
                                                         @if ($msg->user && $msg->user->profile_image)
-                                                            <flux:avatar circle src="{{ asset('storage/' . $msg->user->profile_image) }}" />
+                                                            <flux:avatar circle 
+                                                            {{-- src="{{ asset('storage/' . $msg->user->profile_image) }}"  --}}
+                                                            src="{{ Storage::disk('digitalocean')->url($msg->user->profile_image) }}"
+                                                            />
                                                         @else
                                                             <flux:avatar circle :initials="$msg->user?->initials()" />
                                                         @endif
@@ -274,7 +279,8 @@
                                     @if ($group->group_profile)
                                             <flux:avatar
                                                 circle
-                                                src="{{ asset('storage/' . $group->group_profile) }}"
+                                                {{-- src="{{ asset('storage/' . $group->group_profile) }}" --}}
+                                                src="{{ Storage::disk('digitalocean')->url($group->group_profile) }}"
                                                 
                                             />
                                         @else

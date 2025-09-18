@@ -273,7 +273,7 @@
                     @if ($selectedCandidate->photo_url)
                                 {{-- Show uploaded candidate image --}}
                                 <img 
-                                    src="{{ asset('storage/' . $selectedCandidate->photo_url) }}"
+                                    src="{{ Storage::disk('digitalocean')->url($selectedCandidate->photo_url) }}"
                                     alt="{{ $selectedCandidate->name }}"
                                     class="h-40 lg:h-60 w-full object-cover rounded-md mb-4"
                                 >

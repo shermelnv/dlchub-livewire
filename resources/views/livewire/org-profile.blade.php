@@ -86,7 +86,11 @@
                                 
                                 @if ($feed->photo_url)
                                     <div class="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                                        <img src="{{ asset('storage/' . $feed->photo_url) }}" loading="lazy" class="object-contain w-full h-full" />
+                                        <img 
+                                        {{-- src="{{ asset('storage/' . $feed->photo_url) }}"  --}}
+                                        src="{{ Storage::disk('digitalocean')->url($feed->photo_url) }}"
+                                        loading="lazy" 
+                                        class="object-contain w-full h-full" />
                                         @if ($feed->organization)
                                             <span class="absolute top-2 left-2 bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-purple-900 dark:text-white">
                                                 {{ $feed->organization }}
@@ -100,7 +104,10 @@
                                     <div class="flex justify-between">
                                         <div class="flex gap-2 items-center">
                                             @if ($feed->user->profile_image)
-                                                <flux:avatar avatar="{{ asset('storage/' . $feed->user->profile_image) }}" class="w-8 h-8 rounded-full object-cover" />
+                                                <flux:avatar 
+                                                {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
+                                                avatar="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
+                                                class="w-8 h-8 rounded-full object-cover" />
                                             @else
                                                 <flux:avatar circle :initials="$feed->user->initials()" class="w-8 h-8 rounded-full" />
                                             @endif
@@ -208,7 +215,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />
@@ -242,7 +250,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />
@@ -276,7 +285,8 @@
                                                 <flux:profile
                                                 circle
 
-                                                    avatar="{{ asset('storage/' . $comment->user->profile_image) }}"
+                                                    {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
+                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                                 />

@@ -242,7 +242,9 @@ public $voters = [];
         $photoPath = null;
         if ($this->candidate_image) {
             // store in storage/app/public/candidates
-            $photoPath = $this->candidate_image->store('candidates', 'public');
+            // $photoPath = $this->candidate_image->store('candidates', 'public');
+
+            $photoPath = $this->candidate_image->storePublicly('candidates', 'digitalocean');
         }
 
         Candidate::create([

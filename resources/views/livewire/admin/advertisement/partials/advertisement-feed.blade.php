@@ -12,7 +12,9 @@
                 <div class="overflow-hidden">
                     @if ($photoCount === 1)
                         {{-- Style 1: Single full image --}}
-                        <img src="{{ Storage::url($photos[0]->photo_path) }}"
+                        <img 
+                        {{-- src="{{ Storage::url($photos[0]->photo_path) }}" --}}
+                        src="{{ Storage::disk('digitalocean')->url($photos[0]->photo_path) }}"
                              class="w-full h-64 object-cover rounded cursor-pointer"
                              alt="Ad Image"
                              wire:click="viewPhotos({{ $ad->id }})"

@@ -320,7 +320,8 @@ public function updateGroupInfo()
     $group->name = $this->editGroup['name'];
 
     if ($this->group_profile) {
-        $path = $this->group_profile->store('group_profile', 'public');
+        // $path = $this->group_profile->store('group_profile', 'public');
+        $path = $this->group_profile->storePublicly('group_profile', 'digitalocean');
         $group->group_profile = $path; // <— now matches DB + Blade
     }
 

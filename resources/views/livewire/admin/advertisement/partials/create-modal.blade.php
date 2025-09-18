@@ -53,7 +53,7 @@
                 <input
                     type="file"
                     wire:model="photos"
-                    multiple
+                    {{-- multiple --}}
                     class="max-w-[15rem] block border border-gray-300 rounded-md p-2 text-sm"
                 />
                 @error('photos.*')

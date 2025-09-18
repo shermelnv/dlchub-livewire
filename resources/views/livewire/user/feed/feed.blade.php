@@ -77,7 +77,10 @@ x-data
                     <div class="bg-white dark:bg-gray-800 shadow-md hover:shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition duration-300 ease-in-out">
                         @if ($feed->photo_url)
                             <div class="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                                <img src="{{ asset('storage/' . $feed->photo_url) }}" loading="lazy" class="object-contain w-full h-full" />
+                                <img 
+                                {{-- src="{{ asset('storage/' . $feed->photo_url) }}"  --}}
+                                src="{{ Storage::disk('digitalocean')->url($feed->photo_url) }}"
+                                loading="lazy" class="object-contain w-full h-full" />
                                 @if ($feed->organization)
                                     <span class="absolute top-2 left-2 bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-purple-900 dark:text-white">
                                         {{ $feed->organization }}

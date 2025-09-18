@@ -114,7 +114,9 @@
                  data-aos-delay="{{ $i * 200 }}">
                  
                 @if($feed->photo_url)
-                    <img src="{{ asset('storage/'. $feed->photo_url) }}" 
+                    <img 
+                    {{-- src="{{ asset('storage/'. $feed->photo_url) }}"  --}}
+                    src="{{ Storage::disk('digitalocean')->url($feed->photo_url) }}"
                          alt="News Image" 
                          class="w-full h-48 object-cover rounded-md bg-gray-200 dark:bg-gray-700"/>
                 @else

@@ -165,7 +165,8 @@ $this->trendingOrgs = Advertisement::visibleToUser($user)
 
        // Upload photos
         foreach ($this->photos as $photo) {
-            $path = $photo->store('advertisements', 'public');
+            // $path = $photo->store('advertisements', 'public');
+            $path = $photo->storePublicly('advertisements', 'digitalocean');
             AdvertisementPhoto::create([
                 'advertisement_id' => $ad->id,
                 'photo_path' => $path,
@@ -253,7 +254,8 @@ $this->trendingOrgs = Advertisement::visibleToUser($user)
 
         // Upload new photos
         foreach ($this->photos as $photo) {
-            $path = $photo->store('advertisements', 'public');
+            // $path = $photo->store('advertisements', 'public');
+            $path = $photo->storePublicly('advertisements', 'digitalocean');
             AdvertisementPhoto::create([
                 'advertisement_id' => $ad->id,
                 'photo_path' => $path,
