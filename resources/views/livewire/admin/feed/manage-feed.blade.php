@@ -88,7 +88,7 @@
                     <div class="bg-white dark:bg-gray-800 shadow-md hover:shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition duration-300 ease-in-out">
                         @if ($feed->photo_url)
                         
-                            <div class="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden cursor-pointer" wire:click="viewPostInfo({{ $feed->id }})">
+                            <div class="relative w-full bg-gray-100  dark:bg-gray-700 overflow-hidden cursor-pointer" wire:click="viewPostInfo({{ $feed->id }})">
                                 <img src="{{ Storage::disk('digitalocean')->url($feed->photo_url) }}" loading="lazy" class="object-contain w-full h-full" />
 
                                 @if ($feed->organization)
@@ -245,7 +245,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -280,7 +280,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -315,7 +315,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-lg break-words">{{ $comment->comment }}</div>
                                                         </div>
