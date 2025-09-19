@@ -79,22 +79,31 @@
                             <div class="flex justify-between">
                             <div class="flex gap-4 items-center">
 
-                                <flux:avatar 
-                                circle 
-                                src="{{ auth()->user()->profile_image 
-                                    ? asset('storage/' . auth()->user()->profile_image) 
-                                    : 'https://unavatar.io/x/calebporzio' }}" 
-                                />
+                               @if ($ad->user->profile_image)
+                                    <flux:avatar
+                                        {{-- avatar="{{ asset('storage/' . $ad->user->profile_image) }}" --}}
+                                        src="{{ Storage::disk('digitalocean')->url($ad->user->profile_image) }}"
+                                        icon:trailing="chevrons-up-down"
+                                        class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                    />
+                                    @else
+                                        <flux:avatar
+                                        circle
+                                            :initials="$ad->user->initials()"
+                                            icon:trailing="chevrons-up-down"
+                                            class="w-8 h-8 rounded-full"
+                                        />
+                                    @endif
 
                                 <div>
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                     Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
                                     @if($ad->privacy === 'public') 
-                                        <flux:icon.globe-asia-australia class="size-4" /> 
-                                    @else 
-                                        <flux:icon.lock-closed class="size-4" />
-                                    @endif
+                                            <flux:icon.globe-asia-australia class="size-4" /> 
+                                            @else 
+                                                <flux:icon.lock-closed class="size-4" />
+                                            @endif 
                                 </p>
                                 </div>
                             </div>

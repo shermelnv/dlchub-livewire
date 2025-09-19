@@ -404,7 +404,12 @@
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }}
+                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
+                                    @if($feed->privacy === 'public') 
+                                                        <flux:icon.globe-asia-australia class="size-4" /> 
+                                                    @else 
+                                                        <flux:icon.lock-closed class="size-4" />
+                                                    @endif
                                 </p>
                             </div>
                             @if($ad->user_id === auth()->user()->id)

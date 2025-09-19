@@ -40,7 +40,7 @@ class ManageOrg extends Component
 
         Mail::to($user->email)->send(new UserAccountCreated($user, $password));
 
-        $this->reset('name');
+        $this->reset('name', 'username', 'email');
         $this->modal('create-org')->close();
         Toaster::success('Organization created successfully!');
     }

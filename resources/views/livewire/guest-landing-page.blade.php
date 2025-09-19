@@ -100,9 +100,12 @@
                         </div>
                     @endif
 
-                    <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
-                        {{ $feed->content }}
-                    </p>
+
+                        <p class="text-gray-700 dark:text-gray-300 words-break line-clamp-2 h-[3rem]">
+                            {{ $feed->content }}
+                        </p>
+             
+         
                 </div>
             </a>
             @empty
@@ -118,10 +121,10 @@
         </section>
 
         {{-- ADVERTISEMENT & ORGS --}}
-        <section class="max-h-screen grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900">
+        <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900 items-stretch">
 
             {{-- Advertisement --}}
-            <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700" data-aos="fade-right">
+            <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700 h-auto" data-aos="fade-right">
                 <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
                     Advertisement
                 </div>
@@ -131,7 +134,7 @@
                     
                     @forelse($latestAds as $i => $ad)
                     <a href="{{route('advertisement')}}">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
                             data-aos="fade-up"
                             data-aos-delay="{{ $i * 200 }}">
 
@@ -149,9 +152,10 @@
                                 </div>
                             @endif
 
-                            <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
-                                {{ $ad->description }}
-                            </p>
+                                <p class="text-gray-700 dark:text-gray-300 words-break line-clamp-2 h-[3rem]">
+                                    {{ $ad->description }}
+                                </p>
+                  
                         </div>
                     </a>
                     @empty
@@ -173,18 +177,18 @@
             </div>
 
             {{-- Organizations --}}
-            <div class="col-span-2 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700" data-aos="fade-left">
+            <div class="col-span-2 flex flex-col rounded-2xl shadow-lg h-auto dark:border-gray-700" data-aos="fade-left">
                 <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
                     Organizations
                 </div>
 
                 {{-- Content grows --}}
-                <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-96  overflow-y-auto">
+                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[70vh] overflow-y-auto">
                     {{-- List of Orgs --}}
                     {{-- <div class="grid gap-6"> --}}
                     @forelse($organizations as $org)
                     <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
-                        <div class="flex items-center gap-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
+                        <div class="flex items-center gap-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition ">
                             @if($org->profile_image)
                                 <img src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"

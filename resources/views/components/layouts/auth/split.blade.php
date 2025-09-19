@@ -8,9 +8,10 @@
             <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
                 <div class="absolute inset-0">
                         
-                        <img src="https://sms.dhvsu.edu.ph/general/getThemePhoto?tid=1&field=login_bg" class="h-full w-full object-cover" alt="Background Image">
+                        <img src="{{ asset('images/dhvsu_bg2.jpg') }}"  class="h-full w-full object-cover object-center" alt="Background Image">
 
-                        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60"></div>
+                        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent opacity-80"></div>
+
                 </div>
 
                 <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" >
@@ -25,9 +26,9 @@
                 @endphp
 
                 <div class="relative z-20 mt-auto">
-                    <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>- {{ trim($author) }}</flux:heading></footer>
+                    <blockquote class="space-y-2 ">
+                        <flux:heading size="lg" class="text-white">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
+                        <footer><flux:heading class="text-white">- {{ trim($author) }}</flux:heading></footer>
                     </blockquote>
                 </div>
             </div>

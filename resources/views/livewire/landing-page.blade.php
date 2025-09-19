@@ -21,15 +21,15 @@
         <div class="space-y-6 text-white px-6 md:px-10 text-center lg:text-left" data-aos="fade-left">
             <h1 class="text-2xl md:text-4xl font-bold">Make Your Group Chats More Fun</h1>
             <flux:text class="max-w-lg text-base md:text-lg text-gray-200 text-justify mx-auto lg:mx-0">
-                Collaborate in real-time! Join group chats with classmates or organizations, share ideas, and keep your projects organized — all from your dashboard.
+                Team up in real time! Chat with classmates, share ideas, and keep everything on track—right from your dashboard.
             </flux:text>
             <div class="grid grid-cols-2 lg:flex flex-col gap-4">
                 <ul class="space-y-3">
                     <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="100">
-                        <flux:icon.check class="size-4"/> Real-time messaging and file sharing 
+                        <flux:icon.check class="size-4"/> Real-time messaging
                     </li>
                     <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="200">
-                        <flux:icon.check class="size-4"/> Create study groups and project teams
+                        <flux:icon.check class="size-4"/> Create study groups
                     </li>
                     <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="300">
                         <flux:icon.check class="size-4"/> Integrated calendar and event planning
@@ -62,41 +62,6 @@
 
     {{-- DUMMY HERE --}}
 
-    {{-- STUDENTS REGISTERED / ORGANIZATIONS / VOTING ROOMS / UPCOMING EVENTS --}}
-    <section class="flex items-center justify-center bg-gradient-to-r from-yellow-400 via-amber-700 to-red-800 px-6 py-8">
-        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-10 w-full max-w-6xl">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-                
-                <!-- Students Enrolled -->
-                <div data-aos="fade-up" data-aos-delay="100">
-                    <flux:icon.users class="mx-auto size-8 md:size-12 text-red-800 mb-4"/>
-                    <p class="text-sm md:text-4xl font-bold text-red-900">{{$userCount}}</p>
-                    <p class="text-red-700 font-medium">Students</p>
-                </div>
-
-                <!-- Academic Programs -->
-                <div data-aos="fade-up" data-aos-delay="200">
-                    <flux:icon.user-group class="mx-auto size-8 md:size-12 text-red-800 mb-4"/>
-                    <p class="text-sm md:text-4xl font-bold text-red-900">{{ $orgCount }}</p>
-                    <p class="text-red-700 font-medium">Organizations</p>
-                </div>
-
-                <!-- Employees -->
-                <div data-aos="fade-up" data-aos-delay="300">
-                    <flux:icon.check-circle class="mx-auto size-8 md:size-12 text-red-800 mb-4"/>
-                    <p class="text-sm md:text-4xl font-bold text-red-900">{{ $ongoingVotingRooms }}</p>
-                    <p class="text-red-700 font-medium">Voting Rooms</p>
-                </div>
-
-                <!-- Campuses -->
-                <div data-aos="fade-up" data-aos-delay="400">
-                    <flux:icon.calendar class="mx-auto size-8 md:size-12 text-red-800 mb-4"/>
-                    <p class="text-sm md:text-4xl font-bold text-red-900">8</p>
-                    <p class="text-red-700 font-medium">Upcoming Events</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
 
 
@@ -125,7 +90,7 @@
                     </div>
                 @endif
 
-                <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
+                <p class="text-gray-700 dark:text-gray-300 words-break line-clamp-2 h-[3rem]">
                     {{ $feed->content }}
                 </p>
             </div>
@@ -143,117 +108,77 @@
     </section>
 
 
-{{-- ADVERTISEMENT & ORGS --}}
-    <section class="max-h-screen grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900">
+        {{-- ADVERTISEMENT & ORGS --}}
+        <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900 items-stretch">
 
-        {{-- Advertisement --}}
-        <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700" data-aos="fade-right">
-            <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
-                Advertisement
-            </div>
+            {{-- Advertisement --}}
+            <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700 h-auto" data-aos="fade-right">
+                <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
+                    Advertisement
+                </div>
 
-            {{-- Content grows and scrolls if needed --}}
-            <div class=" p-6 grid grid-cols-2 gap-6 ">
-                
-                @forelse($latestAds as $i => $ad)
-                <a href="{{route('advertisement')}}">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
-                        data-aos="fade-up"
-                        data-aos-delay="{{ $i * 200 }}">
+                {{-- Content grows and scrolls if needed --}}
+                <div class=" p-6 grid grid-cols-2 gap-6 ">
+                    
+                    @forelse($latestAds as $i => $ad)
+                    <a href="{{route('advertisement')}}">
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
+                            data-aos="fade-up"
+                            data-aos-delay="{{ $i * 200 }}">
 
-                        @php
-                            $firstPhoto = $ad->photos->first();
-                        @endphp
+                            @php
+                                $firstPhoto = $ad->photos->first();
+                            @endphp
 
-                        @if ($firstPhoto)
-                            <img src="{{ Storage::url($firstPhoto->photo_path) }}"
-                                class="w-full h-48 object-cover rounded-md bg-gray-200 dark:bg-gray-700"
-                                alt="Ad Image">
-                        @else
-                            <div class="w-full h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-md text-gray-500">
-                                No Image Available
-                            </div>
-                        @endif
+                            @if ($firstPhoto)
+                                <img src="{{ Storage::url($firstPhoto->photo_path) }}"
+                                    class="w-full h-48 object-cover rounded-md bg-gray-200 dark:bg-gray-700"
+                                    alt="Ad Image">
+                            @else
+                                <div class="w-full h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-md text-gray-500">
+                                    No Image Available
+                                </div>
+                            @endif
 
-                        <p class="text-gray-700 dark:text-gray-300 line-clamp-3">
-                            {{ $ad->description }}
-                        </p>
-                    </div>
-                </a>
-                @empty
-                    <p class="col-span-3 text-center text-gray-500 dark:text-gray-400">
-                        No advertisements yet.
-                    </p>
-                @endforelse
-            </div>
-
-            {{-- Button fixed at bottom --}}
-
-            @if($latestAds->count() > 0)
-            <div class="flex justify-center p-4">
-                <flux:button href="{{ route('advertisement') }}" icon="arrow-right-circle" variant="primary" color="red" data-aos="fade-up">
-                    View More Ads
-                </flux:button>
-            </div>
-            @endif
-        </div>
-
-        {{-- Organizations --}}
-        <div class="col-span-2 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700" data-aos="fade-left">
-            <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
-                Organizations
-            </div>
-
-            {{-- Content grows --}}
-            <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 ">
-                @forelse($organizations as $org)
-                <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
-                    <div class="flex items-center gap-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
-                        @if($org->logo_path)
-                            <img src="{{ Storage::url($org->logo_path) }}"
-                                class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"
-                                alt="{{ $org->name }} Logo">
-                        @else
-                            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-800 text-white font-semibold">
-                                {{ strtoupper(substr($org->name, 0, 2)) }}
-                            </div>
-                        @endif
-                        <div class="flex-1">
-                            <h3 class="text-lg font-semibold">{{ $org->name }}</h3>
+                                <p class="text-gray-700 dark:text-gray-300 words-break line-clamp-2 h-[3rem]">
+                                    {{ $ad->description }}
+                                </p>
+                  
                         </div>
-                    </div>
                     </a>
-                @empty
-                    <p class="text-center text-gray-500 dark:text-gray-400">
-                        No organizations available.
-                    </p>
-                @endforelse
-            </div>
+                    @empty
+                        <p class="col-span-3 text-center text-gray-500 dark:text-gray-400">
+                            No advertisements yet.
+                        </p>
+                    @endforelse
+                </div>
 
-            {{-- Button fixed at bottom --}}
-            <div class="flex justify-center p-4">
-                <flux:modal.trigger name="viewAllOrgs">
-                    <flux:button 
-                    {{-- href="{{ route('organizations') }}"  --}}
-                    icon="arrow-right-circle" variant="primary" color="red" data-aos="fade-up">
-                        View More Orgs
+                {{-- Button fixed at bottom --}}
+
+                @if($latestAds->count() > 0)
+                <div class="flex justify-center p-4">
+                    <flux:button href="{{ route('advertisement') }}" icon="arrow-right-circle" variant="primary" color="red" data-aos="fade-up">
+                        View More Ads
                     </flux:button>
-                </flux:modal.trigger>
+                </div>
+                @endif
             </div>
-        </div>
-    </section>
 
-    <flux:modal name="viewAllOrgs" class="w-sm lg:w-lg">
-        
-        <h2 class="text-2xl font-bold mb-4 ">All Organizations</h2>
-            
-        <div class="max-w-3xl max-h-[80vh] overflow-y-auto scrollbar-hover">
-            <div class="grid gap-6">
-                @forelse($allOrganizations as $org)
+            {{-- Organizations --}}
+            <div class="col-span-2 flex flex-col rounded-2xl shadow-lg h-auto dark:border-gray-700" data-aos="fade-left">
+                <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
+                    Organizations
+                </div>
+
+                {{-- Content grows --}}
+                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[70vh] overflow-y-auto">
+                    {{-- List of Orgs --}}
+                    {{-- <div class="grid gap-6"> --}}
+                    @forelse($organizations as $org)
                     <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
-                            @if($org->logo_path)
-                                <img src="{{ Storage::url($org->logo_path) }}"
+                        <div class="flex items-center gap-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition ">
+                            @if($org->profile_image)
+                                <img src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"
                                     alt="{{ $org->name }} Logo">
                             @else
@@ -265,15 +190,17 @@
                                 <h3 class="text-lg font-semibold">{{ $org->name }}</h3>
                             </div>
                         </div>
-                    </a>
-                @empty
-                    <p class="text-center text-gray-500 dark:text-gray-400">
-                        No organizations available.
-                    </p>
-                @endforelse
+                        </a>
+                    @empty
+                        <p class="text-center text-gray-500 dark:text-gray-400">
+                            No organizations available.
+                        </p>
+                    @endforelse
+                </div>
+
+                
             </div>
-        </div>
-    </flux:modal>
+        </section>
 
 
 

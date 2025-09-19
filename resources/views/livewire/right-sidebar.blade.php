@@ -2,13 +2,7 @@
         {{-- DESKTOP --}}
     <div class="hidden lg:flex flex-col h-[100vh] sticky top-0 shadow overflow-y-auto py-5 gap-6 scrollbar-hover bg-white dark:bg-zinc-900 text-black dark:text-white">
 
-            <div class="space-y-4  w-full rounded-lg p-2">
-                <flux:heading size="lg">Trending</flux:heading>
-                <div class="grid h-auto gap-4">
-                    <div class="grid items-center">No trending at the moment</div>
-                </div>
-                
-            </div>
+   
 
 
             @if(auth()->user()->isUser())
@@ -64,13 +58,6 @@
         {{-- MOBILE --}}
         <flux:modal name="mobile-right-sidebar" class="bg-white dark:bg-zinc-900 text-black dark:text-white" variant="flyout">
             
-            <div class="space-y-4  w-full rounded-lg p-2">
-                <flux:heading size="lg">Trending</flux:heading>
-                <div class="grid h-auto gap-4">
-                    <div class="grid items-center">No trending at the moment</div>
-                </div>
-                
-            </div>
 
 
             @if(auth()->user()->role === 'user')
