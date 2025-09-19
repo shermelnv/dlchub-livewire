@@ -440,17 +440,6 @@
                                     </div>
                                 @endif
 
-                                {{-- Footer --}}
-                                <div class="flex items-center gap-6 pt-2 text-gray-500 dark:text-gray-400 text-sm">
-                                    <div class="flex items-center gap-1">
-                                        <flux:icon.eye class="w-4 h-4" />
-                                        <span>1.2k views</span>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <flux:icon.chat-bubble-oval-left-ellipsis class="w-4 h-4" />
-                                        <span>8 comments</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     @empty
