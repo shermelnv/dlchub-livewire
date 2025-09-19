@@ -124,7 +124,7 @@ public function createPost()
 
   
     
-
+  
     
 
     $user = Auth::user();

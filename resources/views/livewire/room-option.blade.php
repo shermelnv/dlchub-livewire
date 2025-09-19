@@ -1,30 +1,30 @@
 
-<flux:modal name="room-option" variant="flyout" class="h-screen">
+<flux:modal name="room-option" variant="flyout" class="h-screen w-sm">
     <div class="h-full flex flex-col justify-between ">
         <div class="space-y-4">
             <!-- Header -->
             <div>
-                <h1 class="text-xl font-bold text-gray-100">Room Settings</h1>
-                <p class="text-sm text-gray-400">Configure room details and manage room settings</p>
+                <h1 class="text-xl font-bold text-zinc-800 dark:text-gray-100">Room Settings</h1>
+                <p class="text-sm text-zinc-800 dark:text-gray-100">Configure room details and manage room settings</p>
             </div>
 
             <!-- Room Information -->
             <div class="space-y-4">
             
-                    <h2 class="text-lg font-semibold text-gray-200">Room Information</h2>
+                    <h2 class="text-lg font-semibold text-zinc-800 dark:text-gray-100">Room Information</h2>
                     <p>you can edit it here in voting room page <a href="{{route('voting')}}" class="underline text-blue-500">Voting Room</a> </p>
         
                 </div>
                 
                 {{-- SHOW WHEN EDIT ICON IS NOT CLICKED --}}
                 <div class="space-y-4">
-                    <label class="text-sm text-gray-400">Room Name</label>
-                    <div class="mt-1 w-full rounded-lg bg-gray-800 px-3 py-2 text-gray-200">
+                    <label class="text-sm text-zinc-800 dark:text-gray-100">Room Name</label>
+                    <div class="mt-1 w-full rounded-lg dark:bg-zinc-800 bg-zinc-100 px-3 py-2 text-gray-200">
                         {{ $room->title }}
                     </div>
 
-                    <label class="text-sm text-gray-400">Room Description</label>
-                    <div class="mt-1 w-full rounded-lg bg-gray-800 px-3 py-2 text-gray-200">
+                    <label class="text-sm text-zinc-800 dark:text-gray-100">Room Description</label>
+                    <div class="mt-1 w-full rounded-lg dark:bg-zinc-800 bg-zinc-100 px-3 py-2 text-gray-200">
                         {{ $room->description ? $room->description : 'No Description'}}
                     </div>
 
@@ -32,16 +32,16 @@
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm text-gray-400">Start Date</label>
-                            <div class="mt-1 w-full rounded-lg bg-gray-800 px-3 py-2 text-gray-200">
+                            <label class="text-sm text-zinc-800 dark:text-gray-100">Start Date</label>
+                            <div class="mt-1 w-full rounded-lg dark:bg-zinc-800 bg-zinc-100 px-3 py-2 text-gray-200">
                                 {{ \Carbon\Carbon::parse($room->start_time)->format('d/m/Y h:i A') }}
                             </div>
                         </div>
 
             
                         <div>
-                            <label class="text-sm text-gray-400">End Date</label>
-                            <div class="mt-1 w-full rounded-lg bg-gray-800 px-3 py-2 text-gray-200">
+                            <label class="text-sm text-zinc-800 dark:text-gray-100">End Date</label>
+                            <div class="mt-1 w-full rounded-lg dark:bg-zinc-800 bg-zinc-100 px-3 py-2 text-gray-200">
                                 {{ \Carbon\Carbon::parse($room->end_time)->format('d/m/Y h:i A') }}
                             </div>
                         </div>
@@ -100,14 +100,14 @@
     <div class="grid grid-cols-2 gap-2">
         <button
             @click="tab = 'newPosition'"
-            :class="tab === 'newPosition' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
+            :class="tab === 'newPosition' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:dark:bg-zinc-800 bg-zinc-100 text-gray-700 dark:text-white'"
             class="py-2 rounded-md text-sm font-medium transition"
         >
             Create Position
         </button>
         <button
             @click="tab = 'newCandidate'"
-            :class="tab === 'newCandidate' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white'"
+            :class="tab === 'newCandidate' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:dark:bg-zinc-800 bg-zinc-100 text-gray-700 dark:text-white'"
             class="py-2 rounded-md text-sm font-medium transition"
         >
             Create Candidate
@@ -224,7 +224,7 @@
                 placeholder="Choose or type position" 
                 class="border rounded p-2 w-full h-10
                        bg-white text-gray-900 
-                       dark:bg-gray-800 dark:text-gray-100 
+                       dark:dark:bg-zinc-800 bg-zinc-100 dark:text-gray-100 
                        border-gray-300 dark:border-gray-700 
                        focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
@@ -237,7 +237,7 @@
             <!-- Dropdown in flow -->
             <div x-show="open && filteredOptions().length"  class="mt-1">
                 <ul class="w-full mah-40 min-h-[40px] overflow-auto 
-                           bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
+                           bg-white dark:dark:bg-zinc-800 bg-zinc-100 border border-gray-300 dark:border-gray-700 
                            rounded shadow">
                     <template x-for="(option, index) in filteredOptions()" :key="option">
                         <li 
@@ -295,6 +295,6 @@
                 </flux:modal.close>
             </div>
         @else
-        <div class="p-6 text-center text-gray-400">Loading candidate data...</div>
+        <div class="p-6 text-center text-zinc-800 dark:text-gray-100">Loading candidate data...</div>
         @endif
     </flux:modal>

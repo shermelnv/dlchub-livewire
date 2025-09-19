@@ -12,11 +12,13 @@
                     <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" /> About
                 </h2>
 
+                @if($org->id !== auth()->user()->id)
                 <flux:modal.trigger name="edit-about">
                     <flux:button size="sm">
                         Edit About
                     </flux:button>
                 </flux:modal.trigger>
+                @endif
             </div>
             
 
@@ -106,7 +108,7 @@
                                             @if ($feed->user->profile_image)
                                                 <flux:avatar 
                                                 {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
-                                                avatar="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
+                                                src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
                                                 class="w-8 h-8 rounded-full object-cover" />
                                             @else
                                                 <flux:avatar circle :initials="$feed->user->initials()" class="w-8 h-8 rounded-full" />
@@ -531,6 +533,7 @@
         <h2>Edit About</h2>
 
     <flux:textarea wire:model.defer="orgInfo.about" rows="4" label="About" />
+    
     <flux:input type="email" wire:model.defer="orgInfo.email" label="Email" placeholder="Email" />
     <flux:input type="url" wire:model.defer="orgInfo.facebook" label="Facebook" placeholder="Facebook URL" />
 

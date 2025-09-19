@@ -40,19 +40,24 @@
             <div class="flex space-x-4">
                     <flux:dropdown>
                         <flux:button icon:trailing="chevron-down" size="sm">
-                            {{ $organizationFilter ? ucfirst($organizationFilter) : 'All Organization' }}
+                            {{ $organizationFilter
+                                ? $orgs->firstWhere('id', $organizationFilter)?->name
+                                : 'All Organizations' }}
                         </flux:button>
+
                         <flux:menu>
                             <flux:menu.item wire:click="$set('organizationFilter', null)">
-                                All Organization
+                                All Organizations
                             </flux:menu.item>
+
                             @foreach ($orgs as $org)
-                                <flux:menu.item wire:click="$set('organizationFilter', '{{ $org->name }}')">
+                                <flux:menu.item wire:click="$set('organizationFilter', {{ $org->id }})">
                                     {{ $org->name }}
                                 </flux:menu.item>
                             @endforeach
                         </flux:menu>
                     </flux:dropdown>
+
 
                     <!-- Type Filter -->
                     <flux:dropdown>
@@ -109,7 +114,7 @@
                                 @if ($feed->user->profile_image)
                                     <flux:avatar
                                         {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}" --}}
-                                        avatar="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
+                                        src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
                                         icon:trailing="chevrons-up-down"
                                         class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                     />

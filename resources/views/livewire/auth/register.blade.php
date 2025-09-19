@@ -15,6 +15,10 @@
     new #[Layout('components.layouts.auth')] class extends Component {
         use WithFileUploads;
 
+        public bool $agreement = false;
+
+
+
         public string $name = '';
         public string $email = '';
         public string $password = '';
@@ -31,7 +35,10 @@
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
                 'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-            ]);
+                'agreement' => ['accepted'],
+                ], [
+                    'agreement.accepted' => 'You must accept the terms and conditions.', // custom error message
+                ]);
 
             // PSU-specific email validation
             $email = $validated['email'];
@@ -67,6 +74,7 @@
                 'password' => Hash::make($this->password),
                 'status' => 'pending',
                 'document' => $photoPath,
+                 
             ]);
 
             session(['user_name' => $user->name]);
@@ -122,11 +130,63 @@
             <flux:input wire:model="email" :label="__('Email address')" type="email" required autocomplete="email" placeholder="2023001234@pampangastateu.edu.ph" />
             <flux:input wire:model="password" :label="__('Password')" type="password" required autocomplete="new-password" placeholder="Password" viewable />
             <flux:input wire:model="password_confirmation" :label="__('Confirm password')" type="password" required autocomplete="new-password" placeholder="Confirm password" viewable />
-            
+
+            <flux:field variant="inline">
+                <flux:checkbox wire:model="agreement" required />
+                <flux:label>I agree to the 
+                    <flux:modal.trigger name="terms" class="text-primary-600 hover:underline cursor-pointer">
+                        Terms and Conditions
+                    </flux:modal.trigger>
+                </flux:label>
+            </flux:field>
+            @error('agreement')
+                <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+            @enderror
+            <flux:modal name="terms">
+                <div class="space-y-2 pb-2">
+                    <flux:heading size="lg">Terms and Conditions</flux:heading>
+
+                    <div class="overflow-y-auto max-h-[60vh] p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.
+                        </p>
+
+                        <div class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                            <p><strong>1. Eligibility</strong><br>
+                            Only Pampanga State University students, staff, or authorized users may register. You must use your official PSU email address to create an account.</p>
+
+                            <p><strong>2. Account Security</strong><br>
+                            You are responsible for keeping your account credentials secure. Do not share your password with others.</p>
+
+                            <p><strong>3. Document Upload</strong><br>
+                            You agree to upload only valid, official COR or ID documents. Any falsification or misuse may result in suspension or termination of your account.</p>
+
+                            <p><strong>4. Acceptable Use</strong><br>
+                            You will not use this platform for unlawful activities, spamming, or sharing harmful content.</p>
+
+                            <p><strong>5. Privacy Policy</strong><br>
+                            Your personal information and uploaded documents will be kept confidential and used only for verification and account management purposes.</p>
+
+                            <p><strong>6. Suspension & Termination</strong><br>
+                            We reserve the right to suspend or terminate accounts that violate these Terms and Conditions without prior notice.</p>
+
+                            <p><strong>7. Changes to Terms</strong><br>
+                            These Terms may be updated from time to time. Continued use of the platform after changes means you accept the revised Terms.</p>
+                        </div>
+                    </div>
+                </div>
+            </flux:modal>
 
             <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Next Step') }}
+                Next Step
             </flux:button>
+
+
+
+
+
+
+
         </form>
     @endif
 

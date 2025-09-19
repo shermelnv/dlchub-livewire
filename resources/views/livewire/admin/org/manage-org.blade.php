@@ -8,21 +8,6 @@
             placeholder="Search user" 
             wire:model.live="search"
             />
-        <flux:dropdown>
-            <flux:button icon:trailing="chevron-down">
-                Status
-            </flux:button>
-
-            <flux:menu>
-                <flux:menu.radio.group wire:model.live="status">
-                    <flux:menu.radio value="all">All</flux:menu.radio>
-                    <flux:menu.radio value="pending">Pending</flux:menu.radio>
-                    <flux:menu.radio value="approved">Approved</flux:menu.radio>
-                    <flux:menu.radio value="rejected">Rejected</flux:menu.radio>
-                    <flux:menu.radio value="banned">Banned</flux:menu.radio>
-                </flux:menu.radio.group>
-            </flux:menu>
-        </flux:dropdown>
         </section>
     <section class="flex justify-end items-center">
         <flux:modal.trigger name="create-org">
@@ -99,7 +84,9 @@
                 <flux:heading size="lg">Create New Org</flux:heading>
                 <flux:text class="mt-2">Fill out the form to register a new user.</flux:text>
             </div>
+            
 
+            <flux:input label="Username" wire:model.defer="username" />
             <flux:input label="Full Name" wire:model.defer="name" />
             <flux:input label="Email" wire:model.defer="email" type="email"/>
     

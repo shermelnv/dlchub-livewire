@@ -139,6 +139,9 @@ public function approveRequest($requestId)
     Toaster::success('Request approved');
 }
 
+
+
+
 #[On('user-approved')]
 public function addSystemMessage()
 {
@@ -163,9 +166,52 @@ public function rejectRequest($requestId)
         'status' => 'rejected',
 
     ]);
+    ChatMessage::create([
+        'group_chat_id' => $this->selectedGroup->id,
+        'user_id' => null, // system message
+        'message' => $request->user->name . ' has been approved by ' . auth()->user()->name ,
+    ]);
+
+    $user = User::find($request);
+
+    Notification::send($user, new UniversalNotification(
+                'Group Chat',
+                " Your request from group \"{$this->selectedGroup->name}\"was rejected by " . auth()->user()->name,
+                auth()->id()
+            ));
 
     Toaster::error('Request Rejected');
 }
+
+public function approveRejected($requestId)
+{
+    $request = GroupMemberRequest::findOrFail($requestId);
+
+    if (!$this->selectedGroup || $this->selectedGroup->id !== $request->group_chat_id) return;
+
+    if ($request->user->groupChats()->count() >= 4) {
+    Toaster::error('This user have reached the group limit.');
+    return;
+    }
+
+    $request->update([
+        'status' => 'accepted',
+
+    ]);
+     $this->selectedGroup->members()->attach($request->user_id);
+
+    $user = User::find($request);
+
+    Notification::send($user, new UniversalNotification(
+                'Group Chat',
+                " Your request from group \"{$this->selectedGroup->name}\"was approved by " . auth()->user()->name,
+                auth()->id()
+            ));
+
+    Toaster::success('Request Approved');
+}
+
+
 
 public function leaveGroup($groupId)
 {

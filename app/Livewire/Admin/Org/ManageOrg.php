@@ -17,9 +17,9 @@ class ManageOrg extends Component
     use WithPagination;
 
 
-
+    public string $search = '';
     public array $showOrg = [];
-    public $name, $password, $email, $org;
+    public $name, $password, $email, $org, $username;
 
     protected $paginationTheme = 'tailwind';
 
@@ -30,6 +30,7 @@ class ManageOrg extends Component
          $password = Str::random(10);
 
         $user = User::create([
+            'username' => $this->username,
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($password),
@@ -42,6 +43,11 @@ class ManageOrg extends Component
         $this->reset('name');
         $this->modal('create-org')->close();
         Toaster::success('Organization created successfully!');
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage(); // Reset pagination when searching
     }
 
     public function viewOrg($id)
@@ -95,7 +101,17 @@ class ManageOrg extends Component
     {
         // $manageOrgs = User::orderBy('created_at', 'desc')->paginate(7);
         $manageOrgs = User::where('role', 'org')
-        ->orderBy('created_at', 'asc')->paginate(7);
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhere('email', 'like', '%' . $this->search . '%')
+                      ->orWhere('username', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->orderBy('created_at', 'asc')
+            ->paginate(7);
+
+        
 
         return view('livewire.admin.org.manage-org', [
             'manageOrgs' => $manageOrgs,

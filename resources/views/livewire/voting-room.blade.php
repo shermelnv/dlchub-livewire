@@ -268,7 +268,7 @@
                                         <div class="flex items-center gap-3">
                                             <div class="flex items-center gap-2">
                                                 <span class="size-8 md:size-12 text-lg bg-red-900 rounded-xs md:rounded-md flex items-center justify-center font-bold">{{ $loop->iteration }}</span>
-                                                {{ $candidate->name }}
+                                                <span class="text-black dark:text-white">{{ $candidate->name }}</span>
                                             </div>
                                         </div>
                                         <div class="text-xs md:text-sm font-medium text-white/80">
@@ -303,9 +303,9 @@
                 $buttonLabel = 'Vote';
             }
         @endphp
-            <div class="bg-gray-800 p-4 rounded-lg">
-                <flux:heading class="uppercase text-lg lg:text-xl">{{ $position->name }} Candidates</flux:heading>
-                <flux:text class="mb-4 text-xs lg:text-base">Choose your {{ $position->name }} candidate</flux:text>
+            <div class="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
+                <flux:heading class="uppercase text-lg lg:text-xl text-black dark:text-white">{{ $position->name }} Candidates</flux:heading>
+                <flux:text class="mb-4 text-xs lg:text-base text-black dark:text-white">Choose your {{ $position->name }} candidate</flux:text>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @forelse ($position->candidates as $candidate)
                     <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})">

@@ -112,6 +112,14 @@
                 </div>
             </div>
 
+            <div>
+                <flux:modal.trigger name="rejected-list">
+                    <flux:button size="sm" class="w-full">
+                        View Rejected Requests
+                    </flux:button>
+                </flux:modal.trigger>
+            </div>
+
         </div>
         <div class="">
             <flux:modal.trigger name="delete-group">
