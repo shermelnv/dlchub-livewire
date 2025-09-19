@@ -109,7 +109,7 @@
                                 @if ($feed->user->profile_image)
                                     <flux:avatar
                                         {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}" --}}
-                                        avatar="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
+                                        src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
                                         icon:trailing="chevrons-up-down"
                                         class="w-8 h-8 rounded-full overflow-hidden object-cover"
                                     />

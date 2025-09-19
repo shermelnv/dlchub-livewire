@@ -88,7 +88,7 @@ new class extends Component {
 
 
                 {{-- Complete Name --}}
-                <flux:input wire:model.defer="name" :label="__('Complete Name')" type="text" readonly />
+                <flux:input wire:model.defer="name" :label="__('Complete Name')" type="text"  />
 
                 {{-- Email --}}
                 <flux:input wire:model.defer="email" :label="__('Email')" type="email" readonly />

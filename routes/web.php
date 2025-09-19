@@ -65,6 +65,16 @@ Route::get('/test-email', function () {
     return 'Test email sent!';
 });
 
+Route::get('/test-inbox', function () {
+    $user = User::find(5);
+    Notification::send($user, new UniversalNotification(
+                'Group Chat',
+                " Your request from group \"test\" was approved by " . auth()->user()->name,
+                auth()->id()
+            ));
+
+        });
+
 
 
 Route::get('redirectAfter_LoginOrRegister', function () {

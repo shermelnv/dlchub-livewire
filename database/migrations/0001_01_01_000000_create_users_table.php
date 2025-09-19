@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected', 'banned'])->default('pending');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('organization_joined')->nullable()->constrained('users');
+            // $table->foreignId('organization_joined')->nullable()->constrained('users');
             $table->string('document')->nullable();
             $table->string('profile_image')->nullable();
             $table->rememberToken();

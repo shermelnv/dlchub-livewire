@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('org_user', function (Blueprint $table) {
              $table->id();
-            $table->foreignId('org_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('org_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('status')->default('pending');
             $table->timestamps();
