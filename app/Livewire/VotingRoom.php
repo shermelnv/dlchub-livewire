@@ -119,21 +119,25 @@ public $voters = [];
             'positions.candidates.votes'
         ])->findOrFail($roomId);
 
-     
-
         $this->updateStatusIfNeeded();
-            
 
+        // assign positions
         $this->positions = $this->room->positions;
 
-        // Count votes per candidate
+        // count votes and sort candidates per position
         foreach ($this->positions as $position) {
             foreach ($position->candidates as $candidate) {
                 $candidate->vote_count = $candidate->votes->count();
             }
+
+            // sort descending by vote_count
+            $position->setRelation(
+                'candidates',
+                $position->candidates->sortByDesc('vote_count')->values()
+            );
         }
-        
     }
+
 
     public function deleteRoom($id)
     {
@@ -307,6 +311,7 @@ public $voters = [];
     public function render()
     {
 
+        
         
         return view('livewire.voting-room', [
             'room'      => $this->room,
