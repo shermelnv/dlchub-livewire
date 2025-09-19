@@ -64,11 +64,11 @@ class OrgProfile extends Component
     public function saveAbout()
     {
         $this->validate([
-            'orgInfo.about'    => 'nullable|string|max:5000',
+            'orgInfo.about'    => 'nullable|string|max:255',
             'orgInfo.email'    => 'nullable|email',
             'orgInfo.facebook' => 'nullable|url',
         ]);
-
+        
         $this->org->organizationInfo()->updateOrCreate(
             ['user_id' => $this->org->id],
             $this->orgInfo
