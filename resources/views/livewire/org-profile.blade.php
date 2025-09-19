@@ -12,7 +12,7 @@
                     <flux:icon.information-circle class="size-6 text-red-900 dark:text-red-800" /> About
                 </h2>
 
-                @if($org->id !== auth()->user()->id)
+                @if($org->id === auth()->user()->id)
                 <flux:modal.trigger name="edit-about">
                     <flux:button size="sm">
                         Edit About
