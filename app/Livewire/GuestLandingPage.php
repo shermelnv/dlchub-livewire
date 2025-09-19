@@ -25,7 +25,7 @@ class GuestLandingPage extends Component
         $this->ongoingVotingRooms = VotingRoom::where('status', 'Ongoing')->count();
         $this->orgCount = User::where('role', 'org')->count();
 
-        $this->organizations = User::where('role', 'org')->take(6)->get();
+        $this->organizations = User::where('role', 'org')->get();
         $this->allOrganizations = User::where('role', 'org')->get();
 
         $this->latestFeeds = Feed::latest()->take(3)->get();

@@ -40,19 +40,24 @@
             <div class="flex space-x-4">
                     <flux:dropdown>
                         <flux:button icon:trailing="chevron-down" size="sm">
-                            {{ $organizationFilter ? ucfirst($organizationFilter) : 'All Organization' }}
+                            {{ $organizationFilter
+                                ? $orgs->firstWhere('id', $organizationFilter)?->name
+                                : 'All Organizations' }}
                         </flux:button>
+
                         <flux:menu>
                             <flux:menu.item wire:click="$set('organizationFilter', null)">
-                                All Organization
+                                All Organizations
                             </flux:menu.item>
+
                             @foreach ($orgs as $org)
-                                <flux:menu.item wire:click="$set('organizationFilter', '{{ $org->name }}')">
+                                <flux:menu.item wire:click="$set('organizationFilter', {{ $org->id }})">
                                     {{ $org->name }}
                                 </flux:menu.item>
                             @endforeach
                         </flux:menu>
                     </flux:dropdown>
+
 
                     <!-- Type Filter -->
                     <flux:dropdown>

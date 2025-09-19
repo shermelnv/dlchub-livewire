@@ -179,12 +179,14 @@
                 </div>
 
                 {{-- Content grows --}}
-                <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 ">
+                <div class="flex flex-col gap-6  p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-96  overflow-y-auto">
+                    {{-- List of Orgs --}}
+                    {{-- <div class="grid gap-6"> --}}
                     @forelse($organizations as $org)
                     <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
                         <div class="flex items-center gap-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
-                            @if($org->logo_path)
-                                <img src="{{ Storage::url($org->logo_path) }}"
+                            @if($org->profile_image)
+                                <img src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
                                     class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"
                                     alt="{{ $org->name }} Logo">
                             @else
@@ -204,53 +206,14 @@
                     @endforelse
                 </div>
 
-                {{-- Button fixed at bottom --}}
-                <div class="flex justify-center p-4">
-                    <flux:modal.trigger name="viewAllOrgs">
-                        <flux:button 
-                        {{-- href="{{ route('organizations') }}"  --}}
-                        icon="arrow-right-circle" variant="primary" color="red" data-aos="fade-up">
-                            View More Orgs
-                        </flux:button>
-                    </flux:modal.trigger>
-                </div>
+                
             </div>
         </section>
 
-        <flux:modal name="viewAllOrgs" class="w-sm lg:w-lg">
-            
-            <h2 class="text-2xl font-bold mb-4 ">All Organizations</h2>
-                
-            <div class="max-w-3xl max-h-[80vh] overflow-y-auto scrollbar-hover">
-                <div class="grid gap-6">
-                    @forelse($allOrganizations as $org)
-                        <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
-                            <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition ">
-                                @if($org->logo_path)
-                                    <img src="{{ Storage::url($org->logo_path) }}"
-                                        class="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-600"
-                                        alt="{{ $org->name }} Logo">
-                                @else
-                                    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-800 text-white font-semibold">
-                                        {{ strtoupper(substr($org->name, 0, 2)) }}
-                                    </div>
-                                @endif
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-semibold">{{ $org->name }}</h3>
-                                </div>
-                            </div>
-                        </a>
-                    @empty
-                        <p class="text-center text-gray-500 dark:text-gray-400">
-                            No organizations available.
-                        </p>
-                    @endforelse
-                </div>
-            </div>
-        </flux:modal>
+   
 
             <!-- ====== FOOTER ====== -->
-    <footer class="bg-red-950 text-gray-300 ">
+    <footer class="bg-red-950 text-gray-300 ">  
         <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
             
             <!-- Branding -->

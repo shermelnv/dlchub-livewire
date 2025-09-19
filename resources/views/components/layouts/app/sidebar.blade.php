@@ -67,11 +67,11 @@
                     </flux:navlist.group>
                 @endif
 
-                @if (auth()->user()->isOrg())
+                {{-- @if (auth()->user()->isOrg())
                    <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
                             {{ __('Follow Request') }}
                         </flux:navlist.item>
-                @endif
+                @endif --}}
 
                 @if (auth()->user()->isOrg())
 
