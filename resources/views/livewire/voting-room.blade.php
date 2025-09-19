@@ -428,7 +428,7 @@
                                     <div class="absolute top-0 left-0 h-full bg-sky-600 transition-all duration-500 ease-in-out" style="width: {{ $percent }}%"></div>
                                     <div class="relative z-5 flex justify-between items-center h-full px-4 text-white font-semibold select-none">
                                         <div class="truncate">{{ $candidate->name }}</div>
-                                        <div class="text-xs md:text-sm font-medium text-white/80">{{ $candidate->vote_count }} votes ({{ $percent }}%)</div>
+                                        <div class="text-xs md:text-sm font-medium text-black dark:text-white">{{ $candidate->vote_count }} votes ({{ $percent }}%)</div>
                                     </div>
                                 </div>
                             </div>

@@ -110,33 +110,33 @@ public $voters = [];
     // Room Loader & Live Vote Counts
     // ────────────────────────────────────────────────
 
-    public function loadRoom($id = null)
-    {
-        $roomId = $id ?? $this->room->id;
+public function loadRoom($id = null)
+{
+    $roomId = $id ?? $this->room->id;
 
-        $this->room = VotingRoomModel::with([
-            'positions' => fn($query) => $query->orderBy('order_index'),
-            'positions.candidates.votes'
-        ])->findOrFail($roomId);
+    $this->room = VotingRoomModel::with([
+        'positions' => fn($query) => $query->orderBy('order_index'),
+        'positions.candidates.votes'
+    ])->findOrFail($roomId);
 
-        $this->updateStatusIfNeeded();
+    $this->updateStatusIfNeeded();
 
-        // assign positions
-        $this->positions = $this->room->positions;
+    // assign positions
+    $this->positions = $this->room->positions;
 
-        // count votes and sort candidates per position
-        foreach ($this->positions as $position) {
-            foreach ($position->candidates as $candidate) {
-                $candidate->vote_count = $candidate->votes->count();
-            }
-
-            // sort descending by vote_count
-            $position->setRelation(
-                'candidates',
-                $position->candidates->sortByDesc('vote_count')->values()
-            );
+    // count votes and sort candidates per position
+    foreach ($this->positions as $position) {
+        foreach ($position->candidates as $candidate) {
+            $candidate->vote_count = $candidate->votes->count();
         }
+
+        // sort descending by vote_count
+        $position->setRelation(
+            'candidates',
+            $position->candidates->sortByDesc('vote_count')->values()
+        );
     }
+}
 
 
     public function deleteRoom($id)

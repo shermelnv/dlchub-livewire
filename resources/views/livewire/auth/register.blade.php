@@ -127,7 +127,7 @@
     @if($step === 1)
         <form wire:submit.prevent="checkDetails" class="flex flex-col gap-6">
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" placeholder="Full name" />
-            <flux:input wire:model="email" :label="__('Email address')" type="email" required autocomplete="email" placeholder="2023001234@pampangastateu.edu.ph" />
+            <flux:input wire:model.defer="email" :label="__('Email address')" type="email" required autocomplete="email" placeholder="2023001234@pampangastateu.edu.ph" />
             <flux:input wire:model="password" :label="__('Password')" type="password" required autocomplete="new-password" placeholder="Password" viewable />
             <flux:input wire:model="password_confirmation" :label="__('Confirm password')" type="password" required autocomplete="new-password" placeholder="Confirm password" viewable />
 
