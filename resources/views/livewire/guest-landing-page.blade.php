@@ -36,21 +36,21 @@
 
             <div class="space-y-6 text-white px-6 md:px-10 text-center lg:text-left" data-aos="fade-left">
                 <h1 class="text-2xl md:text-4xl font-bold">Make Your Group Chats More Fun</h1>
-                <flux:text class="max-w-lg text-base md:text-lg text-gray-200 text-justify mx-auto lg:mx-0">
-                    Collaborate in real-time! Join group chats with classmates or organizations, share ideas, and keep your projects organized — all from your dashboard.
-                </flux:text>
-                <div class="grid grid-cols-2 lg:flex flex-col gap-4">
-                    <ul class="space-y-3">
-                        <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="100">
-                            <flux:icon.check class="size-4"/> Real-time messaging and file sharing 
-                        </li>
-                        <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="200">
-                            <flux:icon.check class="size-4"/> Create study groups and project teams
-                        </li>
-                        <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="300">
-                            <flux:icon.check class="size-4"/> Integrated calendar and event planning
-                        </li>
-                    </ul>
+               <flux:text class="max-w-lg text-base md:text-lg text-gray-200 text-justify mx-auto lg:mx-0">
+                Team up in real time! Chat with classmates, share ideas, and keep everything on track—right from your dashboard.
+            </flux:text>
+            <div class="grid grid-cols-2 lg:flex flex-col gap-4">
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="100">
+                        <flux:icon.check class="size-4"/> Real-time messaging
+                    </li>
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="200">
+                        <flux:icon.check class="size-4"/> Create study groups
+                    </li>
+                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="300">
+                        <flux:icon.check class="size-4"/> Integrated calendar and event planning
+                    </li>
+                </ul>
                     <div class="flex justify-between items-center lg:block">
                         <flux:button href="{{route('user.chat')}}" icon="chat-bubble-oval-left" variant="primary" color="rose" data-aos="fade-up" data-aos-delay="400">Start Chatting</flux:button>
                     </div>

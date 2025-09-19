@@ -35,6 +35,9 @@
                             {{ __('Manage Org') }}
                         </flux:navlist.item>
 
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                            {{ __('Manage Chat') }}
+                        </flux:navlist.item>
                        
                     </flux:navlist.group>
                 @endif
@@ -47,9 +50,9 @@
                             {{ __('Org Profile') }}
                         </flux:navlist.item> --}}
 
-                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                        {{-- <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
                             {{ __('Manage Chat') }}
-                        </flux:navlist.item>
+                        </flux:navlist.item> --}}
 
                         <flux:navlist.item icon="rss" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>
                             {{ __('Manage Feed') }}

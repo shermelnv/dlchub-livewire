@@ -256,6 +256,7 @@ public function toggleHeart(FeedModel $feed)
     'content' => $post->content,
     'org_id' => $post->org_id,
     'type' => $post->type,
+    'privacy' => $post->privacy,
 ];
 
 
@@ -286,6 +287,7 @@ public function toggleHeart(FeedModel $feed)
     'org_id' => $this->showPost['org_id'],
     'type' => $this->showPost['type'],
     'photo_url' => $post->photo_url,
+    'privacy' => $post->showPost['privacy'],
 ]);
 
 

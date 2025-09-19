@@ -140,13 +140,62 @@
                             </div>
                             @if($feed->user_id === auth()->user()->id)
                             <div>
-                                <flux:dropdown position="bottom" align="end">
+                                {{-- <flux:dropdown position="bottom" align="end">
                                     <button><flux:icon.ellipsis-horizontal /></button>
                                     <flux:menu>
                                         <flux:menu.item wire:click="editPost({{ $feed->id }})">Edit</flux:menu.item>
                                         <flux:menu.item wire:click="confirmDelete({{ $feed->id }})">Delete</flux:menu.item>
                                     </flux:menu>
-                                </flux:dropdown>
+                                </flux:dropdown> --}}
+
+                                <flux:button 
+                                    wire:click="editPost({{ $feed->id }})"
+                                    wire:loading.attr="disabled" 
+                                    wire:target="editPost({{ $feed->id }})"
+                                    size="sm"
+                                >
+                                    {{-- normal state --}}
+                                    <span wire:loading.remove wire:target="editPost({{ $feed->id }})" class="flex items-center">
+                                        <flux:icon.pencil class="size-4" />
+                                        Edit
+                                    </span>
+
+                                    {{-- loading state --}}
+                                    <span wire:loading wire:target="editPost({{ $feed->id }})" class="flex items-center">
+                                        <flux:icon.loading class="size-4" />
+                                    </span>
+                                </flux:button>
+
+
+
+                        <flux:button 
+                            wire:click="confirmDelete({{ $feed->id }})"
+                            wire:loading.attr="disabled" 
+                            wire:target="confirmDelete({{ $feed->id }})"
+                            size="sm"
+                            variant="danger"
+                        >
+                            {{-- Normal state --}}
+                            <span 
+                                wire:loading.remove 
+                                wire:target="confirmDelete({{ $feed->id }})" 
+                                class="flex items-center"
+                            >
+                                <flux:icon.trash class="mr-1 size-4" />
+                                Delete
+                            </span>
+
+                            {{-- Loading state --}}
+                            <span 
+                                wire:loading 
+                                wire:target="confirmDelete({{ $feed->id }})" 
+                                class="flex items-center"
+                            >
+                                <flux:icon.loading class="size-4" />
+                            </span>
+                        </flux:button>
+
+
                             </div>
                             @endif
                             </div>

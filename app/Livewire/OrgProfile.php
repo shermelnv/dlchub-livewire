@@ -41,6 +41,7 @@ class OrgProfile extends Component
         // Advertisement type posts
         $this->ads = Advertisement::with('photos')
             ->where('org_id', $orgId)
+            ->visibleToUser(auth()->user())
             ->latest()
             ->get();
 

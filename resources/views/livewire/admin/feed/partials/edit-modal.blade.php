@@ -24,7 +24,7 @@
                 />
 
                 <!-- Image Upload -->
-<div>
+<div class="grid grid-cols-2 gap-4">
     <flux:field>
         <div class="flex items-center justify-between">
             <flux:label badge="Optional">Image</flux:label>
@@ -47,6 +47,14 @@
             <p class="text-red-500 text-xs">{{ $message }}</p>
         @enderror
     </flux:field>
+    
+    @if(auth()->user()->role === 'org')
+     <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
+        <flux:select.option value="public">Public</flux:select.option>
+        <flux:select.option value="private">Private</flux:select.option>
+    </flux:select>
+    @endif
+
 </div>
 
 <!-- Single Image Preview Modal -->
@@ -82,7 +90,7 @@
                         wire:model.defer="showPost.organization"
                         placeholder="Organization"
                     >
-                        <flux:select.option value="">All</flux:select.option>
+                    <flux:select.option value="">All</flux:select.option>
                         @foreach ($orgs as $org)
                             <flux:select.option value="{{ $org->name }}">{{ $org->name }}</flux:select.option>
                         @endforeach

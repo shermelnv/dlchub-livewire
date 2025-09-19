@@ -403,7 +403,7 @@
                                    <div class="flex justify-between">
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                <p class="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
                                     Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
                                     @if($feed->privacy === 'public') 
                                                         <flux:icon.globe-asia-australia class="size-4" /> 

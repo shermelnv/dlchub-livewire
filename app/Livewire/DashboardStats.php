@@ -27,7 +27,7 @@ class DashboardStats extends Component
         $this->studentCount = User::where('role', 'user')->count();
         $this->groupChatCount = GroupChat::count();
         $this->activeVoteCount = VotingRoom::where('status', 'Ongoing')->count();
-        $this->orgCount = Org::count();
+        $this->orgCount = User::where('role', 'org')->count();
     }
 
     public function updateCounts($stats)

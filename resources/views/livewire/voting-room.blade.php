@@ -141,7 +141,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
                 <div class="text-sm text-gray-500 dark:text-gray-400">Total Votes</div>
-                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $totalVotes . " / " . $totalStudents }}</div>
+                <div class="text-xl font-bold text-maroon-700 dark:text-white">{{ $totalUniqueVoters  . " / " . $totalStudents }}</div>
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
