@@ -317,30 +317,38 @@
                         <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
                             @if(auth()->user()->role !== 'user' && auth()->user()->id === $room->creator_id)
                                 <div class="flex justify-end items-center gap-2 mb-2 relative" x-data="{ open: false }">
-                                <!-- Ellipsis Button (Vertical) -->
-                                <flux:button size="xs" variant="ghost" @click="open = !open">
-                                    ⋮
-                                </flux:button>
+                                    <!-- Ellipsis Button (Vertical) -->
+                                    <flux:button size="xs" variant="ghost" @click="open = !open">
+                                        ⋮
+                                    </flux:button>
 
-                                <!-- Dropdown -->
-                                <div 
-                                    x-show="open" 
-                                    @click.outside="open = false"
-                                    x-transition
-                                    class="absolute right-0 mt-8 w-28 bg-white dark:bg-gray-900 border rounded-md shadow-lg z-50"
-                                >
-                                    <button 
-                                        class="block w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 hover:text-black"
-                                        wire:click="edit({{ $candidate->id }})"
+                                    <!-- Dropdown -->
+                                    <div 
+                                        x-show="open" 
+                                        @click.outside="open = false"
+                                        x-transition
+                                        class="absolute right-0 mt-8 w-28 bg-white dark:bg-gray-900 border rounded-md shadow-lg z-50"
                                     >
-                                        Edit
-                                    </button>
-                                    <button 
-                                        class="block w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
-                                        wire:click="remove({{ $candidate->id }})"
-                                    >
-                                        Delete
-                                    </button>
+                                        <button 
+                                            class="block w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 hover:text-black" 
+                                            wire:click="edit({{ $candidate->id }})"
+                                        >
+                                            Edit
+                                            <svg wire:loading wire:target="edit" class="animate-spin h-4 w-4 text-gray-600 absolute right-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z"></path>
+                                            </svg>
+                                        </button>
+                                        <button 
+                                            class="block w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                                            wire:click="remove({{ $candidate->id }})"
+                                        >
+                                            Delete
+                                            <svg wire:loading wire:target="remove" class="animate-spin h-4 w-4 text-gray-600 absolute right-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z"></path>
+                                            </svg>
+                                        </button>
                                 </div>
                             </div>
 
