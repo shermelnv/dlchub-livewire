@@ -282,7 +282,7 @@
                                 <img 
                                     src="{{ Storage::disk('digitalocean')->url($selectedCandidate->photo_url) }}"
                                     alt="{{ $selectedCandidate->name }}"
-                                    class="h-40 lg:h-60 w-full object-cover rounded-md mb-4"
+                                    class="h-full w-full object-cover rounded-md mb-4"
                                 >
                                 @else
                                     {{-- "no image" placeholder --}}

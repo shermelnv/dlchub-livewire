@@ -313,7 +313,7 @@
                 <flux:text class="mb-4 text-xs lg:text-base text-black dark:text-white">Choose your {{ $position->name }} candidate</flux:text>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     @forelse ($position->candidates as $candidate)
-                    <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})">
+                    {{-- <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})"> --}}
                         <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
                             @if ($candidate->photo_url)
                                 {{-- Show uploaded candidate image --}}
@@ -331,8 +331,27 @@
                                         No image
                                     </div>
                                 @endif
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm md:text-lg h-[2.5rem]">{{ $candidate->name }}</h4>
+                                <flux:button
+                                    variant="ghost"
+                                    wire:click="candidateCard({{ $candidate->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:target="candidateCard({{ $candidate->id }})"
+                                    wire:key="candidateCard({{ $candidate->id }})"
+                                    size="sm"
+                                >
+                                    <span class="hidden lg:inline" wire:loading.remove wire:target="candidateCard({{ $candidate->id }})">
+                                        View
+                                    </span>
+                                    <flux:icon.eye wire:loading.remove wire:target="candidateCard({{ $candidate->id }})" class="lg:hidden"/>
+                                    <span wire:loading wire:target="candidateCard({{ $candidate->id }})">
+                                        <flux:icon.loading/>
+                                    </span>
+                                </flux:button>
 
-                            <h4 class="font-bold text-sm md:text-lg h-[2.5rem]">{{ $candidate->name }}</h4>
+                            </div>
+                            
                             <div class="h-[3.5rem]">
                                 <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 break-words line-clamp-3">
                                     {{ $candidate->bio ?? 'No bio available.' }}
@@ -366,7 +385,7 @@
                                 @endif
                             </div>
                         </div>
-                    </flux:modal.trigger>
+                    {{-- </flux:modal.trigger> --}}
                     @empty
                         <flux:text class="col-span-2 md:col-span-3 text-center text-xs md:text-lg">NO CANDIDATE AT THE MOMENT</flux:text>
                     @endforelse
