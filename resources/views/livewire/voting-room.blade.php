@@ -25,7 +25,7 @@
     <div class="flex justify-between items-center mb-6">
         <a 
             href="{{route('voting')}}"
-            
+            wire:navigate
 
             class="inline-flex items-center text-sm font-medium text-maroon-700 dark:text-maroon-300 hover:underline"
         >
@@ -36,7 +36,7 @@
 
 
         <flux:modal.trigger name="room-option">
-            <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer hover:text-white" />
+            <flux:icon.cog-6-tooth variant="solid" class="cursor-pointer" />
         </flux:modal.trigger>
         @endif
     </div>
@@ -273,10 +273,10 @@
                                         <div class="flex items-center gap-3">
                                             <div class="flex items-center gap-2">
                                                 <span class="size-8 md:size-12 text-lg bg-red-900 rounded-xs md:rounded-md flex items-center justify-center font-bold">{{ $loop->iteration }}</span>
-                                                <span class="text-black dark:text-white">{{ $candidate->name }}</span>
+                                                <span class="font-bold text-black dark:text-white">{{ $candidate->name }}</span>
                                             </div>
                                         </div>
-                                        <div class="text-xs md:text-sm font-medium text-white/80">
+                                        <div class="text-xs md:text-sm font-medium text-black dark:text-white">
                                             {{ $candidate->vote_count }} votes ({{ $percent }}%)
                                         </div>
                                     </div>

@@ -6,7 +6,7 @@
     </div>
 
     @forelse ($activeVotings as $voting)
-        <a href="{{ route('voting.room', $voting->id) }}" 
+        <a href="{{ route('voting.room', $voting->id) }} " wire:navigate 
             class="flex justify-between items-center p-3 mb-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition rounded-lg">
            
            <div class="rounded-lg ">

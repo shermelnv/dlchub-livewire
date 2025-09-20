@@ -9,7 +9,7 @@
 
 
 
-            <a href="{{ route('landing-page') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+            <a href="{{ route('landing-page') }}" wire:navigate  class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
           

@@ -25,7 +25,7 @@
                 
                 <div class="h-auto">
                 @forelse ($orgs as $org)
-                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
+                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" wire:navigate>
                         <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                             @if ($org->profile_image)
                                 <flux:avatar
@@ -81,7 +81,7 @@
                 
                 <div class="h-auto">
                 @forelse ($orgs as $org)
-                        <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
+                        <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" wire:navigate>
                         <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                              @if ($org->profile_image)
                                 <flux:avatar

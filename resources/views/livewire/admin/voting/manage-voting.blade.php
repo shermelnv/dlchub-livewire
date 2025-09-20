@@ -60,7 +60,7 @@
                 @forelse ($rooms as $room)
                
                 @if(auth()->user()->id !== $room->creator_id)
-                    <a href="{{ route('voting.room', $room->id) }}" class="flex justify-between items-center p-3 mb-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition rounded-lg">
+                    <a href="{{ route('voting.room', $room->id) }}" wire:navigate class="flex justify-between items-center p-3 mb-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition rounded-lg">
                         <div class="rounded-lg ">
                         <h3 class="font-semibold text-md text-gray-900 dark:text-gray-100">
                             {{ $room->title }}
@@ -116,7 +116,7 @@
 
                             <flux:separator vertical/>
                             
-                            <a href="{{ route('voting.room', $room->id) }}">
+                            <a href="{{ route('voting.room', $room->id) }}" wire:navigate>
                                 <flux:icon.arrow-right class="size-5 text-gray-500 dark:text-gray-400"/>
                             </a>
                         </div>

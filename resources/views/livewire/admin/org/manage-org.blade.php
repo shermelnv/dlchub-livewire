@@ -36,7 +36,7 @@
                         <td class="px-4 py-3 font-medium text-black dark:text-white">{{ $manageOrg->id }}</td>
                         
                             <td class="px-4 py-3 font-medium text-maroon-900 dark:text-rose-300">
-                                <a href="{{ route('org.profile', ['orgId' => $manageOrg->id]) }}">
+                                <a href="{{ route('org.profile', ['orgId' => $manageOrg->id]) }}" wire:navigate >
                                     {{ $manageOrg->name }}
                                 </a>
                             </td>
@@ -45,7 +45,7 @@
                             <flux:dropdown position="left">
                                 <flux:button icon="ellipsis-horizontal" variant="ghost" />
                                 <flux:menu>
-                                    <a href="{{ route('org.profile', ['orgId' => $manageOrg->id]) }}">
+                                    <a href="{{ route('org.profile', ['orgId' => $manageOrg->id]) }}" wire:navigate >
                                         <flux:menu.item icon="exclamation-circle">
                                             View Profile
                                         </flux:menu.item>

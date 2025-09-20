@@ -84,7 +84,7 @@
 
             <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-6 p-6">
             @forelse($latestFeeds as $i => $feed)
-            <a href="{{route('feed')}}">
+            <a href="{{route('feed')}}" >
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3" 
                     data-aos="fade-up" 
                     data-aos-delay="{{ $i * 200 }}">

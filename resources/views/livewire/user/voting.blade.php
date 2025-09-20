@@ -36,7 +36,7 @@ class="p-10"
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('voting.room', $room->id) }}" class="text-green-500 hover:text-green-700 text-sm">
+                    <a href="{{ route('voting.room', $room->id) }}" wire:navigate class="text-green-500 hover:text-green-700 text-sm">
                         <flux:icon.eye class="w-5 h-5" />
                     </a>
                 </div>

@@ -73,7 +73,7 @@
 
         <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-6 p-6">
            @forelse($latestFeeds as $i => $feed)
-           <a href="{{route('feed')}}">
+           <a href="{{route('feed')}}" wire:navigate >
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3" 
                  data-aos="fade-up" 
                  data-aos-delay="{{ $i * 200 }}">
@@ -121,7 +121,7 @@
                 <div class=" p-6 grid grid-cols-2 gap-6 ">
                     
                     @forelse($latestAds as $i => $ad)
-                    <a href="{{route('advertisement')}}">
+                    <a href="{{route('advertisement')}}" wire:navigate >
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4 space-y-4"
                             data-aos="fade-up"
                             data-aos-delay="{{ $i * 200 }}">
@@ -175,7 +175,7 @@
                     {{-- List of Orgs --}}
                     {{-- <div class="grid gap-6"> --}}
                     @forelse($organizations as $org)
-                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}">
+                    <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" wire:navigate >
                         <div class="flex items-center gap-4 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition ">
                             @if($org->profile_image)
                                 <img src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
