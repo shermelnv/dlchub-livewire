@@ -157,17 +157,20 @@
                                     <div class="flex flex-col gap-2 text-gray-500 dark:text-gray-400 text-sm">
                                         <div class="flex items-center gap-6">
                                             <!-- Heart -->
-                                            <div class="flex items-center gap-1 cursor-pointer" wire:click="toggleHeart({{ $feed->id }})">
+                                            <div class="flex items-center gap-1 cursor-pointer" wire:click="toggleHeart({{ $feed->id }})" >
                                                 @php
                                                     $userReacted = $feed->reactions->where('user_id', auth()->id())->where('type', 'heart')->count() > 0;
                                                     $count = $feed->reactions->where('type', 'heart')->count();
                                                 @endphp
 
+                                                
                                                 @if($userReacted)
-                                                    <flux:icon.heart variant="solid" color="red"/>
+                                                    <flux:icon.heart variant="solid" color="red" wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                                 @else
-                                                    <flux:icon.heart/>
+                                                    <flux:icon.heart wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                                 @endif
+
+                                                <flux:icon.loading wire:loading wire:target="toggleHeart({{ $feed->id }})"/>
 
                                                 <span>{{ $count }}</span>
                                             </div>
