@@ -73,7 +73,7 @@
                 <flux:button 
                 type="submit" 
                 variant="primary"
-                 wire:loading.attr="disabled" 
+                wire:loading.attr="disabled" 
                 wire:target="photos">
                     Save Changes
                 </flux:button>

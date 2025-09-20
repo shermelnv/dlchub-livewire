@@ -100,14 +100,14 @@
     <div class="grid grid-cols-2 gap-2">
         <button
             @click="tab = 'newPosition'"
-            :class="tab === 'newPosition' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:dark:bg-zinc-800 bg-zinc-100 text-gray-700 dark:text-white'"
+            :class="tab === 'newPosition' ? 'bg-red-900 text-white' : 'bg-zinc-100 dark:dark:bg-zinc-800 text-gray-700 dark:text-white'"
             class="py-2 rounded-md text-sm font-medium transition"
         >
             Create Position
         </button>
         <button
             @click="tab = 'newCandidate'"
-            :class="tab === 'newCandidate' ? 'bg-red-900 text-white' : 'bg-gray-100 dark:dark:bg-zinc-800 bg-zinc-100 text-gray-700 dark:text-white'"
+            :class="tab === 'newCandidate' ? 'bg-red-900 text-white' : 'bg-zinc-100 dark:dark:bg-zinc-800 text-gray-700 dark:text-white'"
             class="py-2 rounded-md text-sm font-medium transition"
         >
             Create Candidate
@@ -190,7 +190,14 @@
                     <flux:modal.close>
                         <flux:button variant="ghost" size="sm">Close</flux:button>
                     </flux:modal.close>
-                    <flux:button type="submit" size="sm">Create Candidate</flux:button>
+                    <flux:button 
+                        type="submit" 
+                        size="sm"
+                        wire:loading.attr="disabled" 
+                        wire:target="candidate_image"
+                        >
+                        Create Candidate
+                    </flux:button>
                 </div>
             </div>
         </form>
@@ -223,7 +230,7 @@
                 @focus="open = true" 
                 placeholder="Choose or type position" 
                 class="border rounded p-2 w-full h-10
-                       bg-white text-gray-900 
+                     text-gray-900 
                        dark:dark:bg-zinc-800 bg-zinc-100 dark:text-gray-100 
                        border-gray-300 dark:border-gray-700 
                        focus:ring-2 focus:ring-indigo-500 focus:outline-none"
@@ -237,7 +244,7 @@
             <!-- Dropdown in flow -->
             <div x-show="open && filteredOptions().length"  class="mt-1">
                 <ul class="w-full mah-40 min-h-[40px] overflow-auto 
-                           bg-white dark:dark:bg-zinc-800 bg-zinc-100 border border-gray-300 dark:border-gray-700 
+                         dark:dark:bg-zinc-800 bg-zinc-100 border border-gray-300 dark:border-gray-700 
                            rounded shadow">
                     <template x-for="(option, index) in filteredOptions()" :key="option">
                         <li 

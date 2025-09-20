@@ -152,7 +152,7 @@ public function loadRoom($id = null)
         ->where('voting_rooms_id', $this->room->id)
         ->select('user_id') // select only user_id for uniqueness
         ->distinct()
-        ->paginate(5);
+        ->get();
 
     }
 

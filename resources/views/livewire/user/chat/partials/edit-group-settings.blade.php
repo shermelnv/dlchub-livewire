@@ -32,7 +32,13 @@
             <flux:modal.close>
                 <flux:button variant="ghost">Cancel</flux:button>
             </flux:modal.close>
-            <flux:button variant="primary" wire:click="updateGroupInfo">Save</flux:button>
+            <flux:button 
+                variant="primary" 
+                wire:click="updateGroupInfo"
+                wire:loading.attr="disabled" 
+                wire:target="group_image"
+                >
+                Save</flux:button>
         </div>
     </div>
 </flux:modal>

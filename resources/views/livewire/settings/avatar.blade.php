@@ -71,7 +71,14 @@ new class extends Component {
 
 
             <div class="flex items-center gap-4">
-                <flux:button type="submit" variant="primary">{{ __('Save Changes') }}</flux:button>
+                <flux:button 
+                    type="submit" 
+                    variant="primary"
+                    wire:loading.attr="disabled" 
+                    wire:target="avatar"
+                    >
+                    {{ __('Save Changes') }}
+                </flux:button>
                 <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
                 <x-action-message class="me-3" on="avatar-updated">
                     {{ __('Saved.') }}

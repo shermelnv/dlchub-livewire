@@ -65,9 +65,10 @@
                     type="submit" 
                     variant="primary"
                     wire:loading.attr="disabled" 
-                    wire:target="photo">
-                    <span wire:loading.remove wire:target="photo">Post</span>
-                    <span wire:loading wire:target="photo">Uploading...</span>
+                    wire:target="photo"
+                    >
+                    
+                    Post
                 </flux:button>
 
             </div>

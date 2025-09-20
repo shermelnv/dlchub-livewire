@@ -103,7 +103,13 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="primary">Update</flux:button>
+                <flux:button 
+                    type="submit" 
+                    variant="primary"
+                    wire:loading.attr="disabled" 
+                    wire:target="photo"
+                    >
+                    Update</flux:button>
             </div>
         </div>
     </form>

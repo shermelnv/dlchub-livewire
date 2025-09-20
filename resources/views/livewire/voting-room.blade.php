@@ -102,36 +102,41 @@
                         @endforelse
                     </ul> --}}
 
-                    <table class="w-full text-sm text-left ">
-                        <thead>
-                            <tr class="bg-gray-200 dark:bg-gray-700">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-200 dark:bg-gray-700">
+                            <tr>
                                 <th class="px-4 py-2">Voter Info</th>
                                 <th class="py-2">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($this->voters() as $vote)
-                                <tr class="border-b dark:border-gray-600">
-                                    <td class="px-4 py-2 flex items-center gap-2">
-                                        <flux:avatar circle src="{{ $vote->user->avatar_url ?? 'https://i.pravatar.cc/50?u=' . $vote->user->id }}" class="size-12"/>
+                    </table>
+
+                    <div class="max-h-56 overflow-y-auto scrollbar-hover">
+                        <table class="w-full text-sm text-left space-y-6">
+                            <tbody>
+                                @foreach ($this->voters() as $vote)
+                                    <tr class="border-b dark:border-gray-600">
+                                        <td class="px-4 py-2 flex items-center gap-2">
+                                            @if ($vote->user->profile_image)
+                                                <flux:avatar 
+                                                    src="{{ Storage::disk('digitalocean')->url($vote->user->profile_image) }}"
+                                                    class="size-10 object-contain" />
+                                            @else
+                                                <flux:avatar circle :initials="$vote->user->initials()" class="size-10 " />
+                                            @endif
                                             <div>
                                                 <strong>{{ $vote->user->name }}</strong>
-                                                <p class="text-xs">{{ $vote->user->username }}</p>
                                                 <p class="text-xs">{{ $vote->user->email }}</p>
                                             </div>
-                                    </td>
-                                    <td >
-                                        <flux:button icon="eye" variant="ghost"/>
-                                    </td>
-                            
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
                     
-                        <div class="mt-2">
-                            {{ $this->voters()->links() }}
-                        </div>
+                      
                     
                 </div>
             </flux:modal>
@@ -303,7 +308,7 @@
                 $buttonLabel = 'Vote';
             }
         @endphp
-            <div class="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
                 <flux:heading class="uppercase text-lg lg:text-xl text-black dark:text-white">{{ $position->name }} Candidates</flux:heading>
                 <flux:text class="mb-4 text-xs lg:text-base text-black dark:text-white">Choose your {{ $position->name }} candidate</flux:text>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -327,7 +332,7 @@
                                     </div>
                                 @endif
 
-                            <h4 class="font-bold text-sm md:text-lg">{{ $candidate->name }}</h4>
+                            <h4 class="font-bold text-sm md:text-lg h-[2.5rem]">{{ $candidate->name }}</h4>
                             <div class="h-[3.5rem]">
                                 <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 break-words line-clamp-3">
                                     {{ $candidate->bio ?? 'No bio available.' }}
@@ -338,13 +343,20 @@
                                 <button
                                     wire:click.prevent="voteCandidate({{ $candidate->id }})"
                                     @disabled($room->status !== 'Ongoing' || $userVotedInPosition || auth()->user()->role !== 'user')
+                                    wire:loading.attr="disabled"
+                                    wire:target="voteCandidate({{ $candidate->id }})"
                                     class="w-full py-2 rounded transition text-xs md:text-base
                                         {{ $room->status !== 'Ongoing' || $userVotedInPosition || auth()->user()->role !== 'user'
                                             ? 'bg-gray-400 text-white cursor-not-allowed'
                                             : 'bg-[#7B2E2E] text-white hover:bg-[#5c2222] cursor-pointer'
                                         }}"
                                 >
-                                    {{ $buttonLabel }}
+                                    <span wire:loading.remove wire:target="voteCandidate({{ $candidate->id }})">
+                                        {{ $buttonLabel }}
+                                    </span>
+                                    <span wire:loading wire:target="voteCandidate({{ $candidate->id }})">
+                                        Voting…
+                                    </span>
                                     
                                 </button>
                                 @if($room->status !== 'Ongoing')

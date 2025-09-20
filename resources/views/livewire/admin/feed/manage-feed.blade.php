@@ -156,7 +156,7 @@
                                 >
                                     {{-- normal state --}}
                                     <span wire:loading.remove wire:target="editPost({{ $feed->id }})" class="flex items-center">
-                                        <flux:icon.pencil class="size-4" />
+                                        <flux:icon.pencil class="size-4 mr-1" />
                                         Edit
                                     </span>
 
