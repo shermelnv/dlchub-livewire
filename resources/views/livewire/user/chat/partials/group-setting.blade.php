@@ -102,8 +102,23 @@
                                 <p class="text-sm text-gray-300 truncate">{{ $request->user->email }}</p>
                             </div>
                             <div class="flex gap-2">
-                                <flux:button size="xs" wire:click="approveRequest({{ $request->id }})">Approve</flux:button>
-                                <flux:button size="xs" variant="danger" wire:click="rejectRequest({{ $request->id }})">Reject</flux:button>
+                                <flux:button 
+                                    size="xs" 
+                                    wire:click="approveRequest({{ $request->id }})" 
+                                    wire:loading.attr="disabled" 
+                                    wire:target="approveRequest({{ $request->id }})"
+                                    >
+                                    Approve
+                                </flux:button>
+                                <flux:button 
+                                    size="xs" 
+                                    variant="danger" 
+                                    wire:click="rejectRequest({{ $request->id }})"
+                                    wire:loading.attr="disabled" 
+                                    wire:target="rejectRequest({{ $request->id }})"
+                                    >
+                                    Reject
+                                </flux:button>
                             </div>
                         </div>
                     @empty
