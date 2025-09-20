@@ -74,10 +74,11 @@
                             {{ \Carbon\Carbon::parse($room->start_time)->format('M d, Y H:i') }} 
                             - 
                             {{ \Carbon\Carbon::parse($room->end_time)->format('M d, Y H:i') }}
+                            -
+                            {{ $room->status }}
                         </p>
                         </div>
                         <div class="flex items-center gap-2">
-                            
                             
                                 <flux:icon.arrow-right class="size-5 text-gray-500 dark:text-gray-400"/>
                             
@@ -89,6 +90,7 @@
                 
 
                 @else
+
                 <div class="flex justify-between items-center p-3 mb-3 rounded-lg">
                         <div class="rounded-lg ">
                         <h3 class="font-semibold text-md text-gray-900 dark:text-gray-100">
@@ -103,15 +105,44 @@
                             {{ \Carbon\Carbon::parse($room->start_time)->format('M d, Y H:i') }} 
                             - 
                             {{ \Carbon\Carbon::parse($room->end_time)->format('M d, Y H:i') }}
+                            -
+                            {{ $room->status }}
                         </p>
                         </div>
                         <div class="flex items-center gap-2">
 
                             
-                            <button wire:click="editRoom({{ $room->id }})" class="text-gray-500 dark:text-gray-400 cursor-pointer" icon="pencil">
-                                <flux:tooltip content="Edit room info">
-                                    <flux:icon.pencil class="size-5" />
+                            <button 
+                                wire:click="confirmDelete({{ $room->id }})" wire:loading.attr="disabled" class="text-gray-500 dark:text-gray-400 cursor-pointer" >
+                                <flux:tooltip content="Delete Room">
+                                    <flux:icon.trash 
+                                        wire:loading.remove 
+                                        wire:target="confirmDelete({{ $room->id }})" 
+                                        class="size-5 text-red-900 dark:text-red-700" />
                                 </flux:tooltip>
+                                <flux:icon.loading 
+                                        wire:loading wire:target="confirmDelete({{ $room->id }})"
+                                        class="h-4 w-4 text-red-700 dark:text-red-500"/>
+                            </button>
+                            
+                               
+                            
+                     
+                            <flux:separator vertical/>
+
+                            <button 
+                                wire:click="editRoom({{ $room->id }})" 
+                                wire:loading.attr="disabled"
+                                wire:target="editRoom({{ $room->id }})"
+                                class="text-gray-500 dark:text-gray-400 cursor-pointer" >
+                                <flux:tooltip content="Edit room info">
+                                    <flux:icon.pencil class="size-5" 
+                                        wire:loading.remove 
+                                        wire:target="editRoom({{ $room->id }})" />
+                                </flux:tooltip>
+                                <flux:icon.loading 
+                                        wire:loading wire:target="editRoom({{ $room->id }})"
+                                        class="h-4 w-4 "/>
                             </button>
 
                             <flux:separator vertical/>
@@ -195,6 +226,35 @@
                 </div>
             </div>
         </form>
+    </flux:modal>
+
+    <flux:modal name="delete-voting" class="min-w-sm">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Delete room?</flux:heading>
+
+                <flux:text class="mt-2">
+                    <p>You're about to delete this room.</p>
+                    <p>This action cannot be reversed.</p>
+                </flux:text>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+
+                <flux:button 
+                    type="button" 
+                    variant="danger" 
+                    wire:click="deleteRoom"
+                    >
+                    Delete room
+                </flux:button>
+            </div>
+        </div>
     </flux:modal>
 </div>
 

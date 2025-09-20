@@ -26,6 +26,7 @@ class ManageVoting extends Component
     public $status = 'Pending';
     public $rooms = [];
     public $editingRoomId = null;
+
     public $selectedRoom = null;
 
     public function mount()
@@ -147,15 +148,22 @@ class ManageVoting extends Component
         $this->loadRooms();
     }
 
-    public function deleteRoom($roomId)
+    public $confirmRoomId = null;
+    public function confirmDelete($id)
     {
-        $room = VotingRoom::findOrFail($roomId);
-        $roomTitle = $room->title;
-        $room->delete();
+        $this->confirmRoomId = $id;
+        $this->modal('delete-voting')->show();
+    }
 
+    public function deleteRoom()
+    {
+
+        VotingRoom::findOrFail($this->confirmRoomId)->delete();
+        $this->confirmRoomId = null;
 
         $this->loadRooms();
-        Toaster::success('Voting room deleted successfully.');
+        $this->modal('delete-voting')->close();
+        Toaster::success('Delete voting successfully!');
     }
 
     protected function resetFields()
