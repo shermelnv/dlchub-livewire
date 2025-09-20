@@ -86,7 +86,7 @@
             Mail::to($user->email)->send(new EmailVerification($user));
 
             // Redirect
-            $this->redirectIntended(route('redirectToPage', absolute: false), navigate: true);
+            $this->redirectIntended(route('home', absolute: false), navigate: true);
         }
     };
 ?>
@@ -235,17 +235,7 @@
                 <flux:button align="center">review image</flux:button>
             </flux:modal.trigger> --}}
 
-            <flux:modal name="review_image" class="max-h-[calc(100vh-10rem)] w-full m-2">
-                <div class="space-y-2 pb-2">
-                    <flux:heading size="lg">Review Image</flux:heading>
-
-                    <img 
-                        src="{{ $photo->temporaryUrl() }}" 
-                        class="max-h-[60vh] w-auto mx-auto object-contain rounded-xl shadow" 
-                    />
-
-                </div>
-            </flux:modal>
+            
                 <flux:modal.trigger class="flex justify-center" name="review_image">
                     
                          <img 
@@ -268,6 +258,22 @@
         <span>{{ __('Already have an account?') }}</span>
         <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
     </div>
+    <flux:modal name="review_image" class="w-full">
+        @if($photo)
+                <div class="space-y-2 pb-2 max-h-[calc(100vh-10rem)] ">
+                    
+                    <flux:heading size="lg">Review Image</flux:heading>
+
+                    <img 
+                        src="{{ $photo->temporaryUrl() }}" 
+                        class="max-h-[60vh] w-auto mx-auto object-contain rounded-xl shadow" 
+                    />
+
+                </div>
+                @endif
+            </flux:modal>
+    
+    
 </div>
 
 

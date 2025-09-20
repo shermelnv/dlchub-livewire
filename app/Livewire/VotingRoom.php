@@ -303,6 +303,89 @@ public function loadRoom($id = null)
         $this->modal('candidate-card')->show();
     }
 
+    public array $editCandidate = [];
+
+    public function edit($id)
+    {
+        $this->editCandidate = Candidate::findOrFail($id)->toArray();
+        $this->modal('edit-candidate')->show();
+    } 
+
+    public function updateCandidate()
+    {
+        // Validate the input
+        $validated = $this->validate([
+            'editCandidate.name' => 'required|string|max:255',
+            'editCandidate.short_name' => 'nullable|string|max:50',
+            'editCandidate.bio' => 'nullable|string',
+            'candidate_image' => 'nullable|image|max:2048', // optional new image
+        ]);
+
+        // Find the candidate by ID
+        $candidate = Candidate::findOrFail($this->editCandidate['id']);
+
+        // Update candidate data
+        $candidate->update([
+            'name' => $this->editCandidate['name'],
+            'short_name' => $this->editCandidate['short_name'] ?? null,
+            'bio' => $this->editCandidate['bio'] ?? null,
+        ]);
+
+        // Handle new image upload
+        if ($this->candidate_image) {
+            // Delete old image if it exists
+            if ($candidate->photo_url) {
+                \Storage::disk('digitalocean')->delete($candidate->photo_url);
+            }
+
+            // Store new image
+            $path = $this->candidate_image->storePublicly('candidates', 'digitalocean');
+            $candidate->update(['photo_url' => $path]);
+        }
+
+        // Reset the form and modal state
+        $this->reset(['candidate_image', 'editCandidate']);
+        $this->modal('edit-candidate')->close();
+
+        // Reload room to reflect updated candidates
+        $this->loadRoom();
+
+        // Optional: flash a success message
+        \Masmerise\Toaster\Toaster::success('Candidate updated successfully!');
+    }
+
+
+    public $candidateToDelete = null;
+
+
+    public function remove($id)
+    {
+       $this->candidateToDelete = $id;
+        $this->modal('delete-candidate')->show();
+    }
+
+    public function deleteCandidate()
+    {
+        if (!$this->candidateToDelete) return;
+
+        $candidate = Candidate::findOrFail($this->candidateToDelete);
+
+        // Delete image if exists
+        if ($candidate->photo_url) {
+            \Storage::disk('digitalocean')->delete($candidate->photo_url);
+        }
+
+        $candidate->delete();
+
+        $this->candidateToDelete = null; // reset
+        $this->modal('delete-candidate')->close();
+        $this->loadRoom();
+
+        \Masmerise\Toaster\Toaster::success('Candidate removed successfully!');
+    }
+
+
+
 
     // ────────────────────────────────────────────────
     // Render Component

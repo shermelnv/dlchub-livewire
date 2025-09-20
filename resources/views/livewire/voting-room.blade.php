@@ -315,6 +315,26 @@
                     @forelse ($position->candidates as $candidate)
                     {{-- <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})"> --}}
                         <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
+                            @if(auth()->user()->role !== 'user' && auth()->user()->id === $room->creator_id)
+                                <div class="flex justify-end items-center gap-2 mb-2">
+                                    <flux:button 
+                                    size="xs" 
+                                    wire:click="edit({{ $candidate->id }})"
+                                        >
+                                        Edit
+
+                                    </flux:button>
+                                    <flux:button 
+                                    size="xs" 
+                                    variant="danger" 
+                                    wire:click="remove({{ $candidate->id }})"
+                                        >
+                                        Delete
+
+                                    </flux:button>
+                                </div>
+                            @endif
+
                             @if ($candidate->photo_url)
                                 {{-- Show uploaded candidate image --}}
                                 <img 

@@ -77,27 +77,27 @@ Route::get('/test-inbox', function () {
 
 
 
-Route::get('redirectAfter_LoginOrRegister', function () {
+// Route::get('redirectAfter_LoginOrRegister', function () {
 
-    if (!auth()->check()) {
-        return redirect()->route('login'); 
-    }
+//     if (!auth()->check()) {
+//         return redirect()->route('login'); 
+//     }
 
-    if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' ) {
-        return redirect()->route('dashboard');
-    } elseif(auth()->user()->role === 'user' ) {
-        return redirect()->route('landing-page');
-    } elseif(auth()->user()->role === 'org') {
-        return redirect()->route('landing-page');
-    }
+//     if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' ) {
+//         return redirect()->route('dashboard');
+//     } elseif(auth()->user()->role === 'user' ) {
+//         return redirect()->route('landing-page');
+//     } elseif(auth()->user()->role === 'org') {
+//         return redirect()->route('landing-page');
+//     }
 
-})->name('redirectToPage');
+// })->name('redirectToPage');
 
 Route::get('/', function () {
 
 
     if (auth()->check()) {
-        return redirect()->route('redirectToPage');
+        return redirect()->route('landing-page');
     } else {
         return redirect()->route('guest.home');
     }

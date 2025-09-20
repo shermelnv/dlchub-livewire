@@ -2,7 +2,7 @@
 <div class="flex flex-col  overflow-x-hidden min-h-screen w-full">
     <flux:header container class=" bg-white/60 dark:bg-black/60 backdrop-blur-md fixed top-0 left-0 w-full">
 
-        <a href="{{ route('guest.home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+        <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
                 <x-app-logo />
             </a>
         
