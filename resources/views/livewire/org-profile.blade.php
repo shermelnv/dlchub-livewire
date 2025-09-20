@@ -84,7 +84,7 @@
                 <div x-show="tab === 'feed'" class="grid grid-cols-1 gap-4">
                     <div x-show="tab === 'feed'" class="space-y-6">
                         @forelse($feeds as $feed)
-                            <div class="pb-4 bg-white dark:bg-gray-800 shadow-md hover:shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition duration-300 ease-in-out">
+                            <div class="pb-4 bg-white dark:bg-gray-800 shadow-md rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition duration-300 ease-in-out">
                                 
                                 @if ($feed->photo_url)
                                     <div class="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
@@ -186,8 +186,8 @@
                                 <form wire:submit.prevent="addComment({{ $feed->id }})" 
                                     class="gap-2 mt-1 {{ $feed->comments->count() >= 10 ? 'hidden' : 'flex' }}">
                                     <flux:input.group>
-                                        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." />
-                                        <flux:button icon="paper-airplane" type="submit" />
+                                        <flux:input wire:model.defer="comments.{{ $feed->id }}" placeholder="Add a comment..." style="outline: none; box-shadow: none;"/>
+                                        <flux:button icon="paper-airplane" type="submit" class="text-blue-500 dark:text-blue-300"/>
                                     </flux:input.group>
                                 </form>
 
