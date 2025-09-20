@@ -27,7 +27,7 @@
             }); --}}
     "
     class="flex justify-between">
-    <div>{{ __('inbox') }} </div>
+    <div>{{ __('Inbox') }} </div>
     @if($unreadCount > 0)
         <div>{{$unreadCount}}</div>
     @endif
