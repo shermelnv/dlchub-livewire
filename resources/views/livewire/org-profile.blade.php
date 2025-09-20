@@ -45,8 +45,13 @@
                     </flux:badge>
                     <div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">Facebook</div>
-                        <a href="https://www.egames-org.com" target="_blank"
-                            class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->facebook ?? 'No Facebook' }}</a>
+                        @if($org->organizationInfo->facebook)
+                        <a href="{{ $org->organizationInfo->facebook }}" target="_blank"
+                            class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->facebook }}
+                        </a>
+                        @else
+                            <span class="text-black dark:text-white">No Facebook</span>
+                        @endif
                     </div>
                 </div>
 
@@ -165,7 +170,7 @@
 
                                                 
                                                 @if($userReacted)
-                                                    <flux:icon.heart variant="solid" color="red" wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
+                                                    <flux:icon.heart variant="solid" color="red"  wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                                 @else
                                                     <flux:icon.heart wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                                 @endif
