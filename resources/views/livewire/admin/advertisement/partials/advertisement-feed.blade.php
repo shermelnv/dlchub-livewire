@@ -96,7 +96,9 @@
                                     @endif
 
                                 <div>
-                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
+                                <a href="{{ route('org.profile', ['orgId' => $ad->user->id]) }}" wire:navigate>
+                                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
+                                </a>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                     Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
                                     @if($ad->privacy === 'public') 

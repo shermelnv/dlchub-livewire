@@ -45,10 +45,10 @@
                     </flux:badge>
                     <div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">Facebook</div>
-                        @if($org->organizationInfo->facebook)
-                        <a href="{{ $org->organizationInfo->facebook }}" target="_blank"
-                            class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->facebook }}
-                        </a>
+                        @if($org->organizationInfo?->facebook)
+                            <a href="{{ $org->organizationInfo->facebook }}" target="_blank"
+                                class="text-black dark:text-white underline break-all">{{ $org->organizationInfo->facebook }}
+                            </a>
                         @else
                             <span class="text-black dark:text-white">No Facebook</span>
                         @endif
@@ -464,9 +464,14 @@
                             <ul class="mt-2 space-y-2">
                                 @foreach($org->followers as $follower)
                                     <li class="flex items-center space-x-2">
-                                        <img src="{{ $follower->profile_image ?? 'https://ui-avatars.com/api/?name='.$follower->name }}" 
-                                            class="w-8 h-8 rounded-full" alt="{{ $follower->name }}">
-                                        <span>{{ $follower->name }}</span>
+                                        @if($follower->profile_image)
+                                            <flux:avatar 
+                                                    src="{{ Storage::disk('digitalocean')->url($follower->profile_image) }}"
+                                                    class="w-8 h-8 rounded-full object-cover" />
+                                                    <span>{{ $follower->name }}</span>
+                                        @else
+                                            <flux:avatar circle :initials="$follower->user->initials()" class="w-8 h-8 rounded-full" />
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>

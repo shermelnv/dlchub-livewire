@@ -109,7 +109,7 @@
 
 
         {{-- ADVERTISEMENT & ORGS --}}
-        <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900 items-stretch">
+        <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900 items-stretch overflow-hidden">
 
             {{-- Advertisement --}}
             <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700 h-auto" data-aos="fade-right">
@@ -171,7 +171,7 @@
                 </div>
 
                 {{-- Content grows --}}
-                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[70vh] overflow-y-auto">
+                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[90vh] overflow-y-auto">
                     {{-- List of Orgs --}}
                     {{-- <div class="grid gap-6"> --}}
                     @forelse($organizations as $org)
@@ -205,61 +205,9 @@
 
 
 
-    <!-- ====== FOOTER ====== -->
-    <footer class="bg-red-950 text-gray-300 ">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
-            
-            <!-- Branding -->
-            <div>
-                <h2 class="text-xl font-bold text-white">DLCHub</h2>
-                <p class="mt-2 text-sm text-gray-400">
-                    Empowering students and organizations through digital collaboration.
-                </p>
-            </div>
 
-            <!-- Students -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Students</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Directory</a></li>
-                    <li><a href="#" class="hover:text-white">Achievements</a></li>
-                    <li><a href="#" class="hover:text-white">Profiles</a></li>
-                </ul>
-            </div>
 
-            <!-- Organizations -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Organizations</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">All Orgs</a></li>
-                    <li><a href="#" class="hover:text-white">Events</a></li>
-                    <li><a href="#" class="hover:text-white">Join Requests</a></li>
-                </ul>
-            </div>
 
-            <!-- Voting Rooms & Events -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Voting & Events</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Voting Rooms</a></li>
-                    <li><a href="#" class="hover:text-white">Upcoming Elections</a></li>
-                    <li><a href="#" class="hover:text-white">Calendar</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Bottom Bar -->
-        <div class="border-t border-gray-700 mt-6">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} DLCHub. All rights reserved.</p>
-                <div class="flex space-x-4 mt-2 md:mt-0">
-                    <a href="#" class="hover:text-white">Privacy</a>
-                    <a href="#" class="hover:text-white">Terms</a>
-                    <a href="#" class="hover:text-white">Support</a>
-                </div>
-            </div>
-        </div>
-    </footer>
 
 
 

@@ -127,7 +127,9 @@
                                         />
                                     @endif
                                 <div>
-                                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
+                                    <a href="{{ route('org.profile', ['orgId' => $feed->user->id]) }}" wire:navigate>
+                                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
+                                    </a>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                         Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }} ・ 
                                             @if($feed->privacy === 'public') 
@@ -203,7 +205,8 @@
                             
 
                             
-                            <h2 class="text-base font-semibold text-gray-800 dark:text-white">{{ $feed->title }}</h2>
+                                <h2 class="text-base font-semibold text-gray-800 dark:text-white">{{ $feed->title }}</h2>
+                      
                             <!-- Content -->
                             <p class="text-sm text-gray-600 dark:text-gray-300">{{ $feed->content }}</p>
 

@@ -183,7 +183,7 @@
                 </div>
 
                 {{-- Content grows --}}
-                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[70vh] overflow-y-auto">
+                <div class="flex-1 flex flex-col gap-6 p-6 text-gray-700 dark:text-gray-300 scrollbar-hover max-h-[100vh] overflow-y-auto">
                     {{-- List of Orgs --}}
                     {{-- <div class="grid gap-6"> --}}
                     @forelse($organizations as $org)
@@ -214,68 +214,33 @@
             </div>
         </section>
 
-   
+        <footer class="w-full bg-red-900 dark:bg-red-950 text-white mt-4">
+            <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start">
+                    <span class="font-semibold text-lg">PLCHUB</span>
+                    <span class="opacity-75">Connecting Students Together</span>
+                </div>
 
-            <!-- ====== FOOTER ====== -->
-    <footer class="bg-red-950 text-gray-300 ">  
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
-            
-            <!-- Branding -->
-            <div>
-                <h2 class="text-xl font-bold text-white">DLCHub</h2>
-                <p class="mt-2 text-sm text-gray-400">
-                    Empowering students and organizations through digital collaboration.
-                </p>
-            </div>
+                <!-- Links with heading -->
+                <div class="flex flex-col items-center md:items-center">
+                    <span class="font-semibold mb-2">Platforms</span>
+                    <div class="flex gap-2 text-center md:text-left">
+                        <p  class="hover:font-bold">News Feed</p>
+                        <p  class="hover:font-bold">Advertisement</p>
+                        <p  class="hover:font-bold">Voting</p>
+                        <p  class="hover:font-bold">Chat</p>
+                    </div>
+                </div>
 
-            <!-- Students -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Students</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Directory</a></li>
-                    <li><a href="#" class="hover:text-white">Achievements</a></li>
-                    <li><a href="#" class="hover:text-white">Profiles</a></li>
-                </ul>
-            </div>
-
-            <!-- Organizations -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Organizations</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">All Orgs</a></li>
-                    <li><a href="#" class="hover:text-white">Events</a></li>
-                    <li><a href="#" class="hover:text-white">Join Requests</a></li>
-                </ul>
-            </div>
-
-            <!-- Voting Rooms & Events -->
-            <div>
-                <h3 class="text-lg font-semibold text-white">Voting & Events</h3>
-                <ul class="mt-2 space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white">Voting Rooms</a></li>
-                    <li><a href="#" class="hover:text-white">Upcoming Elections</a></li>
-                    <li><a href="#" class="hover:text-white">Calendar</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Bottom Bar -->
-        <div class="border-t border-gray-700 mt-6">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} DLCHub. All rights reserved.</p>
-                <div class="flex space-x-4 mt-2 md:mt-0">
-                    <a href="#" class="hover:text-white">Privacy</a>
-                    <a href="#" class="hover:text-white">Terms</a>
-                    <a href="#" class="hover:text-white">Support</a>
+                <!-- Copyright -->
+                <div class="flex flex-col items-center md:items-end opacity-75">
+                    <p>© {{ now()->year }} PLCHUB. All rights reserved.</p>
+                    <p class="text-xs">Built by students for Pampanga State University — Lubao Campus</p>
                 </div>
             </div>
-        </div>
-    </footer>
-   
-
-
-
-
+        </footer>
 
 
 </div>
