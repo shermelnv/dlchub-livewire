@@ -316,23 +316,34 @@
                     {{-- <flux:modal.trigger wire:click="candidateCard({{$candidate->id}})"> --}}
                         <div class="bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden p-4 flex flex-col">
                             @if(auth()->user()->role !== 'user' && auth()->user()->id === $room->creator_id)
-                                <div class="flex justify-end items-center gap-2 mb-2">
-                                    <flux:button 
-                                    size="xs" 
-                                    wire:click="edit({{ $candidate->id }})"
-                                        >
+                                <div class="flex justify-end items-center gap-2 mb-2 relative" x-data="{ open: false }">
+                                <!-- Ellipsis Button (Vertical) -->
+                                <flux:button size="xs" variant="ghost" @click="open = !open">
+                                    ⋮
+                                </flux:button>
+
+                                <!-- Dropdown -->
+                                <div 
+                                    x-show="open" 
+                                    @click.outside="open = false"
+                                    x-transition
+                                    class="absolute right-0 mt-8 w-28 bg-white dark:bg-gray-900 border rounded-md shadow-lg z-50"
+                                >
+                                    <button 
+                                        class="block w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 hover:text-black"
+                                        wire:click="edit({{ $candidate->id }})"
+                                    >
                                         Edit
-
-                                    </flux:button>
-                                    <flux:button 
-                                    size="xs" 
-                                    variant="danger" 
-                                    wire:click="remove({{ $candidate->id }})"
-                                        >
+                                    </button>
+                                    <button 
+                                        class="block w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                                        wire:click="remove({{ $candidate->id }})"
+                                    >
                                         Delete
-
-                                    </flux:button>
+                                    </button>
                                 </div>
+                            </div>
+
                             @endif
 
                             @if ($candidate->photo_url)
