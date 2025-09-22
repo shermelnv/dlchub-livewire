@@ -46,6 +46,24 @@
 
     {{-- Table --}}
     <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
+                    </thead>
+        {{-- Center Loading Spinner --}}
+        <div 
+            wire:loading 
+            wire:target="viewUser,getUser,confirmBan,confirmUnban,confirmApprove,confirmDelete" 
+            class="fixed inset-0 z-50 bg-black/20"
+        >
+            <svg 
+                class="animate-spin h-10 w-10 text-gray-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24"
+            >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z"></path>
+            </svg>
+        </div>
+
         <table class="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700 text-sm">
             <thead class="bg-gray-100 dark:bg-zinc-800 text-left text-gray-600 dark:text-gray-300 uppercase tracking-wide">
                 <tr>
@@ -58,7 +76,7 @@
                                         <th class="px-4 py-3">Role</th>
                     <th class="px-4 py-3 text-center">Actions</th>
                 </tr>
-            </thead>
+
             <tbody class="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700">
                 @forelse ($manageUsers as $manageUser)
                     <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800" wire:key="user-{{ $manageUser->id }}">
@@ -100,7 +118,7 @@
                                         {{-- PROFILE MANAGEMENT --}}
                                         <flux:menu.group heading="Profile Management">
                                             <flux:menu.item icon="exclamation-circle" wire:click="viewUser({{ $manageUser->id }})">
-                                                View Detail
+                                                View Detail                                           
                                             </flux:menu.item>
                                             <flux:menu.item icon="pencil-square" wire:click="getUser({{ $manageUser->id }})">
                                                 Edit Detail
