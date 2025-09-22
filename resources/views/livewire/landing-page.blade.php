@@ -25,13 +25,13 @@
             </flux:text>
             <div class="grid grid-cols-2 lg:flex flex-col gap-4">
                 <ul class="space-y-3">
-                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="100">
+                    <li class="flex items-center gap-2 text-xs lg:text-lg  text-start justify-start" data-aos="fade-up" data-aos-delay="100">
                         <flux:icon.check class="size-4"/> Real-time messaging
                     </li>
-                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="200">
+                    <li class="flex items-center gap-2 text-xs lg:text-lg  text-start justify-start" data-aos="fade-up" data-aos-delay="200">
                         <flux:icon.check class="size-4"/> Create study groups
                     </li>
-                    <li class="flex items-center gap-2 text-xs lg:text-lg justify-center text-start lg:justify-start" data-aos="fade-up" data-aos-delay="300">
+                    <li class="flex items-center gap-2 text-xs lg:text-lg  text-start justify-start" data-aos="fade-up" data-aos-delay="300">
                         <flux:icon.check class="size-4"/> Integrated calendar and event planning
                     </li>
                 </ul>
@@ -112,7 +112,7 @@
         <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6 bg-gray-100 dark:bg-gray-900 items-stretch overflow-hidden">
 
             {{-- Advertisement --}}
-            <div class="col-span-3 flex flex-col rounded-2xl shadow-lg  dark:border-gray-700 h-auto" data-aos="fade-right">
+            <div class="lg:col-span-3 w-full flex flex-col rounded-2xl shadow-lg dark:border-gray-700 h-auto" data-aos="fade-right">
                 <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
                     Advertisement
                 </div>
@@ -165,7 +165,7 @@
             </div>
 
             {{-- Organizations --}}
-            <div class="col-span-2 flex flex-col rounded-2xl shadow-lg h-auto dark:border-gray-700" data-aos="fade-left">
+            <div class="lg:col-span-2 w-full flex flex-col rounded-2xl shadow-lg dark:border-gray-700 h-auto" data-aos="fade-left">
                 <div class="w-full py-3 bg-red-800 dark:bg-red-900 text-center text-white font-semibold rounded-t-2xl">
                     Organizations
                 </div>

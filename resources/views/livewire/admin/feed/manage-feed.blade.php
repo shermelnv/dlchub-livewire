@@ -232,10 +232,12 @@
                                     @endphp
 
                                     @if($userReacted)
-                                        <flux:icon.heart variant="solid" color="red"/>
+                                        <flux:icon.heart variant="solid" color="red"  wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                     @else
-                                        <flux:icon.heart/>
+                                        <flux:icon.heart wire:loading.remove wire:target="toggleHeart({{ $feed->id }})"/>
                                     @endif
+
+                                    <flux:icon.loading wire:loading wire:target="toggleHeart({{ $feed->id }})"/>
 
                                     <span>{{ $count }}</span>
                                 </div>
