@@ -14,18 +14,27 @@
                 </div>
                 <div class="flex gap-2">
 
-     
-                    <flux:icon.eye class="w-5 h-5 text-green-500 hover:text-green-700 text-sm" wire:click="viewRoom({{$room->id}})"/>
-     
+                        <button 
+                            wire:click="viewRoom({{ $room->id }})"
+                            wire:target="viewRoom({{ $room->id }})"
+                            wire:key="viewRoom({{ $room->id }})"
+                            class="cursor-pointer"
+                        >
+                            <flux:icon.eye wire:loading.remove wire:target="viewRoom({{ $room->id }})"
+                                class="w-5 h-5 text-green-500 hover:text-green-700 text-sm" />
+                            <flux:icon.loading wire:loading wire:target="viewRoom({{ $room->id }})"
+                                class="w-5 h-5 animate-spin" />
+                        </button>
+
                 </div>
             </div>
         @empty
             <p class="text-gray-500 dark:text-gray-400">No voting rooms found.</p>
         @endforelse
 
-        <flux:modal name="roomDetails">
+        <flux:modal name="roomDetails" class="min-w-sm">
             @if($selectedRoom)
-                <div class="p-6 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-700 transition-colors duration-300">
+                <div class="p-6 rounded-2xl ">
                     <flux:heading size="lg" class="mb-6 text-gray-900 dark:text-gray-100">Room Details</flux:heading>
 
                     <div class="space-y-3 mb-6">
