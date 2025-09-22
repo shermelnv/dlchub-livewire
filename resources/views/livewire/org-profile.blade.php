@@ -124,9 +124,9 @@
                                                 <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                                     Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }} ・ 
                                                     @if($feed->privacy === 'public') 
-                                                        <flux:icon.globe-asia-australia class="size-4" /> 
+                                                        Public
                                                     @else 
-                                                        <flux:icon.lock-closed class="size-4" />
+                                                        Private
                                                     @endif
                                                 </p>
                                             </div>
@@ -240,7 +240,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -275,7 +275,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -310,7 +310,7 @@
                                                     />
                                                 @endif
                                                     <div>
-                                                        <div class="bg-gray-700 rounded-lg p-2">
+                                                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-lg break-words">{{ $comment->comment }}</div>
                                                         </div>
@@ -414,9 +414,9 @@
                                 <p class="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
                                     Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
                                     @if($feed->privacy === 'public') 
-                                                        <flux:icon.globe-asia-australia class="size-4" /> 
+                                                        Public
                                                     @else 
-                                                        <flux:icon.lock-closed class="size-4" />
+                                                        Private
                                                     @endif
                                 </p>
                             </div>

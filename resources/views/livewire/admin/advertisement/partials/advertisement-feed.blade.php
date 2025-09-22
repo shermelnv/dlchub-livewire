@@ -102,9 +102,9 @@
                                 <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                     Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
                                     @if($ad->privacy === 'public') 
-                                            <flux:icon.globe-asia-australia class="size-4" /> 
+                                                Public
                                             @else 
-                                                <flux:icon.lock-closed class="size-4" />
+                                                Private
                                             @endif 
                                 </p>
                                 </div>
