@@ -38,7 +38,7 @@
         <div class="space-y-6 text-white px-6 md:px-10 text-center lg:text-left" data-aos="fade-left">
             <h1 class="text-2xl md:text-4xl font-bold">Make Your Group Chats More Fun</h1>
             <flux:text class="max-w-lg text-base md:text-lg text-gray-200 text-justify mx-auto lg:mx-0">
-                Team up in real time! Chat with classmates, share ideas, and keep everything on track—right from your dashboard.
+                Share ideas and plan events with friends through instant messaging.
             </flux:text>
             <div class="grid grid-cols-2 lg:flex flex-col gap-4">
                 <ul class="space-y-3">

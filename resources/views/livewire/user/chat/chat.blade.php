@@ -221,7 +221,9 @@
                         
 
                         @empty
-                        no chat yet
+                        <div class="text-center text-sm text-gray-400 dark:text-gray-500 my-2 ">
+                                        No messages yet. Start the conversation!
+                                </div>
                         @endforelse
 
 

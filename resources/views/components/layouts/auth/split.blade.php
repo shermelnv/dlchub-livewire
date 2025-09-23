@@ -8,7 +8,7 @@
             <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
                 <div class="absolute inset-0">
                         
-                        <img src="{{ asset('images/dhvsu_bg2.jpg') }}"  class="h-full w-full object-cover object-center " alt="Background Image">
+                        <img src="{{ asset('images/new-bg.png') }}"  class="h-full w-full object-cover object-center " alt="Background Image">
 
                         <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent opacity-80"></div>
 

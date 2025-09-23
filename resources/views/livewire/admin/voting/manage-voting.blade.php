@@ -44,7 +44,7 @@
 <div class="grid lg:grid-cols-3 gap-4">
             <div class="col-span-2 w-full p-2 h-auto rounded-lg shadow-sm space-y-4">
                 <div class="flex flex-col ">
-                    <div class="p-4 flex justify-between items-center">
+                    <div class="py-4 flex justify-between items-center">
                         <flux:heading size="lg">Existing Voting Rooms</flux:heading>
                             {{-- Add Voting Modal Trigger --}}
                         @if(auth()->user()->role !== 'user')
@@ -55,12 +55,22 @@
                     </div>
                     <flux:separator/>
                 </div>
-                    
+                    @php
+    // define colors once
+    $statusBgColors = [
+        'Pending' => 'bg-blue-50 dark:bg-blue-900/30', // light orange
+        'Ongoing' => 'bg-green-50 dark:bg-green-900/30',   // light green
+        'Closed'  => 'bg-red-50 dark:bg-red-900/30',       // light red
+    ];
+@endphp
                 
                 @forelse ($rooms as $room)
-               
-                @if(auth()->user()->id !== $room->creator_id)
-                    <a href="{{ route('voting.room', $room->id) }}" wire:navigate class="flex justify-between items-center p-3 mb-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition rounded-lg">
+                    @php
+        $bgClass = $statusBgColors[$room->status] ?? 'bg-gray-50 dark:bg-gray-800/30';
+    @endphp
+
+                @if(auth()->user()->id !== $room->creator_id && auth()->user()->role === 'user' && $room->status !== 'Closed')
+                    <a href="{{ route('voting.room', $room->id) }}" wire:navigate class="flex justify-between items-center p-3 mb-3 {{ $bgClass }} transition rounded-lg">
                         <div class="rounded-lg ">
                         <h3 class="font-semibold text-md text-gray-900 dark:text-gray-100">
                             {{ $room->title }}
@@ -91,7 +101,7 @@
 
                 @else
 
-                <div class="flex justify-between items-center p-3 mb-3 rounded-lg">
+                <div class="flex justify-between items-center p-3 mb-3 rounded-lg {{ $bgClass }} transition">
                         <div class="rounded-lg ">
                         <h3 class="font-semibold text-md text-gray-900 dark:text-gray-100">
                             {{ $room->title }}
@@ -154,7 +164,7 @@
                         
                     
           
-                    </div>
+                </div>
           
                 @endif
                 @empty

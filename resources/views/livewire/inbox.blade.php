@@ -20,7 +20,8 @@
                 {{-- <flux:icon.bell class="text-blue-300"/> --}}
                 Notifications
             </h2>
-            @if($notifications->count())
+            {{-- unread notif --}}
+            @if($notifications->count() && $notifications->where('read_at', null)->count() > 0)
                     <flux:button 
                         wire:click="markAllAsRead"
                         variant="filled"
