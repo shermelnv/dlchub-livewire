@@ -93,25 +93,29 @@ Route::get('/test-inbox', function () {
 
 // })->name('redirectToPage');
 
-Route::get('/', function () {
+// Route::get('/', function () {
 
 
-    if (auth()->check()) {
-        return redirect()->route('landing-page');
-    } else {
-        return redirect()->route('guest.home');
-    }
+//     if (auth()->check()) {
+//         return redirect()->route('landing-page');
+//     } else {
+//         return redirect()->route('guest.home');
+//     }
     
 
 
-})->name('home');
+// })->name('home');
+
+// Route::get('/', LandingPage::class)->name('home');
 
 
-Route::get('/guest', GuestLandingPage::class)->name('guest.home');
+
+// Route::get('/', GuestLandingPage::class)->name('home');
+Route::get('/', LandingPage::class)->name('home');
 
 Route::middleware(['auth', 'approved'])->group(function () {
 
-    Route::get('/home', LandingPage::class)->name('landing-page');
+    // Route::get('/home', LandingPage::class)->name('landing-page');
 
 
 

@@ -10,7 +10,7 @@
     <!-- ========== MAIN GRID ========== -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
         <!-- ========== LEFT COLUMN: FEED AREA ========== -->
-        <div class="w-full col-span-2 flex flex-col gap-6 py-5 scrollbar-auto-hide">
+        <div class="w-full col-span-2 flex flex-col gap-6 py-5 scrollbar-auto-hide lg:px-20">
 
             <!-- ====== CREATE POST SECTION ====== -->
             @if(auth()->user()->role !== 'user')

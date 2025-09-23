@@ -14,7 +14,7 @@
         {{ $slot }}
         @if(request()->routeIs('inbox', 'feed', 'advertisement', 'landing-page' , '/home', 'home'))
             <!-- ====== FOOTER ====== -->
-            <footer class="w-full bg-red-900 dark:bg-red-950 text-white mt-4">
+            <footer class="w-full bg-red-900 dark:bg-red-950 text-white">
                 <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     
                     <!-- Brand -->

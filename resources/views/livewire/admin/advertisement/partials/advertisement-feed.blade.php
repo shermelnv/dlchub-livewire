@@ -15,9 +15,8 @@
                         <img 
                         {{-- src="{{ Storage::url($photos[0]->photo_path) }}" --}}
                         src="{{ Storage::disk('digitalocean')->url($photos[0]->photo_path) }}"
-                             class="w-full h-64 object-cover rounded cursor-pointer"
+                             class="w-full h-auto object-cover rounded"
                              alt="Ad Image"
-                             wire:click="viewPhotos({{ $ad->id }})"
                              >
                     @elseif ($photoCount === 2)
                         {{-- Style 2: 2 horizontal side-by-side --}}

@@ -14,7 +14,7 @@
 class="px-5">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-        <div class="w-full space-y-4 col-span-2 py-5">
+        <div class="w-full space-y-4 col-span-2 py-5 lg:px-20" >
             @if(auth()->user()->role !== 'user')
             <section class="flex bg-zinc-100 dark:bg-zinc-800 text-black dark:text-white rounded-lg gap-4 p-4">
             @if(auth()->user()->profile_image)

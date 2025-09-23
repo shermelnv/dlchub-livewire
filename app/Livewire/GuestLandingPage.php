@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+
 use App\Models\Feed;
 use App\Models\User;
 use Livewire\Component;
@@ -35,8 +36,17 @@ class GuestLandingPage extends Component
 
     public function render()
     {
-         return view('livewire.guest-landing-page')
+
+        if(!auth()->check())
+        {
+            return view('livewire.guest-landing-page')
             ->layout('components.layouts.guest');
+        }else{
+            return view('livewire.guest-landing-page')
+            ->layout('components.layouts.app');
+        }
+
+         
     }
 }
 

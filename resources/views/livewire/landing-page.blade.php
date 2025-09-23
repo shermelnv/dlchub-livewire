@@ -1,5 +1,22 @@
 <div class="flex flex-col  overflow-x-hidden min-h-screen">
 
+    @if(!auth()->check())
+        <flux:header container class=" bg-white/60 dark:bg-black/60 backdrop-blur-md fixed top-0 left-0 w-full">
+
+        <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+                <x-app-logo />
+            </a>
+        
+        <flux:spacer />
+        
+        <flux:navbar >
+            <flux:navbar.item :href="route('login')" label="Search" >Login</flux:navbar.item>
+            <flux:navbar.item :href="route('register')" label="Settings" >Sign Up</flux:navbar.item>
+        </flux:navbar>
+    </flux:header>
+    @endif
+
+
     {{-- HEADER --}}
     <section class="min-h-screen flex flex-col items-center justify-center text-center space-y-6 px-4" data-aos="fade-up">
         <h1 class="max-w-2xl text-3xl md:text-5xl font-bold">Introducing PLC HUB Students Collaboration</h1>
@@ -203,7 +220,35 @@
         </section>
 
 
+        @if(!auth()->check())
+        <footer class="w-full bg-red-900 dark:bg-red-950 text-white ">
+            <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start">
+                    <span class="font-semibold text-lg">PLCHUB</span>
+                    <span class="opacity-75">Connecting Students Together</span>
+                </div>
 
+                <!-- Links with heading -->
+                <div class="flex flex-col items-center md:items-center">
+                    <span class="font-semibold mb-2">Platforms</span>
+                    <div class="flex gap-2 text-center md:text-left">
+                        <p  class="hover:font-bold">News Feed</p>
+                        <p  class="hover:font-bold">Advertisement</p>
+                        <p  class="hover:font-bold">Voting</p>
+                        <p  class="hover:font-bold">Chat</p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="flex flex-col items-center md:items-end opacity-75">
+                    <p>© {{ now()->year }} PLCHUB. All rights reserved.</p>
+                    <p class="text-xs">Built by students for Pampanga State University — Lubao Campus</p>
+                </div>
+            </div>
+        </footer>
+        @endif
 
 
 

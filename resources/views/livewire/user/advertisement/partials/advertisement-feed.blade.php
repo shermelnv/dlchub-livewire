@@ -13,7 +13,7 @@
                     @if ($photoCount === 1)
                         {{-- Style 1: Single full image --}}
                         <img src="{{ Storage::url($photos[0]->photo_path) }}"
-                             class="w-full h-64 object-cover rounded"
+                             class="w-full h-full object-cover rounded"
                              alt="Ad Image">
                     @elseif ($photoCount === 2)
                         {{-- Style 2: 2 horizontal side-by-side --}}

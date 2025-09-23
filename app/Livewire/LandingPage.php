@@ -35,6 +35,13 @@ class LandingPage extends Component
 
     public function render()
     {
-        return view('livewire.landing-page');
+        if(!auth()->check())
+        {
+            return view('livewire.landing-page')
+            ->layout('components.layouts.guest');
+        }else{
+            return view('livewire.landing-page')
+            ->layout('components.layouts.app');
+        }
     }
 }
