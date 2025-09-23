@@ -439,20 +439,20 @@
             $start_time = Carbon\Carbon::parse($room->start_time);
             $end_time = Carbon\Carbon::parse($room->end_time);
             $totalVotes = \App\Models\Vote::whereHas('candidate.position', function ($query) use ($room) {
-                $query->where('voting_room_id', $room->id);
-            })->count();
+            $query->where('voting_room_id', $room->id);
+            })
+            ->distinct('user_id') // count distinct voters
+            ->count('user_id');
         @endphp
-        <div class="flex justify-between">
             <div>
                 <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $room->title }}</h1>
                 <p class="text-gray-600 dark:text-gray-300 text-sm">{{ $room->description }}</p>
-            </div>
-            <div>
                 <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
-                    Election Date: {{ $start_time->format('m/d/y') }} - {{ $end_time->format('m/d/y') }} &nbsp;&bull;&nbsp; {{ $totalVotes }} total votes
+                    Election Date: {{ $start_time->format('m/d/y') }} - {{ $end_time->format('m/d/y') }} &nbsp;&bull;&nbsp; {{ $totalVotes }} users voted
                 </p>
             </div>
-        </div>
+
+ 
         @if($positions->isNotEmpty() && $positions->pluck('candidates')->flatten()->isNotEmpty())
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
              @if($positions->isEmpty())

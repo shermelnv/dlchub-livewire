@@ -69,7 +69,7 @@
         $bgClass = $statusBgColors[$room->status] ?? 'bg-gray-50 dark:bg-gray-800/30';
     @endphp
 
-                @if(auth()->user()->id !== $room->creator_id && auth()->user()->role === 'user' && $room->status !== 'Closed')
+                @if(auth()->user()->id !== $room->creator_id )
                     <a href="{{ route('voting.room', $room->id) }}" wire:navigate class="flex justify-between items-center p-3 mb-3 {{ $bgClass }} transition rounded-lg">
                         <div class="rounded-lg ">
                         <h3 class="font-semibold text-md text-gray-900 dark:text-gray-100">
