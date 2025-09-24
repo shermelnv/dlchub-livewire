@@ -331,7 +331,7 @@ public function createPost()
             'org_id' => $this->showPost['org_id'],
             'type' => $this->showPost['type'],
             'photo_url' => $post->photo_url,
-            'privacy' => $post->showPost['privacy'],
+            'privacy' => $post->showPost['privacy'] ?? 'public',
         ]);
 
 
