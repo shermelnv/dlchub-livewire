@@ -36,20 +36,20 @@
 
             @if(auth()->user()->role === 'user')
              <flux:button 
-    class="w-full sm:w-auto" 
-    variant="primary" 
-    color="{{ $followStatus === 'accepted' ? 'red' : ($followStatus === 'pending' ? 'yellow' : '') }}" 
-    wire:click="toggleFollow" 
-    icon="{{ $followStatus === 'accepted' ? 'check-circle' : 'user-plus' }}"
->
-    @if($followStatus === 'accepted')
-        Following
-    @elseif($followStatus === 'pending')
-        Pending
-    @else
-        Follow
-    @endif
-</flux:button>
+              class="w-full sm:w-auto" 
+                variant="primary" 
+                color="{{ $followStatus === 'accepted' ? 'red' : ($followStatus === 'pending' ? 'yellow' : '') }}" 
+             wire:click="toggleFollow" 
+             icon="{{ $followStatus === 'accepted' ? 'check-circle' : 'user-plus' }}"
+         >
+             @if($followStatus === 'accepted')
+                Following
+            @elseif($followStatus === 'pending')
+                Pending
+            @else
+                Follow
+            @endif
+        </flux:button>
 
 
 

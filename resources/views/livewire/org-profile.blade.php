@@ -223,26 +223,26 @@
                                             @foreach($sortedComments as $comment)
                                                 <div class="flex items-start gap-2">
                                                     @if ($comment->user->profile_image)
-                                                <flux:profile
+                                                <flux:avatar
                                                 circle
 
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
-                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
+                                                    src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="size-8 rounded-full"
                                                 />
                                                 @else
-                                                    <flux:profile
-                                                    circle
-                                                        
-                                                        :initials="$comment->user->initials()"
+                                                    <flux:avatar
+                                                        circle
+                                                        initials:single
+                                                        :name="$comment->user->name"
                                                         icon:trailing="chevrons-up-down"
                                                         class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
                                                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
-                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="font-semibold">{{ $comment->user->name }}</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
@@ -264,26 +264,26 @@
                                             @foreach($sortedComments->take(1) as $comment)
                                                 <div class="flex items-start gap-2">
                                                     @if ($comment->user->profile_image)
-                                                <flux:profile
+                                                <flux:avatar
                                                 circle
 
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
-                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
+                                                    src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="size-8 rounded-full"
                                                 />
                                                 @else
-                                                    <flux:profile
+                                                    <flux:avatar
                                                     circle
-                                                        
-                                                        :initials="$comment->user->initials()"
+                                                        initials:single
+                                                        :name="$comment->user->name"
                                                         icon:trailing="chevrons-up-down"
                                                         class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
                                                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
-                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="font-semibold">{{ $comment->user->name }}</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
@@ -305,26 +305,26 @@
                                             @foreach($sortedComments->skip(1) as $comment)
                                                 <div class="flex items-start gap-2">
                                                     @if ($comment->user->profile_image)
-                                                <flux:profile
+                                                <flux:avatar
                                                 circle
 
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
-                                                    avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
+                                                    src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
                                                     class="size-8 rounded-full"
                                                 />
                                                 @else
-                                                    <flux:profile
-                                                    circle
-                                                        
-                                                        :initials="$comment->user->initials()"
+                                                    <flux:avatar
+                                                        circle
+                                                        initials:single
+                                                        :name="$comment->user->name"
                                                         icon:trailing="chevrons-up-down"
                                                         class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
                                                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
-                                                            <div class="font-semibold">{{ $comment->user->name }}:</div>
+                                                            <div class="font-semibold">{{ $comment->user->name }}</div>
                                                             <div class="max-w-lg break-words">{{ $comment->comment }}</div>
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400 my-2">

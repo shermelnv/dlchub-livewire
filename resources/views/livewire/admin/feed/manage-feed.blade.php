@@ -127,9 +127,13 @@
                                         />
                                     @endif
                                 <div>
+                                    @if($feed->user->role === 'org')
                                     <a href="{{ route('org.profile', ['orgId' => $feed->user->id]) }}" wire:navigate>
                                         <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
                                     </a>
+                                    @else
+                                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $feed->user->name }}</h2>
+                                    @endif
                                     <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                         Posted {{ \Carbon\Carbon::parse($feed->published_at)->format('Y-m-d') }} ・ 
                                             @if($feed->privacy === 'public') 
