@@ -317,22 +317,26 @@ public function createPost()
             'photo' => 'nullable|image|max:2048',
         ]);
 
-
         $post = FeedModel::findOrFail($this->postToEdit);
 
-
-        $photoPath = $this->photo?->storePublicly('feeds', 'digitalocean');
-
-        $post->update([
+        // Start with current photo
+        $data = [
             'title' => $this->showPost['title'],
             'content' => $this->showPost['content'],
             'org_id' => $this->showPost['org_id'],
             'type' => $this->showPost['type'],
-            'photo_url' => $photoPath,
-            'privacy' => $post->showPost['privacy'] ?? 'public',
-        ]);
+            'privacy' => $this->showPost['privacy'] ?? 'public',
+        ];
 
+        // Only replace photo if a new one is uploaded
+        if ($this->photo) {
+            $photoPath = $this->photo->storePublicly('feeds', 'digitalocean');
+            $data['photo_url'] = $photoPath;
+        }
 
+        $post->update($data);
+
+        // Create type if new
         if ($this->showPost['type'] && !Type::where('type_name', $this->showPost['type'])->exists()) {
             Type::create(['type_name' => $this->showPost['type']]);
         }
@@ -343,6 +347,7 @@ public function createPost()
 
         Toaster::success('Feed post updated!');
     }
+
 
     // ───── Delete Post ─────
     public function confirmDelete(int $id)
