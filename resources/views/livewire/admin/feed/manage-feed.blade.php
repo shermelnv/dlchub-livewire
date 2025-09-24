@@ -157,13 +157,12 @@
                                     size="sm"
                                 >
                                     {{-- normal state --}}
-                                    <span wire:loading.remove wire:target="editPost({{ $feed->id }})" class="flex items-center">
-                                        <flux:icon.pencil class="size-4 mr-1" />
+                                    <span wire:loading.remove wire:target="editPost({{ $feed->id }})" class="flex items-center" size="sm">
                                         Edit
                                     </span>
 
                                     {{-- loading state --}}
-                                    <span wire:loading wire:target="editPost({{ $feed->id }})" class="flex items-center">
+                                    <span wire:loading wire:target="editPost({{ $feed->id }})" class="flex items-center" size="sm">
                                         <flux:icon.loading class="size-4" />
                                     </span>
                                 </flux:button>
@@ -182,8 +181,8 @@
                                 wire:loading.remove 
                                 wire:target="confirmDelete({{ $feed->id }})" 
                                 class="flex items-center"
+                                size="sm"
                             >
-                                <flux:icon.trash class="mr-1 size-4" />
                                 Delete
                             </span>
 

@@ -320,17 +320,15 @@ public function createPost()
 
         $post = FeedModel::findOrFail($this->postToEdit);
 
-        if ($this->photo) {
-            $photoPath = $this->photo->store('feeds', 'public');
-            $post->photo_url = $photoPath;
-        }
+
+        $photoPath = $this->photo?->storePublicly('feeds', 'digitalocean');
 
         $post->update([
             'title' => $this->showPost['title'],
             'content' => $this->showPost['content'],
             'org_id' => $this->showPost['org_id'],
             'type' => $this->showPost['type'],
-            'photo_url' => $post->photo_url,
+            'photo_url' => $photoPath,
             'privacy' => $post->showPost['privacy'] ?? 'public',
         ]);
 

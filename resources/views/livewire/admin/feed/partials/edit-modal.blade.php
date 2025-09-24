@@ -31,7 +31,7 @@
 
                             @if ($photo)
                                 <flux:modal.trigger name="preview-feed-photo">
-                                    <flux:button size="sm" variant="outline">Preview</flux:button>
+                                    <flux:button size="xs" variant="outline">Preview</flux:button>
                                 </flux:modal.trigger>
                             @endif
                         </div>
@@ -48,19 +48,8 @@
                         @enderror
                     </flux:field>
                     
-                    @if(auth()->user()->role === 'org')
-                    <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
-                        <flux:select.option value="public">Public</flux:select.option>
-                        <flux:select.option value="private">Private</flux:select.option>
-                    </flux:select>
-                    @endif
-
-                </div>
-
-
-
-
-                <div class="grid grid-cols-2 gap-4">
+                 
+               
                     <flux:input
                         type="text"
                         label="Type"
@@ -69,17 +58,19 @@
                         autocomplete="off"
                     />
 
-                    <flux:select
-                        label="Organization"
-                        wire:model.defer="showPost.organization"
-                        placeholder="Organization"
-                    >
-                    <flux:select.option value="">All</flux:select.option>
-                        @foreach ($orgs as $org)
-                            <flux:select.option value="{{ $org->name }}">{{ $org->name }}</flux:select.option>
-                        @endforeach
-                    </flux:select>
+               
+                    
                 </div>
+
+   @if(auth()->user()->role === 'org')
+                    <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
+                        <flux:select.option value="public">Public</flux:select.option>
+                        <flux:select.option value="private">Private</flux:select.option>
+                    </flux:select>
+                    @endif
+
+
+
             </div>
 
             <!-- Actions -->
