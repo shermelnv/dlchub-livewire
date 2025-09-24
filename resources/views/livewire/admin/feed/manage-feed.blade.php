@@ -310,13 +310,19 @@
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endforeach
                                         </div>
                                     @else
-                                        <!-- Show latest 3 by default -->
+                                        <!-- Show latest 1 by default -->
                                         <div class="space-y-1">
                                             @foreach($sortedComments->take(1) as $comment)
                                                 <div class="flex items-start gap-2">
@@ -343,8 +349,14 @@
                                                             <div class="font-semibold">{{ $comment->user->name }}</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -380,6 +392,12 @@
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>

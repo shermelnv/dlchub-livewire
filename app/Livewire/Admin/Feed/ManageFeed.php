@@ -177,73 +177,117 @@ public function createPost()
 }
 
 
-// ───── Comments ─────
-public function addComment($feedId)
-{
-    $commentText = $this->comments[$feedId] ?? '';
+    // ───── Comments ─────
+    public function addComment($feedId)
+    {
+        $commentText = $this->comments[$feedId] ?? '';
 
-    $this->validate([
-        "comments.$feedId" => 'required|string|max:500',
-    ]);
-
-    $comment = Comment::create([
-        'feed_id' => $feedId,
-        'user_id' => Auth::id(),
-        'comment' => $commentText,
-    ]);
-
-    $user = Auth::user();
-    $feed = FeedModel::find($feedId);
-    $feedOwner = User::find($feed->user_id);
-
-    
-    if($feedOwner !== $user){
-
-    Notification::send($feedOwner, new UniversalNotification(
-                 'feed',
-                 "$user->name commented on your post \"$feed->title\"",
- $user->id,
-            ));
-    }
-
-    $this->comments[$feedId] = '';
-    $this->fetchFeeds();
-}
-
-// ───── Reactions ─────
-public function toggleHeart(FeedModel $feed)
-{
-    $reaction = Reaction::where('feed_id', $feed->id)
-        ->where('user_id', Auth::id())
-        ->where('type', 'heart')
-        ->first();
-
-    $user = Auth::user();
-    $feedOwner = User::find($feed->user_id);
-
-    if ($reaction) {
-        $reaction->delete();
-        $action = 'removed a heart on your post';
-    } else {
-        Reaction::create([
-            'feed_id' => $feed->id,
-            'user_id' => $user->id,
-            'type' => 'heart',
+        $this->validate([
+            "comments.$feedId" => 'required|string|max:500',
         ]);
-        $action = 'reacted ❤️ on your post ';
-    }
 
+        $comment = Comment::create([
+            'feed_id' => $feedId,
+            'user_id' => Auth::id(),
+            'comment' => $commentText,
+        ]);
+
+        $user = Auth::user();
+        $feed = FeedModel::find($feedId);
+        $feedOwner = User::find($feed->user_id);
+
+        
         if($feedOwner !== $user){
 
-    Notification::send($feedOwner, new UniversalNotification(
-                'feed',
-                "$user->name $action \"$feed->title\" ",
- $user->id,
-            ));
+        Notification::send($feedOwner, new UniversalNotification(
+                    'feed',
+                    "$user->name commented on your post \"$feed->title\"",
+                        $user->id,
+                ));
+        }
+
+        $this->comments[$feedId] = '';
+        $this->fetchFeeds();
     }
 
-    $this->fetchFeeds();
-}
+        public ?int $commentToEdit = null;
+        public $showComment = [
+            'comment' => '', // 👈 match the textarea's wire:model.defer
+        ];
+    public function editComment($commentId)
+    {
+
+        $comment = Comment::findOrFail($commentId);
+
+        // Optional: check if user owns the comment
+        // if ($comment->user_id !== Auth::id()) {
+        //     abort(403);
+        // }
+
+            $this->commentToEdit = $comment->id;
+            $this->showComment['comment'] = $comment->comment;
+
+            $this->modal('edit-comment')->show();
+        }
+
+        // Save edited comment
+        public function updateComment()
+        {
+            $this->validate([
+                'showComment.comment' => 'required|string|max:500',
+            ]);
+
+            $comment = Comment::findOrFail($this->commentToEdit);
+
+            // if ($comment->user_id !== Auth::id()) {
+            //     abort(403);
+            // }
+
+            $comment->update([
+                'comment' => $this->showComment['comment'],
+            ]);
+
+            $this->reset(['commentToEdit', 'showComment']);
+            $this->modal('edit-comment')->close();
+            $this->fetchFeeds();
+
+            Toaster::success('Comment updated!');
+        }
+
+    // ───── Reactions ─────
+    public function toggleHeart(FeedModel $feed)
+    {
+        $reaction = Reaction::where('feed_id', $feed->id)
+            ->where('user_id', Auth::id())
+            ->where('type', 'heart')
+            ->first();
+
+        $user = Auth::user();
+        $feedOwner = User::find($feed->user_id);
+
+        if ($reaction) {
+            $reaction->delete();
+            $action = 'removed a heart on your post';
+        } else {
+            Reaction::create([
+                'feed_id' => $feed->id,
+                'user_id' => $user->id,
+                'type' => 'heart',
+            ]);
+            $action = 'reacted ❤️ on your post ';
+        }
+
+            if($feedOwner !== $user){
+
+        Notification::send($feedOwner, new UniversalNotification(
+                    'feed',
+                    "$user->name $action \"$feed->title\" ",
+                    $user->id,
+                ));
+        }
+
+        $this->fetchFeeds();
+    }
 
     // ───── Edit / Update Post ─────
     public function editPost($id)
@@ -252,12 +296,12 @@ public function toggleHeart(FeedModel $feed)
 
         $this->postToEdit = $post->id;
         $this->showPost = [
-    'title' => $post->title,
-    'content' => $post->content,
-    'org_id' => $post->org_id,
-    'type' => $post->type,
-    'privacy' => $post->privacy,
-];
+            'title' => $post->title,
+            'content' => $post->content,
+            'org_id' => $post->org_id,
+            'type' => $post->type,
+            'privacy' => $post->privacy,
+        ];
 
 
         $this->modal('edit-post')->show();
@@ -266,12 +310,12 @@ public function toggleHeart(FeedModel $feed)
     public function updatePost()
     {
         $this->validate([
-    'showPost.title' => 'required|string|max:255',
-    'showPost.content' => 'required|string|max:2000',
-    'showPost.org_id' => 'nullable|exists:orgs,id',
-    'showPost.type' => 'nullable|string|max:100',
-    'photo' => 'nullable|image|max:2048',
-]);
+            'showPost.title' => 'required|string|max:255',
+            'showPost.content' => 'required|string|max:2000',
+            'showPost.org_id' => 'nullable|exists:orgs,id',
+            'showPost.type' => 'nullable|string|max:100',
+            'photo' => 'nullable|image|max:2048',
+        ]);
 
 
         $post = FeedModel::findOrFail($this->postToEdit);
@@ -282,13 +326,13 @@ public function toggleHeart(FeedModel $feed)
         }
 
         $post->update([
-    'title' => $this->showPost['title'],
-    'content' => $this->showPost['content'],
-    'org_id' => $this->showPost['org_id'],
-    'type' => $this->showPost['type'],
-    'photo_url' => $post->photo_url,
-    'privacy' => $post->showPost['privacy'],
-]);
+            'title' => $this->showPost['title'],
+            'content' => $this->showPost['content'],
+            'org_id' => $this->showPost['org_id'],
+            'type' => $this->showPost['type'],
+            'photo_url' => $post->photo_url,
+            'privacy' => $post->showPost['privacy'],
+        ]);
 
 
         if ($this->showPost['type'] && !Type::where('type_name', $this->showPost['type'])->exists()) {
@@ -327,6 +371,33 @@ public function toggleHeart(FeedModel $feed)
             $this->fetchFeeds();
         }
     }
+    public ?int $commentToDelete = null; // add this
+    // Show modal
+    public function confirmDeleteComment( $commentId)
+    {
+        $this->commentToDelete = $commentId;
+        $this->modal('delete-comment')->show();
+    }
+
+    // Delete comment
+    public function deleteComment()
+    {
+        if ($this->commentToDelete) {
+            $comment = Comment::findOrFail($this->commentToDelete);
+
+            // Optional ownership check:
+            // if ($comment->user_id !== Auth::id()) abort(403);
+
+            $comment->delete();
+
+            $this->reset('commentToDelete');
+            $this->modal('delete-comment')->close();
+            $this->fetchFeeds();
+
+            Toaster::success('Comment deleted.');
+        }
+    }
+
 
     public function render()
     {

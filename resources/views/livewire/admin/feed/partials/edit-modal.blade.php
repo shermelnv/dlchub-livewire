@@ -24,56 +24,40 @@
                 />
 
                 <!-- Image Upload -->
-<div class="grid grid-cols-2 gap-4">
-    <flux:field>
-        <div class="flex items-center justify-between">
-            <flux:label badge="Optional">Image</flux:label>
+                <div class="grid grid-cols-2 gap-4">
+                    <flux:field>
+                        <div class="flex items-center justify-between">
+                            <flux:label badge="Optional">Image</flux:label>
 
-            @if ($photo)
-                <flux:modal.trigger name="preview-feed-photo">
-                    <flux:button size="sm" variant="outline">Preview</flux:button>
-                </flux:modal.trigger>
-            @endif
-        </div>
+                            @if ($photo)
+                                <flux:modal.trigger name="preview-feed-photo">
+                                    <flux:button size="sm" variant="outline">Preview</flux:button>
+                                </flux:modal.trigger>
+                            @endif
+                        </div>
 
-        <input
-            type="file"
-            wire:model="photo"
-            accept="image/*"
-            class="mt-2 max-w-[15rem] block border border-gray-300 rounded-md p-2 text-sm"
-        />
+                        <input
+                            type="file"
+                            wire:model="photo"
+                            accept="image/*"
+                            class="mt-2 max-w-[15rem] block border border-gray-300 rounded-md p-2 text-sm"
+                        />
 
-        @error('photo')
-            <p class="text-red-500 text-xs">{{ $message }}</p>
-        @enderror
-    </flux:field>
-    
-    @if(auth()->user()->role === 'org')
-     <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
-        <flux:select.option value="public">Public</flux:select.option>
-        <flux:select.option value="private">Private</flux:select.option>
-    </flux:select>
-    @endif
+                        @error('photo')
+                            <p class="text-red-500 text-xs">{{ $message }}</p>
+                        @enderror
+                    </flux:field>
+                    
+                    @if(auth()->user()->role === 'org')
+                    <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
+                        <flux:select.option value="public">Public</flux:select.option>
+                        <flux:select.option value="private">Private</flux:select.option>
+                    </flux:select>
+                    @endif
 
-</div>
+                </div>
 
-<!-- Single Image Preview Modal -->
-<flux:modal name="preview-feed-photo" class="md:w-[30rem]">
-    <div class="space-y-4">
-        <div class="flex justify-between items-center">
-            <flux:heading>Preview Image</flux:heading>
 
-        </div>
-
-        @if ($photo)
-            <img
-                src="{{ $photo->temporaryUrl() }}"
-                alt="Uploaded preview"
-                class="w-full h-64 object-cover rounded-xl shadow border border-gray-300 dark:border-zinc-700"
-            />
-        @endif
-    </div>
-</flux:modal>
 
 
                 <div class="grid grid-cols-2 gap-4">
@@ -115,3 +99,41 @@
     </form>
 </flux:modal>
 
+    <!-- Single Image Preview Modal -->
+    <flux:modal name="preview-feed-photo" class="md:w-[30rem]">
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <flux:heading>Preview Image</flux:heading>
+
+            </div>
+
+            @if ($photo)
+                <img
+                    src="{{ $photo->temporaryUrl() }}"
+                    alt="Uploaded preview"
+                    class="w-full h-64 object-cover rounded-xl shadow border border-gray-300 dark:border-zinc-700"
+                />
+            @endif
+        </div>
+    </flux:modal>
+
+
+<flux:modal name="edit-comment" class="md:w-96">
+    <form wire:submit.prevent="updateComment" class="space-y-6">
+        <div>
+            <flux:heading size="lg">Edit Comment</flux:heading>
+            <flux:text class="mt-2">Make changes to your comment.</flux:text>
+        </div>
+        <div>
+            <flux:textarea
+                label="Comment"
+                wire:model.defer="showComment.comment"
+                placeholder="Edit your comment..."
+            />
+        </div>
+        <div class="flex">
+            <flux:spacer />
+            <flux:button type="submit" variant="primary">Save</flux:button>
+        </div>
+    </form>
+</flux:modal>

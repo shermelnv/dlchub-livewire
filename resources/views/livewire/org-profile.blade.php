@@ -112,11 +112,12 @@
                                         <div class="flex gap-2 items-center">
                                             @if ($feed->user->profile_image)
                                                 <flux:avatar 
+                                                circle
                                                 {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
                                                 src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
-                                                class="w-8 h-8 rounded-full object-cover" />
+                                                class="size-8 rounded-full object-cover" />
                                             @else
-                                                <flux:avatar circle :initials="$feed->user->initials()" class="w-8 h-8 rounded-full" />
+                                                <flux:avatar circle :initials="$feed->user->initials()" class="size-8 rounded-full" />
                                             @endif
 
                                             <div>
@@ -228,7 +229,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                    class="size-8 rounded-full"
                                                 />
                                                 @else
                                                     <flux:profile
@@ -236,7 +237,7 @@
                                                         
                                                         :initials="$comment->user->initials()"
                                                         icon:trailing="chevrons-up-down"
-                                                        class="w-8 h-8 rounded-full"
+                                                        class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
@@ -244,8 +245,14 @@
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -263,7 +270,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                    class="size-8 rounded-full"
                                                 />
                                                 @else
                                                     <flux:profile
@@ -271,7 +278,7 @@
                                                         
                                                         :initials="$comment->user->initials()"
                                                         icon:trailing="chevrons-up-down"
-                                                        class="w-8 h-8 rounded-full"
+                                                        class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
@@ -279,8 +286,14 @@
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-xl break-words">{{ $comment->comment }}</div>
                                                         </div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -298,7 +311,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     avatar="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="w-8 h-8 rounded-full overflow-hidden object-cover"
+                                                    class="size-8 rounded-full"
                                                 />
                                                 @else
                                                     <flux:profile
@@ -306,7 +319,7 @@
                                                         
                                                         :initials="$comment->user->initials()"
                                                         icon:trailing="chevrons-up-down"
-                                                        class="w-8 h-8 rounded-full"
+                                                        class="size-8 rounded-full"
                                                     />
                                                 @endif
                                                     <div>
@@ -314,8 +327,14 @@
                                                             <div class="font-semibold">{{ $comment->user->name }}:</div>
                                                             <div class="max-w-lg break-words">{{ $comment->comment }}</div>
                                                         </div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
+                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            <div class="inline-flex gap-2">
+                                                                <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -349,7 +368,7 @@
                                     @if ($photoCount === 1)
                                         {{-- Style 1: Single full image --}}
                                         <img src="{{ Storage::url($photos[0]->photo_path) }}"
-                                            class="w-full h-64 object-cover rounded"
+                                            class="w-full h-auto object-cover rounded"
                                             alt="Ad Image">
                                     @elseif ($photoCount === 2)
                                         {{-- Style 2: 2 horizontal side-by-side --}}
@@ -408,29 +427,40 @@
                             {{-- TEXT CONTENT --}}
                             <div class="p-4 space-y-3">
                                 
-                                   <div class="flex justify-between">
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
-                                <p class="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                    Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
-                                    @if($feed->privacy === 'public') 
-                                                        Public
-                                                    @else 
-                                                        Private
-                                                    @endif
-                                </p>
-                            </div>
-                            @if($ad->user_id === auth()->user()->id)
-                            <div>
-                                <flux:dropdown position="bottom" align="end">
-                                    <button><flux:icon.ellipsis-horizontal /></button>
-                                    <flux:menu>
-                                        <flux:menu.item wire:click="editAdvertisement({{ $ad->id }})">Edit</flux:menu.item>
-                                        <flux:menu.item wire:click="confirmDelete({{ $ad->id }})">Delete</flux:menu.item>
-                                    </flux:menu>
-                                </flux:dropdown>
-                            </div>
-                            @endif
+                            <div class="flex justify-between">
+                                <div class="flex gap-2 items-center">
+                                            @if ($feed->user->profile_image)
+                                                <flux:avatar 
+                                                {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
+                                                src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
+                                                circle
+                                                class="size-8 rounded-full object-cover" />
+                                            @else
+                                                <flux:avatar circle :initials="$feed->user->initials()" class="size-8 rounded-full" />
+                                            @endif
+                                    <div>
+                                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $ad->user->name }}</h2>
+                                        <p class="flex gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                            Posted {{ \Carbon\Carbon::parse($ad->published_at)->format('Y-m-d') }} ・ 
+                                            @if($feed->privacy === 'public') 
+                                                                Public
+                                                            @else 
+                                                                Private
+                                                            @endif
+                                        </p>
+                                    </div>
+                                    @if($ad->user_id === auth()->user()->id)
+                                    <div>
+                                        <flux:dropdown position="bottom" align="end">
+                                            <button><flux:icon.ellipsis-horizontal /></button>
+                                            <flux:menu>
+                                                <flux:menu.item wire:click="editAdvertisement({{ $ad->id }})">Edit</flux:menu.item>
+                                                <flux:menu.item wire:click="confirmDelete({{ $ad->id }})">Delete</flux:menu.item>
+                                            </flux:menu>
+                                        </flux:dropdown>
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
 
                                 
@@ -467,10 +497,10 @@
                                         @if($follower->profile_image)
                                             <flux:avatar 
                                                     src="{{ Storage::disk('digitalocean')->url($follower->profile_image) }}"
-                                                    class="w-8 h-8 rounded-full object-cover" />
+                                                    class="size-8 rounded-full object-cover" />
                                                     <span>{{ $follower->name }}</span>
                                         @else
-                                            <flux:avatar circle :initials="$follower->user->initials()" class="w-8 h-8 rounded-full" />
+                                            <flux:avatar circle :initials="$follower->user->initials()" class="size-8 rounded-full" />
                                         @endif
                                     </li>
                                 @endforeach
@@ -556,6 +586,44 @@
         </div>
     </form>
 </flux:modal>
+<flux:modal name="edit-comment" class="md:w-96">
+    <form wire:submit.prevent="updateComment" class="space-y-6">
+        <div>
+            <flux:heading size="lg">Edit Comment</flux:heading>
+            <flux:text class="mt-2">Make changes to your comment.</flux:text>
+        </div>
+        <div>
+            <flux:textarea
+                label="Comment"
+                wire:model.defer="showComment.comment"
+                placeholder="Edit your comment..."
+            />
+        </div>
+        <div class="flex">
+            <flux:spacer />
+            <flux:button type="submit" variant="primary">Save</flux:button>
+        </div>
+    </form>
+</flux:modal>
+<flux:modal name="delete-comment" class="min-w-[22rem]">
+    <form wire:submit.prevent="deleteComment" class="space-y-6">
+        <div>
+            <flux:heading size="lg">Delete comment?</flux:heading>
+            <flux:text class="mt-2">
+                <p>You're about to delete this comment.</p>
+                <p>This action cannot be reversed.</p>
+            </flux:text>
+        </div>
+        <div class="flex gap-2">
+            <flux:spacer />
+            <flux:modal.close>
+                <flux:button variant="ghost">Cancel</flux:button>
+            </flux:modal.close>
+            <flux:button type="submit" variant="danger">Delete</flux:button>
+        </div>
+    </form>
+</flux:modal>
+
 </div>
 
                 

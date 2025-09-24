@@ -8,6 +8,7 @@ use App\Models\Comment;
 use Livewire\Component;
 use App\Models\Reaction;
 use App\Models\Advertisement;
+use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\UniversalNotification;
 use Illuminate\Support\Facades\Notification;
@@ -148,6 +149,78 @@ class OrgProfile extends Component
 
         // $this->fetchFeeds();
     }
+
+         public ?int $commentToEdit = null;
+        public $showComment = [
+            'comment' => '', // 👈 match the textarea's wire:model.defer
+        ];
+    public function editComment($commentId)
+    {
+
+        $comment = Comment::findOrFail($commentId);
+
+        // Optional: check if user owns the comment
+        // if ($comment->user_id !== Auth::id()) {
+        //     abort(403);
+        // }
+
+            $this->commentToEdit = $comment->id;
+            $this->showComment['comment'] = $comment->comment;
+
+            $this->modal('edit-comment')->show();
+    }
+
+        // Save edited comment
+        public function updateComment()
+        {
+            $this->validate([
+                'showComment.comment' => 'required|string|max:500',
+            ]);
+
+            $comment = Comment::findOrFail($this->commentToEdit);
+
+            // if ($comment->user_id !== Auth::id()) {
+            //     abort(403);
+            // }
+
+            $comment->update([
+                'comment' => $this->showComment['comment'],
+            ]);
+
+            $this->reset(['commentToEdit', 'showComment']);
+            $this->modal('edit-comment')->close();
+            // $this->fetchFeeds();
+
+            Toaster::success('Comment updated!');
+        }
+
+    public ?int $commentToDelete = null;
+    public function confirmDeleteComment( $commentId)
+    {
+        $this->commentToDelete = $commentId;
+        $this->modal('delete-comment')->show();
+    }
+
+    // Delete comment
+    public function deleteComment()
+    {
+        if ($this->commentToDelete) {
+            $comment = Comment::findOrFail($this->commentToDelete);
+
+            // Optional ownership check:
+            // if ($comment->user_id !== Auth::id()) abort(403);
+
+            $comment->delete();
+
+            $this->reset('commentToDelete');
+            $this->modal('delete-comment')->close();
+            // $this->fetchFeeds();
+
+            Toaster::success('Comment deleted.');
+        }
+    }
+
+
 
     public function render()
     {
