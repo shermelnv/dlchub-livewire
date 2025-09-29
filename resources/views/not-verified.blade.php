@@ -7,12 +7,16 @@
             You will be notified once it’s activated.
         </flux:text>
 
+        <div class="flex gap-2 justify-center items-center">
             <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <flux:button color="danger" type="submit">
                         Logout
                     </flux:button>
                 </form>
+            <flux:button :href="route('home')">Home</flux:button>
+        </div>
+            
 
     </div>
 </x-layouts.guest>
