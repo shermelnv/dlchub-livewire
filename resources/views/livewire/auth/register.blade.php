@@ -86,7 +86,13 @@
             Mail::to($user->email)->send(new EmailVerification($user));
 
             // Redirect
-            $this->redirectIntended(route('checkStatus', absolute: false), navigate: true);
+
+            if(auth()->user()->status === 'pending')
+            {
+                $this->redirectIntended(route('not-verified') );
+            }
+
+            $this->redirectIntended(route('home') );
         }
     };
 ?>

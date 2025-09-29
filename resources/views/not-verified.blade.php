@@ -7,14 +7,12 @@
             You will be notified once it’s activated.
         </flux:text>
 
-     
-            <flux:button color="danger" type="submit" :href="route('logout')">
-                Logout
-            </flux:button>
-            <flux:button color="danger" type="submit" :href="route('home')">
-                Home
-            </flux:button>
-      
+            <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <flux:button color="danger" type="submit">
+                        Logout
+                    </flux:button>
+                </form>
 
     </div>
 </x-layouts.guest>

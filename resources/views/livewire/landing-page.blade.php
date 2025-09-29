@@ -25,9 +25,13 @@
         <flux:spacer />
         
         <flux:navbar >
-            <flux:navbar.item :href="route('checkStatus')" label="Search" >Still Pending</flux:navbar.item>
-            <flux:navbar.item :href="route('logout')" >Log out</flux:navbar.item>
-        </flux:navbar>
+            <flux:navbar.item :href="route('not-verified')" label="Search" >Still Pending</flux:navbar.item>
+            
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                    <flux:button variant="ghost" type="submit">Log out</flux:button>
+                </form>
+            </flux:navbar>
     </flux:header>
     @endif
 

@@ -41,6 +41,7 @@ class LandingPage extends Component
             ->layout('components.layouts.app');
         }else{
             
+            
             return view('livewire.landing-page')
             ->layout('components.layouts.guest');
     

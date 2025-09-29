@@ -38,15 +38,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     $user = Auth::user();
 
-    if ($user->status !== 'approved') {
-        session(['user_name' => $user->name]); // optional, for display
-
-        Auth::logout();
-
-        $this->redirect(route('not-verified')); // you must have this route defined
-        return;
-    }
-
     RateLimiter::clear($this->throttleKey());
     Session::regenerate();
 
@@ -54,7 +45,12 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         return;
     } else {
-        $this->redirect(route('checkStatus'));
+
+        if(auth()->user()->status === 'pending')
+        {
+            $this->redirect(route('not-verified'));
+        }
+        $this->redirect(route('home'));
         return;
     }
 
