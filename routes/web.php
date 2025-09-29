@@ -108,7 +108,16 @@ Route::get('/test-inbox', function () {
 
 // Route::get('/', LandingPage::class)->name('home');
 
+Route::get('checkStatus', function(){
 
+    if(auth()->user()->status === 'pending')
+    {
+        return redirect()->route('not-verified');
+    }else{
+        return redirect()->route('home');
+    }
+
+})->name('checkStatus');
 
 // Route::get('/', GuestLandingPage::class)->name('home');
 Route::get('/', LandingPage::class)->name('home');

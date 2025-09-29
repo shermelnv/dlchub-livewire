@@ -15,6 +15,21 @@
         </flux:navbar>
     </flux:header>
     @endif
+    @if(auth()->check() && auth()->user()->status === 'pending')
+        <flux:header container class=" bg-white/60 dark:bg-black/60 backdrop-blur-md fixed top-0 left-0 w-full">
+
+        <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" >
+                <x-app-logo />
+            </a>
+        
+        <flux:spacer />
+        
+        <flux:navbar >
+            <flux:navbar.item :href="route('checkStatus')" label="Search" >Still Pending</flux:navbar.item>
+            <flux:navbar.item :href="route('logout')" >Log out</flux:navbar.item>
+        </flux:navbar>
+    </flux:header>
+    @endif
 
 
     {{-- HEADER --}}

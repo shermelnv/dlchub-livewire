@@ -54,7 +54,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         return;
     } else {
-        $this->redirect(route('home'));
+        $this->redirect(route('checkStatus'));
         return;
     }
 

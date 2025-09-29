@@ -86,7 +86,7 @@
             Mail::to($user->email)->send(new EmailVerification($user));
 
             // Redirect
-            $this->redirectIntended(route('home', absolute: false), navigate: true);
+            $this->redirectIntended(route('checkStatus', absolute: false), navigate: true);
         }
     };
 ?>

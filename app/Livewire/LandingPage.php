@@ -35,13 +35,15 @@ class LandingPage extends Component
 
     public function render()
     {
-        if(!auth()->check())
+        if(auth()->check() && auth()->user()->status === 'approved')
         {
             return view('livewire.landing-page')
-            ->layout('components.layouts.guest');
-        }else{
-            return view('livewire.landing-page')
             ->layout('components.layouts.app');
+        }else{
+            
+            return view('livewire.landing-page')
+            ->layout('components.layouts.guest');
+    
         }
     }
 }
