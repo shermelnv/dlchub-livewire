@@ -140,19 +140,12 @@
                                         {{-- ACCOUNT CONTROL --}}
                                         @if($manageUser->status !== 'pending')
                                         <flux:menu.group heading="Account Control">
-                                            @if(in_array($manageUser->status, ['approved']))
-                                            <flux:menu.item icon="no-symbol"  wire:click="confirmBan({{ $manageUser->id }})">
-                                                Ban
-                                            </flux:menu.item>
-                                            @elseif(in_array($manageUser->status, ['banned']))
-                                            <flux:menu.item icon="no-symbol"  wire:click="confirmUnban({{ $manageUser->id }})">
-                                                Unban
-                                            </flux:menu.item>
-                                            @else
-                                            <flux:menu.item icon="check"  wire:click="confirmApprove({{ $manageUser->id }})">
-                                                Approve
-                                            </flux:menu.item>
+                                            @if (!in_array($manageUser->status, ['approved']))
+                                                <flux:menu.item icon="check" wire:click="confirmApprove({{ $manageUser->id }})">
+                                                    Approve
+                                                </flux:menu.item>
                                             @endif
+
                                             <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $manageUser->id }})">
                                                 Delete
                                             </flux:menu.item>
