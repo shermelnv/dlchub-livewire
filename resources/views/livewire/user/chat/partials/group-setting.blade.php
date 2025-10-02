@@ -50,6 +50,7 @@
                                 <flux:avatar circle 
                                 {{-- src="{{ asset('storage/' . $member->profile_image) }}"  --}}
                                 src="{{ Storage::disk('digitalocean')->url($member->profile_image) }}"
+                                class="size-8 rounded-full object-cover overflow-hidden"
                                 />
                             @else
                                 <flux:avatar circle :initials="$member->initials()" />
