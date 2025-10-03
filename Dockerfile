@@ -42,5 +42,4 @@ EXPOSE 8080
 
 
 
-# Run FrankenPHP serving the public folder on 8080
-CMD ["frankenphp", "php-server", "-r", "public/", "-p", "8080"]
+CMD ["sh", "-c", "frankenphp php-server -r public/ -p ${PORT:-8080}"]
