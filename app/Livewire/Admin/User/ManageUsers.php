@@ -16,6 +16,7 @@ use App\Events\UserRegistered;
 use Masmerise\Toaster\Toaster;
 use App\Mail\EmailVerification;
 use App\Mail\UserAccountCreated;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -40,6 +41,31 @@ class ManageUsers extends Component
     public string $status = 'all';
 
 
+    public function archiveUser()
+    {
+        DB::transaction(function () {
+        $students = User::where('role', 'user')->get();
+
+        $archiveData = $students->map(function ($student) {
+            return [
+                'user_id' => $student->id,
+                'name' => $student->name,
+                'username' => $student->username,
+                'email' => $student->email,
+                'role' => $student->role,
+                'status' => $student->status,
+                'document' => $student->document,
+                'profile_image' => $student->profile_image,
+                'archived_at' => now(),
+            ];
+        })->toArray();
+
+            DB::table('archives')->insert($archiveData);
+            User::where('role', 'user')->delete();
+        });
+
+        Toaster::success('All students have been archived.');
+    }
 
     public function mount()
     {
