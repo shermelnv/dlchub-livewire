@@ -1,35 +1,35 @@
-# Use PHP 8.3 FPM as base
-FROM php:8.3-fpm
+# Base PHP
+FROM php:8.2-fpm
 
-WORKDIR /var/www
-
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    tzdata git unzip curl libpng-dev libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    git curl libzip-dev zip unzip libpng-dev libonig-dev libxml2-dev supervisor nginx \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Install FrankenPHP binary
-RUN curl -sSL https://frankenphp.dev/install.sh | sh \
-    && mv frankenphp /usr/local/bin/
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application code
+WORKDIR /var/www/html
 COPY . .
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer install --optimize-autoloader --no-dev
+# PHP deps
+RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Node.js + build assets
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
+RUN npm install && npm run build
 
-# Laravel production optimizations
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 80 (App Platform internal)
-EXPOSE 80
+# Supervisor config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Run FrankenPHP (no -p flag!)
-CMD ["frankenphp", "php-server", "-r", "public/"]
+# Nginx config
+COPY nginx.conf /etc/nginx/sites-enabled/default
+
+# Expose internal ports
+EXPOSE 8000 
+
+# Start Supervisor (Laravel + Reverb + Scheduler)
+CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
