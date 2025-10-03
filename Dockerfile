@@ -1,27 +1,41 @@
-FROM ubuntu:22.04
+# Use PHP 8.3 FPM base image
+FROM php:8.3-fpm
 
+# Set working directory
 WORKDIR /var/www
 
-# Install dependencies
-RUN apt-get update && apt-get install -y curl unzip git php-cli php-mbstring php-xml php-bcmath php-pdo mysql-client
+# Prevent tzdata from prompting during build
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Manila
 
-# Install FrankenPHP
-RUN curl -sSL https://frankenphp.dev/install.sh | sh
-RUN mv frankenphp /usr/local/bin/
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+    tzdata \
+    git unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Copy your Laravel app
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copy application code
 COPY . .
 
-# Install Composer dependencies
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+# Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# Set permissions
+# Set permissions for Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
-# Expose App Platform port
+# Cache Laravel configuration, routes, views (production optimization)
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+# Expose the port for App Platform
 EXPOSE 8080
 
-# Run FrankenPHP
+# Run FrankenPHP serving the public folder
 CMD ["frankenphp", "php-server", "-r", "public/"]
