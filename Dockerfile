@@ -1,36 +1,31 @@
-# Base PHP
-FROM php:8.2-fpm
+# Use official PHP image with FPM
+FROM php:8.3-fpm
 
-# Install dependencies
+# Set working directory
+WORKDIR /var/www
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl libzip-dev zip unzip libpng-dev libonig-dev libxml2-dev supervisor nginx \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
+    git unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+# Copy project files
 COPY . .
 
-# PHP deps
-RUN composer install --no-dev --optimize-autoloader
+# Install PHP dependencies
+RUN composer install --optimize-autoloader --no-dev
 
-# Node.js + build assets
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
-RUN npm install && npm run build
+# Copy Nginx configuration
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Expose port for App Platform
+EXPOSE 8080
 
-# Nginx config
-COPY nginx.conf /etc/nginx/sites-enabled/default
-
-# Expose internal ports
-EXPOSE 8000 
-
-# Start Supervisor (Laravel + Reverb + Scheduler)
-CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-  
+# Start PHP-FPM and Nginx
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
