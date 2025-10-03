@@ -39,4 +39,5 @@ RUN php artisan config:cache \
 EXPOSE 8080
 
 # Run FrankenPHP on the port App Platform provides
-CMD ["sh", "-c", "frankenphp php-server -r public/ -p ${PORT:-8080}"]
+CMD ["sh", "-c", "frankenphp php-server -r public/ --port ${PORT:-8080}"]
+
