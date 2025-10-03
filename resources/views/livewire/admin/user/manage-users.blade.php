@@ -39,6 +39,9 @@
         <flux:modal.trigger name="create-user">
             <flux:button icon="plus">Create User</flux:button>
         </flux:modal.trigger>
+        <flux:modal.trigger name="archive-students">
+            <flux:button icon="archive-box">Archive User</flux:button>
+        </flux:modal.trigger>
     </section>
 
     </div>
@@ -196,6 +199,8 @@
 
     {{-- ========= CREATE USER =========== --}}
     @include('livewire.admin.user.partials.create-user')
+
+    @include('livewire.admin.user.partials.archive-user')
 
     {{-- ========= VIEW USER =========== --}}
     @include('livewire.admin.user.partials.view-user')

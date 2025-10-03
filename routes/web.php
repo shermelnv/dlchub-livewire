@@ -32,6 +32,7 @@ use App\Livewire\User\Voting;
 use App\Events\UserRegistered;
 use App\Events\VotedCandidate;
 use App\Events\ChatJoinRequest;
+use App\Livewire\Admin\Archive;
 use App\Events\RecentActivities;
 use App\Events\GroupUserApproved;
 use App\Models\Feed as FeedModel;
@@ -146,6 +147,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
         Route::get('admin/user/manage-users', ManageUsers::class)->name('admin.user.manage-users');
         Route::get('admin/org/manage-org', ManageOrg::class)->name('admin.org.manage-org');
+        Route::get('admin/archive', Archive::class)->name('admin.archive');
     });
 
     Route::middleware('sharedRole')->group(function() {
