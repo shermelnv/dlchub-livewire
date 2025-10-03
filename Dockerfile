@@ -37,7 +37,10 @@ RUN php artisan config:cache \
     && php artisan view:cache
 
 # Expose port 8080 for App Platform
+# Expose port 8080 for App Platform
 EXPOSE 8080
 
-# Run FrankenPHP serving the public folder
-CMD ["frankenphp", "php-server", "-r", "public/"]
+
+
+# Run FrankenPHP serving the public folder on 8080
+CMD ["frankenphp", "php-server", "-r", "public/", "-p", "8080"]
