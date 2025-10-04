@@ -1,23 +1,27 @@
-# Use the official FrankenPHP image (includes PHP + Caddy)
+# Use official FrankenPHP image with PHP 8.3
 FROM dunglas/frankenphp:1-php8.3
 
-# Set working directory
-WORKDIR /app
+# Set your domain name or use :80 to disable HTTPS
+ENV SERVER_NAME=:80
+ENV SERVER_ROOT=/app/public
 
-# Copy all project files
-COPY . .
+# Enable production PHP settings
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Install dependencies
-RUN apt-get update && apt-get install -y unzip git \
- && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
- && composer install --no-dev --optimize-autoloader \
- && php artisan config:cache \
- && php artisan route:cache \
- && php artisan view:cache \
- && php artisan storage:link
+# Copy your Laravel app
+COPY . /app
 
-# Expose the port FrankenPHP will serve on
+# Install Composer dependencies (Laravel)
+RUN composer install --no-dev --optimize-autoloader
+
+# Build frontend if needed
+RUN npm install && npm run build || true
+
+# Set permissions
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+
+# Expose port (DigitalOcean detects it automatically)
 EXPOSE 8080
 
-# Start FrankenPHP (serves Laravel from the public/ directory)
-CMD ["php-server", "--root", "public", "--port", "${PORT:-8080}", "--workers", "4"]
+# Start FrankenPHP
+CMD ["frankenphp", "run", "--port", "8080", "--root", "public"]
