@@ -33,3 +33,4 @@ EXPOSE 8000
 
 # Start Supervisor (Laravel + Reverb + Scheduler)
 CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+  

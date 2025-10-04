@@ -1,0 +1,32 @@
+name: plc-hub
+services:
+  - name: dlchub-livewire2
+    github:
+      repo: shermelnv/dlchub-livewire
+      branch: main
+      deploy_on_push: true
+    environment_slug: php
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    run_command: "php -S 0.0.0.0:8080 -t public"
+    build_command: |
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      mkdir -p storage/framework/{sessions,views,cache} bootstrap/cache
+      chmod -R 775 storage bootstrap/cache
+    http_port: 8080
+    routes:
+      - path: /
+    envs:
+      - key: APP_NAME
+        value: "PLC HUB"
+      - key: APP_ENV
+        value: "production"
+      - key: APP_KEY
+        value: "base64:iSWm+DbKK7BaspRTOP46wVWnQON0tyN8XBweidQkxoc="
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: "https://plc-hub-uhniv.ondigitalocean.app"

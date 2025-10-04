@@ -31,6 +31,10 @@
                             {{ __('Manage Users') }}
                         </flux:navlist.item>
 
+                        <flux:navlist.item icon="archive-box" :href="route('admin.archive')" :current="request()->routeIs('admin.archive')" wire:navigate>
+                            {{ __('Archives') }}
+                        </flux:navlist.item>
+
                         <flux:navlist.item icon="folder-git-2" :href="route('admin.org.manage-org')" :current="request()->routeIs('admin.org.manage-org')" wire:navigate>
                             {{ __('Manage Org') }}
                         </flux:navlist.item>
