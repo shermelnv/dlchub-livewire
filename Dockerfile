@@ -1,35 +1,23 @@
-# Base PHP
-FROM php:8.2-fpm
+# Use the official FrankenPHP image (includes PHP + Caddy)
+FROM dunglas/frankenphp:1-php8.3
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    git curl libzip-dev zip unzip libpng-dev libonig-dev libxml2-dev supervisor nginx \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
+# Set working directory
+WORKDIR /app
 
-# Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-WORKDIR /var/www/html
+# Copy all project files
 COPY . .
 
-# PHP deps
-RUN composer install --no-dev --optimize-autoloader
+# Install dependencies
+RUN apt-get update && apt-get install -y unzip git \
+ && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+ && composer install --no-dev --optimize-autoloader \
+ && php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache \
+ && php artisan storage:link
 
-# Node.js + build assets
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
-RUN npm install && npm run build
+# Expose the port FrankenPHP will serve on
+EXPOSE 8080
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Supervisor config
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Nginx config
-COPY nginx.conf /etc/nginx/sites-enabled/default
-
-# Expose internal ports
-EXPOSE 8000 
-
-# Start Supervisor (Laravel + Reverb + Scheduler)
-CMD php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+# Start FrankenPHP (serves Laravel from the public/ directory)
+CMD ["php-server", "--root", "public", "--workers", "4"]
