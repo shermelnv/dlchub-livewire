@@ -140,7 +140,7 @@
                      
                             <flux:separator vertical/>
 
-                            <button 
+                            {{-- <button 
                                 wire:click="editRoom({{ $room->id }})" 
                                 wire:loading.attr="disabled"
                                 wire:target="editRoom({{ $room->id }})"
@@ -155,7 +155,7 @@
                                         class="h-4 w-4 "/>
                             </button>
 
-                            <flux:separator vertical/>
+                            <flux:separator vertical/> --}}
                             
                             <a href="{{ route('voting.room', $room->id) }}" wire:navigate>
                                 <flux:icon.arrow-right class="size-5 text-gray-500 dark:text-gray-400"/>
