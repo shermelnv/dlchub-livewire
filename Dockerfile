@@ -20,4 +20,4 @@ RUN apt-get update && apt-get install -y unzip git \
 EXPOSE 8080
 
 # Start FrankenPHP (serves Laravel from the public/ directory)
-CMD ["php-server", "--root", "public", "--workers", "4"]
+CMD ["php-server", "--root", "public", "--port", "${PORT:-8080}", "--workers", "4"]
