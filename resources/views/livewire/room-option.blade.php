@@ -218,7 +218,7 @@
                         }"
                         x-init="$watch('query', () => highlightedIndex = -1); $watch('tab', () => open = false)"
                         @keydown.arrow-down.prevent="if (highlightedIndex < filteredOptions().length -1) highlightedIndex++"
-                        @keydown.arrow-up.prevent="if (highlightedIndex > 0) highlightedIndexe-"
+                        @keydown.arrow-up.prevent="if (highlightedIndex > 0) highlightedIndexe--"
                         @keydown.enter.prevent="if (highlightedIndex > -1) { query = filteredOptions()[highlightedIndex]; open = false; highlightedIndex = -1 }"
                         @click.outside="open = false"
                         class="relative"

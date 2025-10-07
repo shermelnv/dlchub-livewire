@@ -55,6 +55,7 @@
                             circle 
                             {{-- src="{{ asset('storage/' . $user->profile_image) }}"  --}}
                             src="{{ Storage::disk('digitalocean')->url($user->profile_image) }} "
+                            class="overflow-hidden"
                             />
                             
                         @else

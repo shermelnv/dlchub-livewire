@@ -115,7 +115,7 @@
                                                 circle
                                                 {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
                                                 src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
-                                                class="size-8 rounded-full object-cover" />
+                                                class="size-8 rounded-full object-cover overflow-hidden" />
                                             @else
                                                 <flux:avatar circle :initials="$feed->user->initials()" class="size-8 rounded-full" />
                                             @endif
@@ -133,7 +133,7 @@
                                             </div>
                                         </div>
 
-                                        @if($feed->user_id === auth()->user()->id)
+                                        {{-- @if($feed->user_id === auth()->user()->id)
                                             <div>
                                                 <flux:dropdown position="bottom" align="end">
                                                     <button><flux:icon.ellipsis-horizontal /></button>
@@ -143,7 +143,7 @@
                                                     </flux:menu>
                                                 </flux:dropdown>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
 
                                     <!-- Title & Content -->
@@ -229,7 +229,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="size-8 rounded-full"
+                                                    class="size-8 rounded-full overflow-hidden"
                                                 />
                                                 @else
                                                     <flux:avatar
@@ -270,7 +270,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="size-8 rounded-full"
+                                                    class="size-8 rounded-full overflow-hidden"
                                                 />
                                                 @else
                                                     <flux:avatar
@@ -311,7 +311,7 @@
                                                     {{-- avatar="{{ asset('storage/' . $comment->user->profile_image) }}" --}}
                                                     src="{{ Storage::disk('digitalocean')->url($comment->user->profile_image) }}"
                                                     icon:trailing="chevrons-up-down"
-                                                    class="size-8 rounded-full"
+                                                    class="size-8 rounded-full overflow-hidden"
                                                 />
                                                 @else
                                                     <flux:avatar
@@ -434,7 +434,7 @@
                                                 {{-- avatar="{{ asset('storage/' . $feed->user->profile_image) }}"  --}}
                                                 src="{{ Storage::disk('digitalocean')->url($feed->user->profile_image) }}"
                                                 circle
-                                                class="size-8 rounded-full object-cover" />
+                                                class="size-8 rounded-full object-cover overflow-hidden" />
                                             @else
                                                 <flux:avatar circle :initials="$feed->user->initials()" class="size-8 rounded-full" />
                                             @endif
@@ -449,7 +449,7 @@
                                                             @endif
                                         </p>
                                     </div>
-                                    @if($ad->user_id === auth()->user()->id)
+                                    {{-- @if($ad->user_id === auth()->user()->id)
                                     <div>
                                         <flux:dropdown position="bottom" align="end">
                                             <button><flux:icon.ellipsis-horizontal /></button>
@@ -459,7 +459,7 @@
                                             </flux:menu>
                                         </flux:dropdown>
                                     </div>
-                                    @endif
+                                    @endif --}}
                                 </div>
                             </div>
 
@@ -497,7 +497,7 @@
                                         @if($follower->profile_image)
                                             <flux:avatar 
                                                     src="{{ Storage::disk('digitalocean')->url($follower->profile_image) }}"
-                                                    class="size-8 rounded-full object-cover" />
+                                                    class="size-8 rounded-full object-cover overflow-hidden" />
                                                     <span>{{ $follower->name }}</span>
                                         @else
                                             <flux:avatar circle :initials="$follower->user->initials()" class="size-8 rounded-full" />
@@ -623,6 +623,99 @@
         </div>
     </form>
 </flux:modal>
+<flux:modal name="edit-post">
+    <form wire:submit.prevent="updatePost">
+        <div class="space-y-6">
+            <!-- Header -->
+            <div>
+                <flux:heading size="lg">Edit Feed Post</flux:heading>
+                <flux:text class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    Update your announcement or event post.
+                </flux:text>
+            </div>
+
+            <!-- Fields -->
+            <div class="flex flex-col gap-4">
+                <flux:input
+                    label="Post Title"
+                    wire:model.defer="showPost.title"
+                    placeholder="Post Title"
+                />
+
+                <flux:textarea
+                    label="Post Content"
+                    wire:model.defer="showPost.content"
+                    placeholder="What's on your mind? (Max 2000 Characters)"
+                />
+
+                <!-- Image Upload -->
+                <div class="grid grid-cols-2 gap-4">
+                    <flux:field>
+                        <div class="flex items-center justify-between">
+                            <flux:label badge="Optional">Image</flux:label>
+
+                            @if ($photo)
+                                <flux:modal.trigger name="preview-feed-photo">
+                                    <flux:button size="xs" variant="outline">Preview</flux:button>
+                                </flux:modal.trigger>
+                            @endif
+                        </div>
+
+                        <input
+                            type="file"
+                            wire:model="photo"
+                            accept="image/*"
+                            class="mt-2 max-w-[15rem] block border border-gray-300 rounded-md p-2 text-sm"
+                        />
+
+                        @error('photo')
+                            <p class="text-red-500 text-xs">{{ $message }}</p>
+                        @enderror
+                    </flux:field>
+                    
+                 
+               
+                    <flux:input
+                        type="text"
+                        label="Type"
+                        wire:model.defer="showPost.type"
+                        placeholder="ex. Event, Announcement, etc."
+                        autocomplete="off"
+                    />
+
+               
+                    
+                </div>
+
+   @if(auth()->user()->role === 'org')
+                    <flux:select label="Privacy" wire:model.defer="showPost.privacy" placeholder="Public / Private">
+                        <flux:select.option value="public">Public</flux:select.option>
+                        <flux:select.option value="private">Private</flux:select.option>
+                    </flux:select>
+                    @endif
+
+
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button 
+                    type="submit" 
+                    variant="primary"
+                    wire:loading.attr="disabled" 
+                    wire:target="photo"
+                    >
+                    Update</flux:button>
+            </div>
+        </div>
+    </form>
+</flux:modal>
+
+
 
 </div>
 

@@ -10,7 +10,7 @@
                     @if (!empty($showUser['profile_image']))
                     <flux:avatar
                         circle
-                        class="size-40 object-cover"
+                        class="size-40 object-cover overflow-hidden"
                         {{-- src="{{ asset('storage/' . $showUser['profile_image']) }}" --}}
                         src="{{ Storage::disk('digitalocean')->url($showUser['profile_image']) }}"
                     />

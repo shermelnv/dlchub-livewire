@@ -15,11 +15,15 @@
           
             <flux:navlist variant="outline">
 
-                <flux:navlist.item icon="home" :href="route('home')" :current="request()->routeIs('home')" >
+                <flux:navlist.item 
+                class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                icon="home" :href="route('home')" :current="request()->routeIs('home')" >
                             {{ __('Home') }}
                         </flux:navlist.item>
                 @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
-                    <flux:navlist.item icon="rectangle-group" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:navlist.item 
+                    class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                    icon="rectangle-group" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                             {{ __('Dashboard') }}
                         </flux:navlist.item>
                 @endif
@@ -27,19 +31,27 @@
                 @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
                     <flux:navlist.group :heading="__('Manage')" class="grid">
                         
-                        <flux:navlist.item icon="users" :href="route('admin.user.manage-users')" :current="request()->routeIs('admin.user.manage-users')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="users" :href="route('admin.user.manage-users')" :current="request()->routeIs('admin.user.manage-users')" wire:navigate>
                             {{ __('Manage Users') }}
                         </flux:navlist.item>
 
-                        <flux:navlist.item icon="archive-box" :href="route('admin.archive')" :current="request()->routeIs('admin.archive')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="archive-box" :href="route('admin.archive')" :current="request()->routeIs('admin.archive')" wire:navigate>
                             {{ __('Archives') }}
                         </flux:navlist.item>
 
-                        <flux:navlist.item icon="folder-git-2" :href="route('admin.org.manage-org')" :current="request()->routeIs('admin.org.manage-org')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="folder-git-2" :href="route('admin.org.manage-org')" :current="request()->routeIs('admin.org.manage-org')" wire:navigate>
                             {{ __('Manage Org') }}
                         </flux:navlist.item>
 
-                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
                             {{ __('Manage Chat') }}
                         </flux:navlist.item>
                        
@@ -50,23 +62,33 @@
 
                 @if (in_array(auth()->user()->role, ['org', 'admin', 'superadmin']))
                     <flux:navlist.group  class="grid">
-                        {{-- <flux:navlist.item icon="identification" :href="route('org.profile')" :current="request()->routeIs('org.profile')" wire:navigate>
+                        {{-- <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="identification" :href="route('org.profile')" :current="request()->routeIs('org.profile')" wire:navigate>
                             {{ __('Org Profile') }}
                         </flux:navlist.item> --}}
 
-                        {{-- <flux:navlist.item icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
+                        {{-- <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="chat-bubble-left-right" :href="route('admin.chat.manage-chat')" :current="request()->routeIs('admin.chat.manage-chat')" wire:navigate>
                             {{ __('Manage Chat') }}
                         </flux:navlist.item> --}}
 
-                        <flux:navlist.item icon="rss" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="rss" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>
                             {{ __('Manage Feed') }}
                         </flux:navlist.item>
 
-                        <flux:navlist.item icon="inbox-arrow-down" :href="route('voting')" :current="request()->routeIs('voting')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="inbox-arrow-down" :href="route('voting')" :current="request()->routeIs('voting')" wire:navigate>
                             {{ __('Manage Voting') }}
                         </flux:navlist.item>
 
-                        <flux:navlist.item icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>
                             {{ __('Manage Advertisement') }}
                         </flux:navlist.item>
 
@@ -75,14 +97,18 @@
                 @endif
 
                 {{-- @if (auth()->user()->isOrg())
-                   <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
+                   <flux:navlist.item 
+                   class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                   icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
                             {{ __('Follow Request') }}
                         </flux:navlist.item>
                 @endif --}}
 
                 @if (auth()->user()->isOrg())
 
-                   <flux:navlist.item icon="users" 
+                   <flux:navlist.item 
+                   class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                   icon="users" 
                         :href=" route('org.profile', ['orgId' => auth()->id()]) " 
                         :current="request()->routeIs('org.profile') && request()->route('orgId') == auth()->id()"
                         wire:navigate
@@ -90,7 +116,9 @@
                         {{ __('Profile') }}
                     </flux:navlist.item>
 
-                    <flux:navlist.item icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
+                    <flux:navlist.item 
+                    class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                    icon="users" :href="route('org.follow-request')" :current="request()->routeIs('org.follow-request')" wire:navigate>
                         {{ __('Follow Request') }}
                     </flux:navlist.item>
                 @endif
@@ -98,10 +126,18 @@
                 @if (auth()->user()->isUser())
                     {{-- USER --}}
                     <flux:navlist.group  class="grid">
-                        <flux:navlist.item icon="megaphone" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>{{ __('News Feed') }}</flux:navlist.item>
-                        <flux:navlist.item icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
-                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item>
-                        <flux:navlist.item icon="check-circle" :href="route('voting')" :current="request()->routeIs('voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="megaphone" :href="route('feed')" :current="request()->routeIs('feed')" wire:navigate>{{ __('News Feed') }}</flux:navlist.item>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="megaphone" :href="route('advertisement')" :current="request()->routeIs('advertisement')" wire:navigate>{{ __('Advertisement') }}</flux:navlist.item>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="chat-bubble-left-right" :href="route('user.chat')" :current="request()->routeIs('user.chat')" wire:navigate>{{ __('Chat') }}</flux:navlist.item>
+                        <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="check-circle" :href="route('voting')" :current="request()->routeIs('voting')" wire:navigate>{{ __('Voting') }}</flux:navlist.item>
 
                     </flux:navlist.group>
 
@@ -110,6 +146,8 @@
 
 
                 <flux:navlist.item 
+class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+
                 
                 
                 icon="users" :href="route('inbox')" :current="request()->routeIs('inbox')" wire:navigate>
@@ -121,7 +159,9 @@
                     
 
                         {{-- MEMBERS --}}
-                        {{-- <flux:navlist.item icon="users" :href="route('members')" :current="request()->routeIs('members')" wire:navigate>
+                        {{-- <flux:navlist.item 
+                        class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                        icon="users" :href="route('members')" :current="request()->routeIs('members')" wire:navigate>
                             {{ __('Members') }}
                         </flux:navlist.item> --}}
                     {{-- </flux:navlist.group> --}}
@@ -130,17 +170,21 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                {{-- <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                {{-- <flux:navlist.item 
+                class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
+                <flux:navlist.item 
+                class="!text-black dark:!text-white data-[current]:!bg-red-900 data-[current]:!text-white data-[current]:!font-bold hover:!bg-red-100 hover:!text-red-700"
+                icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
                 {{ __('Documentation') }}
                 </flux:navlist.item> --}}
             </flux:navlist>
 
             <!-- Desktop User Menu -->
-            <flux:dropdown class="hidden lg:block" position="bottom" align="start">
+            <flux:dropdown class="hidden lg:block" position="bottom" align="start" >
                 @if (auth()->user()->profile_image)
                 <flux:profile
                 circle

@@ -309,10 +309,12 @@ public function createPost()
 
     public function updatePost()
     {
+    
+
         $this->validate([
             'showPost.title' => 'required|string|max:255',
             'showPost.content' => 'required|string|max:2000',
-            'showPost.org_id' => 'nullable|exists:orgs,id',
+            'showPost.org_id' => 'nullable',
             'showPost.type' => 'nullable|string|max:100',
             'photo' => 'nullable|image|max:2048',
         ]);
@@ -327,6 +329,8 @@ public function createPost()
             'type' => $this->showPost['type'],
             'privacy' => $this->showPost['privacy'] ?? 'public',
         ];
+
+        // dd($data);
 
         // Only replace photo if a new one is uploaded
         if ($this->photo) {

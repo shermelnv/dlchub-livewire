@@ -40,7 +40,7 @@
             <flux:button icon="plus">Create User</flux:button>
         </flux:modal.trigger>
         <flux:modal.trigger name="archive-students">
-            <flux:button icon="archive-box">Archive User</flux:button>
+            <flux:button icon="archive-box" variant="danger">Archive User</flux:button>
         </flux:modal.trigger>
     </section>
 

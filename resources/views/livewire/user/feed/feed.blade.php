@@ -167,7 +167,7 @@ x-data
                 @forelse ($orgs as $org)
                     <a href="{{ route('org.profile', ['orgId' => $org->id]) }}" >
                         <div class="flex gap-4 items-center text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                            <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" />
+                            <flux:avatar circle src="{{$org->profile ?? 'https://i.pravatar.cc/100?u=' . $org->id}}" class="overflow-hidden"/>
                             <span class="truncate">{{ $org->name }}</span>
                         </div>
                     </a>

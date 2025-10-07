@@ -11,7 +11,7 @@
                                             circle
                 
                                             src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
-                                            class="size-40"
+                                            class="size-40 overflow-hidden"
                                         />
                                     @else
                                         <flux:avatar
@@ -168,7 +168,7 @@
                     circle
                     {{-- src="{{ asset('storage/' . $selectedGroup->group_profile) }}" --}}
                     src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
-                    class="size-40"
+                    class="size-40 overflow-hidden"
                 />
             @else
                 <flux:avatar

@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Archive as ArchiveModel;
+
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
+use App\Models\Archive as ArchiveModel;
 
 class Archive extends Component
 {
@@ -18,6 +20,14 @@ class Archive extends Component
     {
         $this->archives = ArchiveModel::where('role', 'user')->get();
     }
+
+    public function emptyArchive()
+    {
+    ArchiveModel::truncate();
+    $this->modal('empty-archive')->close();
+    Toaster::success('Archive cleared Successfully!');
+    }
+
 
     public function render()
     {
