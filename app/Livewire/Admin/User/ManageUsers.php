@@ -64,6 +64,8 @@ class ManageUsers extends Component
             User::where('role', 'user')->delete();
         });
 
+        $this->modal('archive-students')->close();
+
         Toaster::success('All students have been archived.');
     }
 
