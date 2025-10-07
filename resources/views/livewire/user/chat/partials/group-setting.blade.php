@@ -102,6 +102,7 @@
                                 <p class="font-bold text-white truncate">{{ $request->user->name }}</p>
                                 <p class="text-sm text-gray-300 truncate">{{ $request->user->email }}</p>
                             </div>
+                            @if($selectedGroup->group_owner_id === auth()->user()->id)
                             <div class="flex gap-2">
                                 <flux:button 
                                     size="xs" 
@@ -121,6 +122,7 @@
                                     Reject
                                 </flux:button>
                             </div>
+                            @endif
                         </div>
                     @empty
                         <div class="text-gray-500 dark:text-gray-400 text-sm">No pending requests.</div>
