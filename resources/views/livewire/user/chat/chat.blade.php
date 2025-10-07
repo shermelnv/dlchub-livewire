@@ -65,6 +65,7 @@
                                     <flux:avatar
                                         circle
                                         src="{{ Storage::disk('digitalocean')->url($selectedGroup->group_profile) }}"
+                                        class="overflow-hidden"
                                     />
                                 @else
                                     <flux:avatar
@@ -171,6 +172,7 @@
                                                     <flux:avatar circle 
                                                     {{-- src="{{ asset('storage/' . $msg->user->profile_image) }}"  --}}
                                                     src="{{ Storage::disk('digitalocean')->url($msg->user->profile_image) }}"
+                                                    class="overflow-hidden"
                                                     />
                                                 @else
                                                     <flux:avatar circle :initials="$msg->user?->initials()" />
@@ -205,6 +207,7 @@
                                                             <flux:avatar circle 
                                                             {{-- src="{{ asset('storage/' . $msg->user->profile_image) }}"  --}}
                                                             src="{{ Storage::disk('digitalocean')->url($msg->user->profile_image) }}"
+                                                            class="overflow-hidden"
                                                             />
                                                         @else
                                                             <flux:avatar circle :initials="$msg->user?->initials()" />
@@ -283,7 +286,7 @@
                                                 circle
                                                 {{-- src="{{ asset('storage/' . $group->group_profile) }}" --}}
                                                 src="{{ Storage::disk('digitalocean')->url($group->group_profile) }}"
-                                                
+                                                class="overflow-hidden"
                                             />
                                         @else
                                             <flux:avatar

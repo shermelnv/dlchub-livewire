@@ -32,7 +32,7 @@
                                     circle
                                     {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
                                     src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
-                                    
+                                    class="overflow-hidden"
                                 />
                             @else
                                 <flux:avatar
@@ -88,7 +88,7 @@
                                     circle
                                     {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
                                     src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
-                                    
+                                    class="overflow-hidden"
                                 />
                             @else
                                 <flux:avatar

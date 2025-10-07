@@ -1,5 +1,5 @@
 <x-layouts.app.sidebar :title="$title ?? null">
-    <flux:main class="!p-0">
+    <flux:main class="!p-0 !bg-[#FFFFEB]">
         {{-- @if($title !== 'Chat')
         <flux:navbar class="bg-red-950 px-5 justify-between">
             <flux:heading size="xl" >{{$title ?? null}}</flux:heading>

@@ -120,7 +120,7 @@
                                             @if ($vote->user->profile_image)
                                                 <flux:avatar 
                                                     src="{{ Storage::disk('digitalocean')->url($vote->user->profile_image) }}"
-                                                    class="size-10 object-contain" />
+                                                    class="size-10 object-contain overflow-hidden" />
                                             @else
                                                 <flux:avatar circle :initials="$vote->user->initials()" class="size-10 " />
                                             @endif

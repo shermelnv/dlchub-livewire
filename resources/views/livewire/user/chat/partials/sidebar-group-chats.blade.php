@@ -18,7 +18,7 @@
                                     circle
                       
                                     src="{{ Storage::disk('digitalocean')->url($group->group_profile) }}"
-                                    class="size-8"
+                                    class="size-8 overflow-hidden"
                                 />
                             @else
                                 <flux:avatar

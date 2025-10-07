@@ -8,7 +8,7 @@
                                     circle
                                     {{-- src="{{ asset('storage/' . $org->profile_image) }}" --}}
                                     src="{{ Storage::disk('digitalocean')->url($org->profile_image) }}"
-                                    class="size-16 lg:size-24"
+                                    class="size-16 lg:size-24 overflow-hidden"
                                     
                                 />
                             @else

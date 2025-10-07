@@ -11,7 +11,7 @@
                 });
                 
             "
-class="px-5">
+class="">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
         <div class="w-full space-y-4 col-span-2 py-5 lg:px-20" >
@@ -22,6 +22,7 @@ class="px-5">
                         circle 
                         {{-- src="{{ asset('storage/' . auth()->user()->profile_image) }}"  --}}
                         src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
+                        class="overflow-hidden"
                         />
                 @else
                     <flux:avatar

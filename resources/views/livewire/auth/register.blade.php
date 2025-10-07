@@ -64,7 +64,10 @@
             ]);
 
             // Store photo in public disk
-            $photoPath = $this->photo->store('user_COR_ID', 'public');
+            // $photoPath = $this->photo->store('user_COR_ID', 'public'); 
+            $photoPath = $this->photo?->storePublicly('user_COR_ID', 'digitalocean');
+
+
 
             // Create user
             $user = User::create([

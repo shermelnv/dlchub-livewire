@@ -5,7 +5,7 @@
                     console.log('new feed post', e.feed);
                     Livewire.dispatch('newFeedPosted');
                 });"
-    class="px-5">
+    class="">
 
     <!-- ========== MAIN GRID ========== -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
@@ -20,6 +20,7 @@
                         circle 
                         {{-- src="{{ asset('storage/' . auth()->user()->profile_image) }}"  --}}
                         src="{{ Storage::disk('digitalocean')->url(auth()->user()->profile_image) }}"
+                        class="overflow-hidden"
                         />
                 @else
                     <flux:avatar
@@ -313,12 +314,12 @@
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
-                                                            <div class="inline-flex gap-2">
+                                                            @if($comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                @endif
+                                                                @if(auth()->user()->id === $feed->user_id || $comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
-                                                            </div>
-                                                            @endif
+                                                                @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -354,12 +355,17 @@
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400 my-2">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
+                                                            {{-- @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id) --}}
                                                             <div class="inline-flex gap-2">
+
+                                                                @if($comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                @endif
+                                                                @if(auth()->user()->id === $feed->user_id || $comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
+                                                                @endif
                                                             </div>
-                                                            @endif
+                                                            {{-- @endif --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -395,12 +401,12 @@
                                                         </div>
                                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ \Carbon\Carbon::parse($comment->created_at)->justDiffForHumans() }}
-                                                            @if($comment->user_id === auth()->user()->id || auth()->user()->id === $feed->user_id)
-                                                            <div class="inline-flex gap-2">
+                                                            @if($comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="editComment({{ $comment->id }})">Edit</flux:button>
+                                                                @endif
+                                                                @if(auth()->user()->id === $feed->user_id || $comment->user_id === auth()->user()->id)
                                                                 <flux:button variant="subtle" size="xs" wire:click="confirmDeleteComment({{ $comment->id }})">Delete</flux:button>
-                                                            </div>
-                                                            @endif
+                                                                @endif
                                                         </div>
                                                     </div>
                                                 </div>

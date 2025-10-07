@@ -8,6 +8,7 @@ use App\Models\Comment;
 use Livewire\Component;
 use App\Models\Reaction;
 use App\Models\Advertisement;
+use Livewire\WithFileUploads;
 use Masmerise\Toaster\Toaster;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\UniversalNotification;
@@ -15,12 +16,17 @@ use Illuminate\Support\Facades\Notification;
 
 class OrgProfile extends Component
 {
+    use WithFileUploads;
 
     public $org;      // this will hold the organization user
     public $feeds;    // optional: the org's feeds
     public $ads;      // optional: the org's advertisements
+    public $photo;
+    public $org_id;
 
-
+     public ?int $postToEdit = null;
+    public string $editContent = '';
+     public $title, $content, $organization, $type;
 
     public $comments = [];
     
@@ -78,6 +84,7 @@ class OrgProfile extends Component
 
         $this->org->load('organizationInfo');
 
+        Toaster::success('Edit Info Successfully!');
         // close modal after saving
        $this->modal('edit-about')->close();
     }
@@ -154,6 +161,70 @@ class OrgProfile extends Component
         public $showComment = [
             'comment' => '', // 👈 match the textarea's wire:model.defer
         ];
+
+         // ───── Edit / Update Post ─────
+    public function editPost($id)
+    {
+        $post = Feed::findOrFail($id);
+
+        $this->postToEdit = $post->id;
+        $this->showPost = [
+            'title' => $post->title,
+            'content' => $post->content,
+            'org_id' => $post->org_id,
+            'type' => $post->type,
+            'privacy' => $post->privacy,
+        ];
+
+
+        $this->modal('edit-post')->show();
+    }
+
+    public function updatePost()
+    {
+    
+
+        $this->validate([
+            'showPost.title' => 'required|string|max:255',
+            'showPost.content' => 'required|string|max:2000',
+            'showPost.org_id' => 'nullable',
+            'showPost.type' => 'nullable|string|max:100',
+            'photo' => 'nullable|image|max:2048',
+        ]);
+
+        $post = Feed::findOrFail($this->postToEdit);
+
+        // Start with current photo
+        $data = [
+            'title' => $this->showPost['title'],
+            'content' => $this->showPost['content'],
+            'org_id' => $this->showPost['org_id'],
+            'type' => $this->showPost['type'],
+            'privacy' => $this->showPost['privacy'] ?? 'public',
+        ];
+
+        // dd($data);
+
+        // Only replace photo if a new one is uploaded
+        if ($this->photo) {
+            $photoPath = $this->photo->storePublicly('feeds', 'digitalocean');
+            $data['photo_url'] = $photoPath;
+        }
+
+        $post->update($data);
+
+        // Create type if new
+        if ($this->showPost['type'] && !Type::where('type_name', $this->showPost['type'])->exists()) {
+            Type::create(['type_name' => $this->showPost['type']]);
+        }
+
+        $this->reset(['showPost', 'photo', 'postToEdit']);
+        $this->modal('edit-post')->close();
+        $this->fetchFeeds();
+
+        Toaster::success('Feed post updated!');
+    }
+
     public function editComment($commentId)
     {
 
